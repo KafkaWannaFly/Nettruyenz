@@ -5,23 +5,24 @@ enum MangaStatus {
 }
 
 interface Manga {
-	id: string = "";
+	id: string;
 	names: string[];
 	cover: string;
 	tags: string[];
+	creators?: string[];
 	rating?: number;
 	rateNum?: number;
-	bookmarks?: number = 0;
-	views?: number = 0;
-	status?: number = MangaStatus.OnGoing;
+	bookmarks?: number;
+	views?: number;
+	status?: number;
 	description: string;
-	groups: string[] = ["VA"];
+	groups: string[];
 	chapters: string[];
 	comments?: string[];
 }
 
 interface Chapter {
-	id: string = "";
+	id: string;
 	images: string[];
 	manga: string;
 	index: number;
@@ -43,7 +44,7 @@ interface User {
 	password: string;
 	nickname: string;
 	avatar?: string;
-	level: number = UserLevel.normal;
+	level: number;
 	groups?: string[];
 	bookmarks?: string[];
 	history?: string[];
@@ -53,7 +54,7 @@ interface User {
 }
 
 interface Group {
-	id: string = "";
+	id: string;
 	name: string;
 	members: string[];
 }
@@ -65,14 +66,14 @@ interface Creator {
 }
 
 interface Comment {
-	id: string = "";
+	id: string;
 	reply?: string;
 	content: string;
 	createdAt: Date;
 }
 
 interface Tag {
-	id: string = "";
+	id: string;
 	name: string;
 }
 
