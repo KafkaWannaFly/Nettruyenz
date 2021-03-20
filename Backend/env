@@ -1,0 +1,4 @@
+DB_HOST="nettruyenz.11pyj.mongodb.net"
+DB_NAME="test"
+DB_USERNAME="kafka"
+DB_PASSWORD="wannafly"

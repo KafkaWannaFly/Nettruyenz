@@ -4,10 +4,10 @@
   "description": "Api server for NetTruyenZ",
   "main": "out/app.js",
   "scripts": {
-    "start": "node_modules/.bin/tsc && node out/app.js ",
-    "test": "nodemon out/app.js"
+    "start": "tsc && node out/src/app.js ",
+    "test": "nodemon out/src/app.js"
   },
-  "author": "Kafka Wanna Fly",
+  "author": "Kafka Wanna Fly && Agent L",
   "license": "MIT",
   "devDependencies": {
     "@types/express": "^4.17.11",
