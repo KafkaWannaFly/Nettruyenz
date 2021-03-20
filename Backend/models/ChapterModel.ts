@@ -5,15 +5,17 @@ const Id = Schema.Types.ObjectId;
 
 const chapterSchema = new Schema(
 	{
+		_id: String,
 		images: [String],
-		manga: Id,
-		uploader: Id,
+		manga: String,
+		uploader: String,
 		views: Number,
-		group: Id,
+		group: String,
 		index: Number,
 		tittle: String,
 	},
 	{
+		_id: false,
 		timestamps: true,
 	}
 );

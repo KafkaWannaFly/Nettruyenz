@@ -7,19 +7,23 @@ const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const Id = Schema.Types.ObjectId;
 const mangaSchema = new Schema({
+    _id: String,
     names: [String],
     cover: String,
-    creators: [Id],
-    tags: [Id],
+    creators: [String],
+    tags: [String],
     rating: Number,
     rateNum: Number,
     bookmarks: Number,
     views: Number,
     status: Number,
-    groups: [Id],
+    groups: [String],
     description: String,
-    chapters: [Id],
-    comments: [Id],
+    chapters: [String],
+    comments: [String],
+}, {
+    _id: false,
+    timestamps: true,
 });
 const mangaModel = Preloader_1.default.model("Manga", mangaSchema);
 exports.default = mangaModel;

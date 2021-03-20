@@ -5,11 +5,13 @@ const Id = Schema.Types.ObjectId;
 
 const commentSchema = new Schema(
 	{
+		_id: String,
 		chapter: Id,
 		reply: Id,
 		content: String,
 	},
 	{
+		_id: false,
 		timestamps: true,
 	}
 );

@@ -7,10 +7,12 @@ const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const Id = Schema.Types.ObjectId;
 const commentSchema = new Schema({
+    _id: String,
     chapter: Id,
     reply: Id,
     content: String,
 }, {
+    _id: false,
     timestamps: true,
 });
 const commentModel = Preloader_1.default.model("Comment", commentSchema);

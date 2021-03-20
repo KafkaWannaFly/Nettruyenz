@@ -5,7 +5,8 @@ enum MangaStatus {
 }
 
 interface Manga {
-	id: string;
+	_id: string;
+	id?: string;
 	names: string[];
 	cover: string;
 	tags: string[];
@@ -22,16 +23,17 @@ interface Manga {
 }
 
 interface Chapter {
-	id: string;
+	_id: string;
+	id?: string;
 	images: string[];
 	manga: string;
 	index: number;
 	tittle: string;
 	uploader: string;
-	views: number;
+	views?: number;
 	group: string;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 enum UserLevel {
@@ -54,26 +56,30 @@ interface User {
 }
 
 interface Group {
-	id: string;
+	_id: string;
+	id?: string;
 	name: string;
 	members: string[];
 }
 
 interface Creator {
-	id: string;
+	_id: string;
+	id?: string;
 	name: string;
 	sumary: string;
 }
 
 interface Comment {
-	id: string;
+	_id: string;
+	id?: string;
 	reply?: string;
 	content: string;
 	createdAt: Date;
 }
 
 interface Tag {
-	id: string;
+	id?: string;
+	_id: string;
 	name: string;
 }
 

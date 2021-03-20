@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const tagSchema = new Schema({
+    _id: String,
     name: String,
+}, {
+    _id: false,
 });
 const tagModel = Preloader_1.default.model("Tag", tagSchema);
 exports.default = tagModel;

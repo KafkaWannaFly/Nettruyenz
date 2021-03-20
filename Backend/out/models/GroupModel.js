@@ -7,8 +7,11 @@ const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const Id = Schema.Types.ObjectId;
 const groupSchema = new Schema({
+    _id: String,
     name: String,
     members: [Id],
+}, {
+    _id: false,
 });
 const groupModel = Preloader_1.default.model("Group", groupSchema);
 exports.default = groupModel;
