@@ -1,7 +1,5 @@
 import express from "express";
 const router = express.Router();
-import { Manga } from "../models/TypeDeclare";
-import mangaModel from "../models/MangaModel";
 
 router.post("/", function (req, res) {
 	// const mangaID = '';

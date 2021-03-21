@@ -10,15 +10,15 @@ const mangaSchema = new Schema(
 		cover: String,
 		creators: [String],
 		tags: [String],
-		rating: Number,
-		rateNum: Number,
-		bookmarks: Number,
-		views: Number,
+		// rating: Number,
+		// rateNum: Number,
+		// bookmarks: Number,
+		// views: Number,
 		status: Number,
-		groups: [String],
+		// groups: [String],
 		description: String,
-		chapters: [String],
-		comments: [String],
+		// chapters: [String],
+		// comments: [String],
 	},
 	{
 		_id: false,
@@ -26,6 +26,28 @@ const mangaSchema = new Schema(
 	}
 );
 
-const mangaModel = mongoose.model("Manga", mangaSchema);
+export const MangaModel = mongoose.model("Manga", mangaSchema);
 
-export default mangaModel;
+export enum MangaStatus {
+	OnGoing,
+	Complete,
+	Dropped,
+}
+
+export interface Manga {
+	_id: string;
+	id?: string;
+	names: string[];
+	cover: string;
+	tags: string[];
+	creators?: string[];
+	// rating?: number;
+	// rateNum?: number;
+	// bookmarks?: number;
+	// views?: number;
+	status?: number;
+	description: string;
+	// groups: string[];
+	// chapters?: string[];
+	// comments?: string[];
+}

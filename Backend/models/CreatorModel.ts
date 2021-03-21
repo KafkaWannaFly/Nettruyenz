@@ -3,15 +3,22 @@ const Schema = mongoose.Schema;
 
 const creatorSchema = new Schema(
 	{
-		_id: String,
+		// _id: String,
 		name: String,
-		sumary: String,
+		// sumary: String,
 	},
 	{
-		_id: false,
+		// _id: false,
 	}
 );
 
-const creatorModel = mongoose.model("Creator", creatorSchema);
+export interface Creator {
+	_id?: string;
+	id?: string;
+	name: string;
+	// sumary: string;
+}
 
-export default creatorModel;
+export const CreatorModel = mongoose.model("Creator", creatorSchema);
+
+// export default creatorModel;

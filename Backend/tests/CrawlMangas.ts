@@ -2,11 +2,9 @@ import axios from "axios";
 import { JSDOM } from "jsdom";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-
-import { Chapter, Manga, MangaStatus, Tag } from "../models/TypeDeclare";
-import tagModel from "../models/TagModel";
-import chapterModel from "../models/ChapterModel";
-import mangaModel from "../models/MangaModel";
+import { Chapter } from "../models/ChapterModel";
+import { Tag } from "../models/TagModel";
+import { Manga, MangaStatus } from "../models/MangaModel";
 
 interface ExtendedTag extends Tag {
 	url?: string;
@@ -149,7 +147,9 @@ async function crawlChapters(
 			// Some time, they don't name a chapter with index
 			let chapterIndex;
 			try {
-				chapterIndex = parseInt(chapterAnchor.title.replace(/^\D+/g, ""));
+				chapterIndex = parseInt(
+					chapterAnchor.title.replace(/^\d{1,10}(\.\d{1,4})?$/, "")
+				);
 
 				if (isNaN(chapterIndex)) {
 					chapterIndex = i + 0.1;
@@ -164,7 +164,7 @@ async function crawlChapters(
 				images: [],
 				index: chapterIndex,
 				manga: mangaId,
-				tittle: mangaPage.title!,
+				tittle: "",
 				uploader: "0",
 				views: 0,
 			};
@@ -203,7 +203,7 @@ async function crawlChapters(
  * */
 async function crawlMangaData(mangaPage: IMangaPage) {
 	let url = mangaPage.url!;
-	let path = `./tests/html/${mangaPage.title}.html`;
+	let path = `./tests/html/${mangaPage.title?.replace(/\//g, "")}.html`;
 	let dom;
 
 	if (!fs.existsSync(path)) {
@@ -225,21 +225,27 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 		status: MangaStatus,
 		briefText: string;
 
+	let i = 0;
 	infoDocument?.forEach((v, k) => {
-		switch (k) {
+		switch (i) {
 			case 0: {
-				// First child is a list of name with some <strong> tag
+				// First child is a list of name with some <strong> tag or nothing
 				//
 				// <p>
 				// 	<strong>Tên khác:</strong> Hiệp Sĩ Thánh Chiến , 七つの大罪; Nanatsu
 				// 	no Daizai; The Seven Deadly Sins, Thất hình đại tội
 				// </p>;
 
-				v.removeChild(v.firstChild!);
+				if (v.firstChild?.textContent !== "Tên khác:") {
+					alterNames = [];
+					i--; // This manga doesn't have alterName field at all so it have less than 1 field that we need
+				} else {
+					v.removeChild(v.firstChild!);
 
-				alterNames = v.textContent?.split(/;|,/).map((name, idx) => {
-					return name.trim();
-				})!;
+					alterNames = v.textContent?.split(/;|,/).map((name, idx) => {
+						return name.trim();
+					})!;
+				}
 				// console.log(alterNames);
 				break;
 			}
@@ -293,25 +299,27 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 			default:
 				break;
 		}
+
+		i++;
 	});
 
 	let manga: Manga = {
 		_id: uuidv4(),
-		chapters: [],
+		// chapters: [],
 		cover: img.src,
 		names: [mangaPage.title!, ...alterNames!],
 		tags: tagsText!,
-		// creators: authorsText!,
-		creators: ["0"],
+		creators: authorsText!,
+		// creators: ["0"],
 		// groups: [...groupsText!],
-		groups: ["0"],
+		// groups: ["0"],
 		description: briefText!,
-		rateNum: 0,
-		rating: 0,
-		bookmarks: 0,
-		views: 0,
+		// rateNum: 0,
+		// rating: 0,
+		// bookmarks: 0,
+		// views: 0,
 		status: MangaStatus.OnGoing,
-		comments: [],
+		// comments: [],
 	};
 
 	// manga.chapters = await crawlChapters(mangaPage, manga._id, chapAmount);

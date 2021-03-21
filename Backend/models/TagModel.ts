@@ -11,6 +11,10 @@ const tagSchema = new Schema(
 	}
 );
 
-const tagModel = mongoose.model("Tag", tagSchema);
+export interface Tag {
+	id?: string;
+	_id: string;
+	name: string;
+}
 
-export default tagModel;
+export const TagModel = mongoose.model("Tag", tagSchema);

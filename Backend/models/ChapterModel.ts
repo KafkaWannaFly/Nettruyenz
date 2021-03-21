@@ -20,6 +20,18 @@ const chapterSchema = new Schema(
 	}
 );
 
-const chapterModel = mongoose.model("Chapter", chapterSchema);
+export interface Chapter {
+	_id: string;
+	id?: string;
+	images: string[];
+	manga: string;
+	index: number;
+	tittle: string;
+	uploader: string;
+	views?: number;
+	group: string;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
 
-export default chapterModel;
+export const ChapterModel = mongoose.model("Chapter", chapterSchema);

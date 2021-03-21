@@ -10,17 +10,35 @@ const userSchema = new Schema(
 		nickname: String,
 		avatar: String,
 		level: Number,
-		groups: [Id],
-		bookmarks: [Id],
-		history: [Id],
-		notifications: [Id],
-		ratesMade: [Id],
+		groups: [String],
+		// bookmarks: [String],
+		// history: [String],
+		// notifications: [String],
+		// ratesMade: [String],
 	},
 	{
 		timestamps: true,
 	}
 );
 
-const userModel = mongoose.model("User", userSchema);
+export const UserModel = mongoose.model("User", userSchema);
 
-export default userModel;
+export enum UserLevel {
+	normal,
+	moderator,
+}
+
+export interface User {
+	_id?: string;
+	username: string;
+	password: string;
+	nickname: string;
+	avatar?: string;
+	level: UserLevel;
+	groups?: string[];
+	// bookmarks?: string[];
+	// history?: string[];
+	// notifications?: string[];
+	// ratesMade?: string[];
+	createdAt?: Date;
+}

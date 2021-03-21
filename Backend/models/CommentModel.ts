@@ -6,8 +6,11 @@ const Id = Schema.Types.ObjectId;
 const commentSchema = new Schema(
 	{
 		_id: String,
-		chapter: Id,
-		reply: Id,
+		username: String,
+		manga: String,
+		chapter: String,
+		replyTo: String,
+		repiledBy: [String],
 		content: String,
 	},
 	{
@@ -16,6 +19,16 @@ const commentSchema = new Schema(
 	}
 );
 
-const commentModel = mongoose.model("Comment", commentSchema);
+export interface Comment {
+	_id: string;
+	id?: string;
+	username: string;
+	manga: string;
+	chapter?: string;
+	replyTo?: string;
+	repliedBy?: string[];
+	content: string;
+	createdAt: Date;
+}
 
-export default commentModel;
+export const CommentModel = mongoose.model("Comment", commentSchema);

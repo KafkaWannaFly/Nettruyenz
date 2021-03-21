@@ -7,13 +7,18 @@ const groupSchema = new Schema(
 	{
 		_id: String,
 		name: String,
-		members: [Id],
+		members: [String],
 	},
 	{
 		_id: false,
 	}
 );
 
-const groupModel = mongoose.model("Group", groupSchema);
+export interface Group {
+	_id: string;
+	id?: string;
+	name: string;
+	members: string[];
+}
 
-export default groupModel;
+export const GroupModel = mongoose.model("Group", groupSchema);
