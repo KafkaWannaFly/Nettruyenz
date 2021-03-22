@@ -31,13 +31,6 @@ html, body {
     background: var(--darkgrey);
 }
 
-.header {
-    background-color: #000000;
-    @apply flex flex-center;
-}
-
-.demo_text {
-    font-family: "GlowSansSC";
-    color: red;
-    @apply center-align;
-}
+.btn {
+    @apply px-4 py-2 bg-blue-600 text-white rounded;
+  }
