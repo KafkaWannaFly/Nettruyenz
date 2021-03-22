@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: "GlowSanSC";
+	src: url("../fonts//GlowSansSC-Normal-Regular.otf");
+}
+
+@font-face {
+	font-family: "Montserrat-Regular";
+	src: url("../fonts/Montserrat-Regular.ttf");
+}
+
+@font-face {
+	font-family: "Montserrat-Medium";
+	src: url("../fonts/Montserrat-Medium.ttf");
+}
+
+:root {
+    --brown: #3D3333;
+    --darkgrey: #33343D;
+    --red: #E9204F;
+    --light_red: #FF6C6C;
+    --violet: #8E1AAB;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--darkgrey);
+}
+
+.header {
+    background-color: #000000;
+    @apply flex flex-center;
+}
+
+.demo_text {
+    font-family: "GlowSansSC";
+    color: red;
+    @apply center-align;
+}
