@@ -2,9 +2,9 @@ import axios from "axios";
 import { JSDOM } from "jsdom";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { Chapter } from "../models/ChapterModel";
+import { Chapter, ChapterModel } from "../models/ChapterModel";
 import { Tag } from "../models/TagModel";
-import { Manga, MangaStatus } from "../models/MangaModel";
+import { Manga, MangaModel, MangaStatus } from "../models/MangaModel";
 
 interface ExtendedTag extends Tag {
 	url?: string;
@@ -113,7 +113,7 @@ async function crawlChapters(
 	howManyChap = 10
 ) {
 	let url = mangaPage.url!;
-	let path = `./tests/html/${mangaPage.title}.html`;
+	let path = `./tests/html/${mangaPage.title?.replace(/\//g, "")}.html`;
 	let dom;
 
 	if (!fs.existsSync(path)) {
@@ -165,7 +165,7 @@ async function crawlChapters(
 				index: chapterIndex,
 				manga: mangaId,
 				tittle: "",
-				uploader: "0",
+				uploader: "kafka",
 				views: 0,
 			};
 
@@ -257,8 +257,18 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 				// >
 				// 	Action
 				// </a>;
-				tagsText = [...v.querySelectorAll("a")].map((anchor, _) => {
-					return anchor.innerHTML;
+				tagsText = [...v.querySelectorAll("a")].flatMap((anchor, _) => {
+					if (
+						anchor.innerHTML.match("Truyện") ||
+						anchor.innerHTML.match("Webtoon") ||
+						anchor.innerHTML.match("Trưởng") ||
+						anchor.innerHTML.match("Truyền") ||
+						anchor.innerHTML.match("Doujinshi")
+					) {
+						return [];
+					} else {
+						return anchor.innerHTML;
+					}
 				});
 				// console.log(tagsText);
 				break;
@@ -337,24 +347,28 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 // });
 
 // CREATE SAMPLE DATA, TOOK LONG TIME TO RUN, BE AWARE!
-// fetchMangaUrl().then(async (res) => {
-// 	for (let i = 0; i < res.length; i++) {
-// 		let manga = await crawlMangaData(res[i]);
-// 		let chapter = await crawlChapters(res[i], manga._id);
+fetchMangaUrl().then(async (res) => {
+	for (let i = 0; i < res.length; i++) {
+		try {
+			let manga = await crawlMangaData(res[i]);
+			let chapter = await crawlChapters(res[i], manga._id);
 
-// 		manga.chapters = chapter.map((val, _) => val._id);
+			// manga.chapters = chapter.map((val, _) => val._id);
 
-// 		// await chapterModel.insertMany(chapter);
-// 		// await mangaModel.create(manga);
+			// await chapterModel.insertMany(chapter);
+			// await mangaModel.create(manga);
 
-// 		await Promise.all([
-// 			chapterModel.insertMany(chapter),
-// 			mangaModel.create(manga),
-// 		]);
+			await Promise.all([
+				ChapterModel.insertMany(chapter),
+				MangaModel.create(manga),
+			]);
 
-// 		console.log(`Insert ${manga.names[0]} into DB`);
-// 		console.log(`Insert ${chapter.length} chapters into DB`);
-// 	}
-// });
+			console.log(`Insert ${manga.names[0]} into DB`);
+			console.log(`Insert ${chapter.length} chapters into DB`);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+});
 
 export {};
