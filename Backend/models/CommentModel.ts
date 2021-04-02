@@ -5,7 +5,7 @@ const Id = Schema.Types.ObjectId;
 
 const commentSchema = new Schema(
 	{
-		_id: String,
+		id: String,
 		username: String,
 		manga: String,
 		chapter: String,
@@ -20,7 +20,6 @@ const commentSchema = new Schema(
 );
 
 export interface Comment {
-	_id: string;
 	id?: string;
 	username: string;
 	manga: string;

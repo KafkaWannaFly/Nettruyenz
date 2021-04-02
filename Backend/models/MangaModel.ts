@@ -5,7 +5,7 @@ const Id = Schema.Types.ObjectId;
 
 const mangaSchema = new Schema(
 	{
-		_id: String,
+		id: String,
 		names: [String],
 		cover: String,
 		creators: [String],
@@ -21,7 +21,6 @@ const mangaSchema = new Schema(
 		// comments: [String],
 	},
 	{
-		_id: false,
 		timestamps: true,
 	}
 );
@@ -35,8 +34,7 @@ export enum MangaStatus {
 }
 
 export interface Manga {
-	_id: string;
-	id?: string;
+	id: string;
 	names: string[];
 	cover: string;
 	tags: string[];

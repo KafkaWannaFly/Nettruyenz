@@ -5,7 +5,7 @@ const Id = Schema.Types.ObjectId;
 
 const chapterSchema = new Schema(
 	{
-		_id: String,
+		id: String,
 		images: [String],
 		manga: String,
 		uploader: String,
@@ -15,14 +15,12 @@ const chapterSchema = new Schema(
 		tittle: String,
 	},
 	{
-		_id: false,
 		timestamps: true,
 	}
 );
 
 export interface Chapter {
-	_id: string;
-	id?: string;
+	id: string;
 	images: string[];
 	manga: string;
 	index: number;

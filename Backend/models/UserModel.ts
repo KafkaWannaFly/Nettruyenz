@@ -29,7 +29,6 @@ export enum UserLevel {
 }
 
 export interface User {
-	_id?: string;
 	username: string;
 	password: string;
 	nickname: string;

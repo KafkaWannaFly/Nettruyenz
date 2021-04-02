@@ -1,19 +1,13 @@
 import mongoose from "./Preloader";
 const Schema = mongoose.Schema;
 
-const tagSchema = new Schema(
-	{
-		_id: String,
-		name: String,
-	},
-	{
-		_id: false,
-	}
-);
+const tagSchema = new Schema({
+	id: String,
+	name: String,
+});
 
 export interface Tag {
-	id?: string;
-	_id: string;
+	id: string;
 	name: string;
 }
 

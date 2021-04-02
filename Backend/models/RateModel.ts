@@ -16,6 +16,14 @@ const rateSchema = new Schema(
 	}
 );
 
-const rateModel = mongoose.model("Rate", rateSchema);
+export const RateModel = mongoose.model("Rate", rateSchema);
 
-export default rateModel;
+export interface MangaRate {
+	id?: string;
+	username: string;
+	manga: string;
+	rate: number;
+	isDelete?: boolean;
+	createdAt?: Date;
+	updatedAt?: Date;
+}

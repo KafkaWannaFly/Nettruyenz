@@ -15,7 +15,8 @@ const viewSchema = new Schema(
 
 export const ViewModel = mongoose.model("View", viewSchema);
 
-export interface View {
+export interface MangaChapterView {
+	id?: string;
 	username?: string;
 	manga: string;
 	chapter: string;

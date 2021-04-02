@@ -13,7 +13,6 @@ const creatorSchema = new Schema(
 );
 
 export interface Creator {
-	_id?: string;
 	id?: string;
 	name: string;
 	// sumary: string;

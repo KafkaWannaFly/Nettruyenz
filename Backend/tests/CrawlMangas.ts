@@ -2,15 +2,11 @@ import axios from "axios";
 import { JSDOM } from "jsdom";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { Chapter } from "../models/ChapterModel";
+import { Chapter, ChapterModel } from "../models/ChapterModel";
 import { Tag } from "../models/TagModel";
-import { Manga, MangaStatus } from "../models/MangaModel";
+import { Manga, MangaModel, MangaStatus } from "../models/MangaModel";
 
-interface ExtendedTag extends Tag {
-	url?: string;
-}
-
-async function crawlHtml(url: string, path: string) {
+export async function crawlHtml(url: string, path: string) {
 	let res = await axios.get(url);
 	let dom = new JSDOM(res.data, {
 		contentType: "text/html",
@@ -19,51 +15,6 @@ async function crawlHtml(url: string, path: string) {
 	fs.writeFileSync(path, res.data);
 
 	return dom;
-}
-
-// Loot from https://hocvientruyentranh.net
-async function crawlTags(): Promise<ExtendedTag[]> {
-	// Try to read data from online
-	let url = "https://hocvientruyentranh.net/";
-	let path = "./tests/html/index.html";
-	let dom;
-
-	if (!fs.existsSync(path)) {
-		dom = await crawlHtml(url, path);
-	} else {
-		let data = fs.readFileSync(path);
-		dom = new JSDOM(data, {
-			contentType: "text/html",
-		}).window.document;
-	}
-
-	let cateListItems = dom?.querySelector(".submenu")?.children;
-	console.log(`submenu children number: ${cateListItems?.length}`);
-	let liArray = cateListItems ? [...cateListItems] : [];
-
-	let tagItems = liArray.slice(10);
-
-	let tags: ExtendedTag[] = tagItems.flatMap((val, index) => {
-		let tag: ExtendedTag = {
-			_id: uuidv4(),
-			name: val.querySelector("a")?.innerHTML.trim()!!,
-			url: val.querySelector("a")?.href,
-		};
-
-		// Filter out those unwanted tags
-		if (
-			tag.name.match("Truyện") ||
-			tag.name.match("Webtoon") ||
-			tag.name.match("Trưởng") ||
-			tag.name.match("Truyền") ||
-			tag.name.match("Doujinshi")
-		) {
-			return [];
-		}
-		return tag;
-	});
-
-	return tags;
 }
 
 interface IMangaPage {
@@ -159,7 +110,7 @@ async function crawlChapters(
 			}
 
 			let chapter: Chapter = {
-				_id: uuidv4(),
+				id: uuidv4(),
 				group: "0",
 				images: [],
 				index: chapterIndex,
@@ -304,7 +255,7 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 	});
 
 	let manga: Manga = {
-		_id: uuidv4(),
+		id: uuidv4(),
 		// chapters: [],
 		cover: img.src,
 		names: [mangaPage.title!, ...alterNames!],
@@ -337,24 +288,28 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 // });
 
 // CREATE SAMPLE DATA, TOOK LONG TIME TO RUN, BE AWARE!
-// fetchMangaUrl().then(async (res) => {
-// 	for (let i = 0; i < res.length; i++) {
-// 		let manga = await crawlMangaData(res[i]);
-// 		let chapter = await crawlChapters(res[i], manga._id);
+fetchMangaUrl().then(async (res) => {
+	for (let i = 0; i < res.length; i++) {
+		try {
+			let manga = await crawlMangaData(res[i]);
+			let chapter = await crawlChapters(res[i], manga.id);
 
-// 		manga.chapters = chapter.map((val, _) => val._id);
+			// manga.chapters = chapter.map((val, _) => val._id);
 
-// 		// await chapterModel.insertMany(chapter);
-// 		// await mangaModel.create(manga);
+			// await chapterModel.insertMany(chapter);
+			// await mangaModel.create(manga);
 
-// 		await Promise.all([
-// 			chapterModel.insertMany(chapter),
-// 			mangaModel.create(manga),
-// 		]);
+			await Promise.all([
+				ChapterModel.insertMany(chapter),
+				MangaModel.create(manga),
+			]);
 
-// 		console.log(`Insert ${manga.names[0]} into DB`);
-// 		console.log(`Insert ${chapter.length} chapters into DB`);
-// 	}
-// });
+			console.log(`Insert ${manga.names[0]} into DB`);
+			console.log(`Insert ${chapter.length} chapters into DB`);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+});
 
 export {};
