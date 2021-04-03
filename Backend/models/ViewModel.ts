@@ -18,8 +18,8 @@ export const ViewModel = mongoose.model("View", viewSchema);
 export interface MangaChapterView {
 	id?: string;
 	username?: string;
-	manga: string;
-	chapter: string;
+	manga?: string;
+	chapter?: string;
 	// isDelete?: boolean;
 	createdAt?: Date;
 	updatedAt?: Date;

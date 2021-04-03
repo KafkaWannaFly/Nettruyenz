@@ -13,7 +13,7 @@ const userSchema = new Schema({
     nickname: String,
     avatar: String,
     level: Number,
-    groups: [String],
+    // groups: [String],
     // bookmarks: [String],
     // history: [String],
     // notifications: [String],

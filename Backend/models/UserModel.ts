@@ -10,7 +10,7 @@ const userSchema = new Schema(
 		nickname: String,
 		avatar: String,
 		level: Number,
-		groups: [String],
+		// groups: [String],
 		// bookmarks: [String],
 		// history: [String],
 		// notifications: [String],
@@ -34,7 +34,7 @@ export interface User {
 	nickname: string;
 	avatar?: string;
 	level: UserLevel;
-	groups?: string[];
+	// groups?: string[];
 	// bookmarks?: string[];
 	// history?: string[];
 	// notifications?: string[];

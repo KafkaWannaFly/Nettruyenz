@@ -77,7 +77,7 @@ async function crawlChapters(mangaPage, mangaId, howManyChap = 10) {
             // Some time, they don't name a chapter with index
             let chapterIndex;
             try {
-                chapterIndex = parseInt(chapterAnchor.title.replace(/^\d{1,10}(\.\d{1,4})?$/, ""));
+                chapterIndex = parseInt(chapterAnchor.title.replace(/[^0-9.]/g, ""));
                 if (isNaN(chapterIndex)) {
                     chapterIndex = i + 0.1;
                 }

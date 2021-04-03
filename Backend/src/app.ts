@@ -7,6 +7,8 @@ import session from "express-session";
 import passport from "passport";
 import { initPassport } from "../controllers/PassportConfig";
 import { User } from "../models/UserModel";
+import homeRouter from "../routes/Home.route";
+import morgan from "morgan";
 
 const app = express();
 app.use(express.json());
@@ -26,9 +28,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 initPassport(passport);
 
-app.get("/", (req, res) => {
-	let user = req.user as User;
-});
+app.use(morgan("dev"));
+
+app.use("/", homeRouter);
 
 app.listen(port, () => {
 	return console.log(`server is listening on ${port}`);

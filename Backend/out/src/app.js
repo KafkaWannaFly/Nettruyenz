@@ -10,6 +10,8 @@ const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
 const passport_1 = __importDefault(require("passport"));
 const PassportConfig_1 = require("../controllers/PassportConfig");
+const Home_route_1 = __importDefault(require("../routes/Home.route"));
+const morgan_1 = __importDefault(require("morgan"));
 const app = express_1.default();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -23,9 +25,8 @@ const port = process.env.PORT;
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 PassportConfig_1.initPassport(passport_1.default);
-app.get("/", (req, res) => {
-    let user = req.user;
-});
+app.use(morgan_1.default("dev"));
+app.use("/", Home_route_1.default);
 app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
 });

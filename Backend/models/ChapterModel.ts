@@ -20,14 +20,14 @@ const chapterSchema = new Schema(
 );
 
 export interface Chapter {
-	id: string;
-	images: string[];
-	manga: string;
-	index: number;
-	tittle: string;
-	uploader: string;
+	id?: string;
+	images?: string[];
+	manga?: string;
+	index?: number;
+	tittle?: string;
+	uploader?: string;
 	views?: number;
-	group: string;
+	group?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
