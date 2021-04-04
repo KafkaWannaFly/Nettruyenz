@@ -5,7 +5,7 @@
   "main": "out/app.js",
   "scripts": {
     "start": "tsc && node out/src/app.js ",
-    "test": "nodemon out/src/app.js"
+    "watch": "nodemon out/src/app.js"
   },
   "author": "Kafka Wanna Fly && Agent L",
   "license": "MIT",

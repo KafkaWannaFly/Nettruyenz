@@ -23,6 +23,16 @@ router.get("/most-rating", async (req, res) => {
 	res.json(mangas);
 });
 
+router.get("/recently-uploaded", async (req, res) => {
+	let mangas = await MangaController.getRecentlyUploadedAsync(5);
+	res.json(mangas);
+});
+
+router.get("/newly-added", async (req, res) => {
+	let mangas = await MangaController.getNewlyAddedAsync(5);
+	res.json(mangas);
+});
+
 const homeRouter = router;
 
 export default homeRouter;

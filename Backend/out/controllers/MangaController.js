@@ -91,7 +91,7 @@ exports.MangaController = {
     },
     /**
      * Get top most bookmarked mangas in a period of time
-     * @param top op first mangas
+     * @param top Top first mangas
      * @param period Accept "weekly" "monthly" or "all". Other values will be considered as "all"
      */
     getTopMostFollowAsync: async (top, period = "all") => {
@@ -157,6 +157,11 @@ exports.MangaController = {
             console.error(error);
         }
     },
+    /**
+     * Get top most rating mangas in a period of time
+     * @param top Top first mangas
+     * @param period Accept "weekly" "monthly" or "all". Other values will be considered as "all"
+     */
     getTopMostRatingAsync: async (top, period = "all") => {
         try {
             // Filtering out the most rate mangas
@@ -230,6 +235,116 @@ exports.MangaController = {
                     return -1;
                 }
                 return b.averageRate - a.averageRate;
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
+    /**
+     * Get recently uploaded mangas
+     * @param top Top first mangas
+     */
+    getRecentlyUploadedAsync: async (top) => {
+        try {
+            let aggregationStatements = [
+                {
+                    $sort: {
+                        manga: 1,
+                        updatedAt: 1,
+                    },
+                },
+                {
+                    $group: {
+                        _id: "$manga",
+                        date: {
+                            $last: "$$ROOT.updatedAt",
+                        },
+                        newestChapter: {
+                            $last: "$$ROOT",
+                        },
+                    },
+                },
+                {
+                    $sort: {
+                        date: -1,
+                    },
+                },
+                {
+                    $limit: top,
+                },
+            ];
+            // Get newest chapters
+            let recentUploadChapters = await ChapterModel_1.ChapterModel.aggregate(aggregationStatements).exec();
+            // Find its manga
+            let mangaDtos = (await MangaModel_1.MangaModel.find()
+                .where("id")
+                .in(recentUploadChapters.map((v) => v._id))
+                .lean()
+                .exec()).map((item) => item);
+            // Fill the rest infomation
+            for (let i = 0; i < mangaDtos.length; i++) {
+                let recentUploadChapter = recentUploadChapters.find((item) => item._id == mangaDtos[i].id);
+                mangaDtos[i].newestChapter = recentUploadChapter?.newestChapter;
+                mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
+                mangaDtos[i].views = await ViewModel_1.ViewModel.find({ manga: mangaDtos[i].id })
+                    .countDocuments()
+                    .exec();
+                mangaDtos[i].bookmarks = await BookmarkModel_1.BookmarkModel.find({
+                    manga: mangaDtos[i].id,
+                })
+                    .countDocuments()
+                    .exec();
+            }
+            return mangaDtos.sort((a, b) => {
+                if (b.newestChapter?.createdAt === undefined ||
+                    a.newestChapter?.createdAt === undefined) {
+                    return -1;
+                }
+                return (b.newestChapter.createdAt.getSeconds() -
+                    a.newestChapter.createdAt?.getSeconds());
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
+    /**
+     * Get newly added mangas
+     * @param top Top first mangas
+     */
+    getNewlyAddedAsync: async (top) => {
+        try {
+            let aggregationStatements = [
+                {
+                    $sort: {
+                        createdAt: -1,
+                    },
+                },
+                {
+                    $limit: top,
+                },
+            ];
+            let mangaDtos = await MangaModel_1.MangaModel.aggregate(aggregationStatements).exec();
+            for (let i = 0; i < mangaDtos.length; i++) {
+                mangaDtos[i].newestChapter = (await ChapterModel_1.ChapterModel.find({ manga: mangaDtos[i].id })
+                    .sort({ index: -1 })
+                    .limit(1))[0];
+                mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
+                mangaDtos[i].views = await ViewModel_1.ViewModel.find({ manga: mangaDtos[i].id })
+                    .countDocuments()
+                    .exec();
+                mangaDtos[i].bookmarks = await BookmarkModel_1.BookmarkModel.find({
+                    manga: mangaDtos[i].id,
+                })
+                    .countDocuments()
+                    .exec();
+            }
+            return mangaDtos.sort((a, b) => {
+                if (b.createdAt === undefined || a.createdAt === undefined) {
+                    return -1;
+                }
+                return b.createdAt.getSeconds() - a.createdAt.getSeconds();
             });
         }
         catch (error) {

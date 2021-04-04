@@ -48,4 +48,6 @@ export interface Manga {
 	// groups: string[];
 	// chapters?: string[];
 	// comments?: string[];
+	createdAt?: Date;
+	updatedAt?: Date;
 }
