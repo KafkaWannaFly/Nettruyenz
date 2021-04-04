@@ -76,7 +76,7 @@ exports.MangaController = {
                     .sort({ index: -1 })
                     .limit(1)
                     .exec());
-                mangaDtos[i].newestChapter = chapter;
+                mangaDtos[i].newestChapter = chapter[0];
             }
             return mangaDtos.sort((a, b) => {
                 if (a.views === undefined || b.views === undefined) {
@@ -145,6 +145,9 @@ exports.MangaController = {
                     .exec();
                 let mangaRate = await getMangaRating(mangaDtos[i].id);
                 mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
+                mangaDtos[i].newestChapter = (await ChapterModel_1.ChapterModel.find({ manga: mangaDtos[i].id })
+                    .sort({ index: -1 })
+                    .limit(1))[0];
             }
             return mangaDtos.sort((a, b) => {
                 if (a.bookmarks === undefined || b.bookmarks === undefined) {
@@ -228,6 +231,9 @@ exports.MangaController = {
                 })
                     .countDocuments()
                     .exec();
+                mangaDtos[i].newestChapter = (await ChapterModel_1.ChapterModel.find({ manga: mangaDtos[i].id })
+                    .sort({ index: -1 })
+                    .limit(1))[0];
             }
             return mangaDtos.sort((a, b) => {
                 if (a.averageRate === undefined || b.averageRate === undefined) {

@@ -39,15 +39,9 @@ export interface Manga {
 	cover: string;
 	tags: string[];
 	creators?: string[];
-	// rating?: number;
-	// rateNum?: number;
-	// bookmarks?: number;
-	// views?: number;
-	status?: number;
+	status?: MangaStatus;
 	description: string;
-	// groups: string[];
-	// chapters?: string[];
-	// comments?: string[];
+
 	createdAt?: Date;
 	updatedAt?: Date;
 }

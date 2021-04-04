@@ -92,9 +92,9 @@ export const MangaController = {
 				let chapter = (await ChapterModel.find()
 					.sort({ index: -1 })
 					.limit(1)
-					.exec()) as ChapterDto;
+					.exec()) as ChapterDto[];
 
-				mangaDtos[i].newestChapter = chapter;
+				mangaDtos[i].newestChapter = chapter[0];
 			}
 
 			return mangaDtos.sort((a, b) => {
@@ -180,6 +180,12 @@ export const MangaController = {
 
 				let mangaRate = await getMangaRating(mangaDtos[i].id);
 				mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
+
+				mangaDtos[i].newestChapter = (
+					await ChapterModel.find({ manga: mangaDtos[i].id })
+						.sort({ index: -1 })
+						.limit(1)
+				)[0] as ChapterDto;
 			}
 
 			return mangaDtos.sort((a, b) => {
@@ -272,6 +278,12 @@ export const MangaController = {
 				})
 					.countDocuments()
 					.exec();
+
+				mangaDtos[i].newestChapter = (
+					await ChapterModel.find({ manga: mangaDtos[i].id })
+						.sort({ index: -1 })
+						.limit(1)
+				)[0] as ChapterDto;
 			}
 
 			return mangaDtos.sort((a, b) => {
