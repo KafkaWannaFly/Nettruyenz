@@ -1,5 +1,5 @@
 import { ChapterDto } from "../DTOs/ChapterDto";
-import { BriefMangaDto } from "../DTOs/MangaDto";
+import { BriefMangaDto } from "../DTOs/BriefMangaDto";
 import { BookmarkModel } from "../models/BookmarkModel";
 import { ChapterModel } from "../models/ChapterModel";
 import { Manga, MangaModel } from "../models/MangaModel";
