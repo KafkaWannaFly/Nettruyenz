@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import Footer from './Footer';
+import MangaPreview from './components/MangaPreview';
 
 test('renders learn react link', () => {
-  render(<App />);
+  render(<MangaPreview />);
   const linkElement = screen.getByText(/learn react/i);
   expect(linkElement).toBeInTheDocument();
 });

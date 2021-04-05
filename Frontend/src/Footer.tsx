@@ -1,7 +1,6 @@
 import React from 'react';
-import logo from './logo.svg';
 
-const App: React.FC = () => {
+const Footer: React.FC = () => {
   return (
   <div className="footer">
     <div id="footer-container">
@@ -40,4 +39,4 @@ const App: React.FC = () => {
   );
 }
 
-export default App;
+export default Footer;

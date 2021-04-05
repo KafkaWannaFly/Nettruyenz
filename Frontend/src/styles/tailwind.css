@@ -2,43 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @font-face {
-	font-family: "GlowSanSC";
-	src: url("../fonts//GlowSansSC-Normal-Regular.otf");
-}
 
-@font-face {
+/* @font-face {
 	font-family: "Montserrat-Regular";
 	src: url("../fonts//Montserrat-Regular.ttf");
-}
+} */
 
-@font-face {
+/* @font-face {
 	font-family: "Montserrat-Medium";
 	src: url("../fonts//Montserrat-Medium.ttf");
-}
+} */
 
-@font-face {
+/* @font-face {
 	font-family: "RedHatDisplay-Regular";
-	src: url("../fonts//RedHatDisplay-RedHatDisplay.ttf");
+	src: url("../fonts/RedHatDisplay-Regular.ttf");
 }
 
 @font-face {
     font-family: "Kanit-Regular";
-    src: url("../fonts//Kanit-Regular.ttf");
+    src: url("../fonts/Kanit-Regular.ttf");
 }
 @font-face {
 	font-family: "MontserratSubrayada-Regular";
-	src: url("../fonts//MontserratSubrayada-Regular.ttf") format(truetype);
+	src: url("../fonts/MontserratSubrayada-Regular.ttf") format(truetype);
 }
 
 @font-face {
 	font-family: "Sen-Regular";
-	src: url("../fonts//Sen-Regular.ttf");
+	src: url("../fonts/Sen-Regular.ttf");
 }
 
 @font-face {
 	font-family: "RobotoSlab-Regular";
-	src: url("../fonts//RobotoSlab-Regular.ttf");
+	src: url("../fonts/RobotoSlab-Regular.ttf");
 } */
 
 
@@ -144,4 +140,51 @@ html, body {
     margin-right: auto;
     color: white;
     @apply text-3xl;
+}
+
+.manga-preview-container {
+    @apply mx-8 my-14;
+    width: 300px;
+    height: 356px;
+    color: white;
+}
+
+.manga-preview-image {
+    background-color: aqua;
+    width: inherit;
+    padding-top: 100%;
+}
+
+.manga-preview-title {
+    @apply overflow-ellipsis text-2xl whitespace-nowrap overflow-hidden;
+}
+
+.flex-container {
+    @apply flex flex-row justify-between;
+}
+
+.tag-button {
+    @apply inline-flex flex-row justify-center content-center;
+    background-color: transparent;
+    @apply rounded-full;
+    border: 1px solid white;
+    color: white;
+    @apply text-lg;
+    padding: 5px 10px 5px 20px;
+    margin: 30px 12px 50px 12px;
+    @apply cursor-pointer;
+}
+
+.tag-button:active {
+    background-color: white;
+    color: black
+}
+
+.tag-content {
+    margin-right: 10px;
+    line-height: 25px;
+}
+
+.remove-tag-icon {
+    line-height: 20px
 }
