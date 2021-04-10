@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Footer from './Footer';
 import reportWebVitals from './reportWebVitals';
+import Footer from './components/Footer';
 import MangaPreview from './components/MangaPreview';
 import Tag from './components/Tag';
+import AdvancedSearchBar from './components/AdvancedSearchBar';
 
 
 ReactDOM.render(
   <React.StrictMode>
+    <AdvancedSearchBar />
     <Tag />
     <MangaPreview />
     <Footer />

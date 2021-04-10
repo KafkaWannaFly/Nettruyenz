@@ -31270,12 +31270,144 @@ video {
   --light_red: #FF6C6C;
   --violet: #8E1AAB;
   --indigo: #3C6478;
+  --grey: #C4C4C4;
 }
 
 html, body {
   margin: 0;
   padding: 0;
   background: var(--darkgrey);
+}
+
+#search-bars-container {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  margin: 100px 75px 35px 75px
+}
+
+.each-search-bar {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  margin: 0 20px 0 20px;
+}
+
+.search-bar-text {
+  color: white;
+  vertical-align: middle;
+}
+
+.search-area {
+  background-color: transparent;
+}
+
+.search-area::-webkit-input-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
+}
+
+.search-area:-ms-input-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
+}
+
+.search-area::placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
+}
+
+.search-area {
+  --tw-text-opacity: 1;
+  color: rgba(255, 255, 255, var(--tw-text-opacity));
+  --tw-border-opacity: 1;
+  border-color: rgba(156, 163, 175, var(--tw-border-opacity));
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 0.375rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  margin-left: 10px;
+  text-indent: 10px;
+  padding: 5px;
+}
+
+.manga-preview-container {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-top: 3.5rem;
+  margin-bottom: 3.5rem;
+  width: 300px;
+  height: 356px;
+  color: white;
+}
+
+.manga-preview-image {
+  background-color: aqua;
+  width: inherit;
+  padding-top: 100%;
+}
+
+.manga-preview-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flex-container {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+
+#tags-container {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+          justify-content: center;
+}
+
+.tag-button {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-align-content: center;
+          align-content: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  background-color: transparent;
+  border-radius: 9999px;
+  border: 1px solid white;
+  color: white;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  padding: 5px 10px 5px 20px;
+  margin: 30px 12px 50px 12px;
+  cursor: pointer;
+}
+
+.tag-button:active {
+  background-color: white;
+  color: black
+}
+
+.tag-content {
+  margin-right: 10px;
+  line-height: 25px;
+}
+
+.remove-tag-icon {
+  line-height: 20px
 }
 
 .footer {
@@ -31398,73 +31530,6 @@ html, body {
   color: white;
   font-size: 1.875rem;
   line-height: 2.25rem;
-}
-
-.manga-preview-container {
-  margin-left: 2rem;
-  margin-right: 2rem;
-  margin-top: 3.5rem;
-  margin-bottom: 3.5rem;
-  width: 300px;
-  height: 356px;
-  color: white;
-}
-
-.manga-preview-image {
-  background-color: aqua;
-  width: inherit;
-  padding-top: 100%;
-}
-
-.manga-preview-title {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.flex-container {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: row;
-          flex-direction: row;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-}
-
-.tag-button {
-  display: -webkit-inline-flex;
-  display: inline-flex;
-  -webkit-flex-direction: row;
-          flex-direction: row;
-  -webkit-align-content: center;
-          align-content: center;
-  -webkit-justify-content: center;
-          justify-content: center;
-  background-color: transparent;
-  border-radius: 9999px;
-  border: 1px solid white;
-  color: white;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  padding: 5px 10px 5px 20px;
-  margin: 30px 12px 50px 12px;
-  cursor: pointer;
-}
-
-.tag-button:active {
-  background-color: white;
-  color: black
-}
-
-.tag-content {
-  margin-right: 10px;
-  line-height: 25px;
-}
-
-.remove-tag-icon {
-  line-height: 20px
 }
 
 @media (min-width: 640px) {

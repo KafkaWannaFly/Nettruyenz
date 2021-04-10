@@ -1,14 +1,21 @@
 import React from 'react';
-import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
-import ThreeDRotation from '@material-ui/icons/ThreeDRotation';
 import CloseIcon from '@material-ui/icons/Close';
-import { amber } from '@material-ui/core/colors'
+
+const color = generateColor();
+
+function generateColor() {
+    const randomColor = Math.floor(Math.random()*16777215).toString(16);
+    return "#" + randomColor;
+}
+
 const Tag: React.FC = () => {
     return (
-        <div className="tag-button">
-            <div className="tag-content">Tag</div>
-            <div className="remove-tag-icon">
-                <CloseIcon fontSize="small"/>
+        <div id="tags-container">
+            <div className="tag-button" style={{borderColor: color}}>
+                <div className="tag-content">LMAOOOOOOOOOOOOO</div>
+                <div className="remove-tag-icon" style={{color: color}}>
+                    <CloseIcon fontSize="small"/>
+                </div>
             </div>
         </div>
     );

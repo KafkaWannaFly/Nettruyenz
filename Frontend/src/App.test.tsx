@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Footer from './Footer';
+import Footer from './components/Footer';
 import MangaPreview from './components/MangaPreview';
 
 test('renders learn react link', () => {
