@@ -109,6 +109,93 @@ Trả về những bộ truyện mới nhất, vừa được đang. Dữ liệu
 
 
 
+## Categories
+
+Nằm ở `https://hostname/categories`, là nơi chứa các bộ manga. Đây là nơi ta lấy thông tin sơ lược về các bộ manga.
+
+### `/` Route mặc định
+
+Trả về mảng `BriefMangaDto` là những bộ manga vừa có chap cập nhật mới nhất.
+
+### Query
+
+Route này cung cấp các tham số query sau:
+
+#### Title
+
+Lọc theo tên. Ví dụ:
+
+`https://hostname/category?title=sword-art-online`
+
+Dữ liệu trả về là 1 mảng `BriefMangaDto` có chứa “sword art online” trong tên, không phân biệt hoa thường.
+
+#### Author
+
+Lọc theo tác giả. Ví dụ:
+
+`https://hostname/categories?title=meta&author=shidol`
+
+#### Sort by
+
+Dữ liệu trả về được sắp xếp theo:
+
+- View: Lượt xem
+- Follow: Lượt theo dõi
+- Rate: Điểm đánh giá
+- Date: Ngày cập nhật chap mới
+
+Ví dụ:
+
+`https://hostname/categories?author=meme50&sortBy=view`
+
+Trả về mảng `BriefMangaDto` là những bộ có lượt xem cao nhất, được vẽ bởi meme50.
+
+Nếu không định nghĩa gì thì lấy Date làm mặc định. Nếu các tham số kia bằng nhau thì lấy Date để so sánh. Nếu Date cũng bằng nhau thì là duyện phận （づ￣3￣）づ╭❤～
+
+Đùa thôi, lúc ấy query database nó xếp như nào thì mình theo như ấy.
+
+#### Order
+
+Dữ liệu trả về được sắp xếp từ lớn tới nhỏ `desc` hoặc ngược lại, từ nhỏ tới lớn `asc`.
+
+Ví dụ:
+
+`https://hostname/categories?sortBy=rate&order=asc`
+
+Trả về những bộ bị ghét nhất web :<
+
+Nếu không định nghĩa thì mặc định là xếp từ cao đến thấp `desc`.
+
+#### Period
+
+Dữ liệu được trả theo khoảng thời gian nhất định, gồm:
+
+- Weekly: Tuần này
+- Monthly: Tháng này
+- All-time: Toàn thời gian
+
+Ví dụ:
+
+`https://hostname/categories?sortBy=rate&period=weekly`
+
+Trả về những bộ được đánh giá cao nhất trong tuần này.
+
+Ví dụ 2:
+
+`https://hostname/categories?period=weekly`
+
+Trả về những bộ vừa đăng chap mới trong tuần này.
+
+#### Tags
+
+Lọc theo 1 hoặc nhiều tag. Ví dụ:
+
+`https://hostname/categories?tags=action&tags=isekai&tags=romance`
+
+Trả về những bộ có tag: action, isekai và romance.
+
+
+
 ## Data Transfer Objects (DTOs)
 
 ### ChapterDto
@@ -133,7 +220,7 @@ interface ChapterDto {
 
 ### BriefMangaDto
 
-Là đối tượng chứa thông tin sơ bộ về 1 bộ manga, dùng ở trang `Home`
+Là đối tượng chứa thông tin sơ bộ về 1 bộ manga
 
 ```typescript
 interface BriefMangaDto {
