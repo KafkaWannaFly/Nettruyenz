@@ -1,21 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import Footer from './components/Footer';
-import MangaPreview from './components/MangaPreview';
-import Tag from './components/Tag';
-import AdvancedSearchBar from './components/AdvancedSearchBar';
-
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import "./styles/tailwind.css";
+import Footer from "./Footer";
+import reportWebVitals from "./reportWebVitals";
+import MangaPreview from "./components/MangaPreview";
+import Tag from "./components/Tag";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <AdvancedSearchBar />
-    <Tag />
-    <MangaPreview />
-    <Footer />
-  </React.StrictMode>,
-  document.getElementById('root')
+	<React.StrictMode>
+		<Tag />
+		<MangaPreview />
+		<Footer />
+	</React.StrictMode>,
+	document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
