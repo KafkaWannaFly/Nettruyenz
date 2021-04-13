@@ -1,0 +1,15 @@
+@font-face {
+	font-family: "Red Hat Text";
+	src: url("../fonts/RedHatText-Regular.ttf");
+}
+
+#logo {
+	width: 50px;
+	height: 50px;
+}
+
+#logo-text {
+	font-size: x-large;
+	font-family: "Red Hat Text";
+	font-weight: 900;
+}

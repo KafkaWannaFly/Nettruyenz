@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.f30e2705.chunk.css",
+    "main.js": "/static/js/main.51026a1c.chunk.js",
+    "main.js.map": "/static/js/main.51026a1c.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.ecd872c3.js",
+    "runtime-main.js.map": "/static/js/runtime-main.ecd872c3.js.map",
+    "static/js/2.8532379d.chunk.js": "/static/js/2.8532379d.chunk.js",
+    "static/js/2.8532379d.chunk.js.map": "/static/js/2.8532379d.chunk.js.map",
+    "static/js/3.f9c6ee12.chunk.js": "/static/js/3.f9c6ee12.chunk.js",
+    "static/js/3.f9c6ee12.chunk.js.map": "/static/js/3.f9c6ee12.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.f30e2705.chunk.css.map": "/static/css/main.f30e2705.chunk.css.map",
+    "static/js/2.8532379d.chunk.js.LICENSE.txt": "/static/js/2.8532379d.chunk.js.LICENSE.txt",
+    "static/media/Misc.css": "/static/media/Montserrat-Regular.7c8ccfe4.ttf",
+    "static/media/Navbar.css": "/static/media/RedHatText-Regular.085d38ee.ttf",
+    "static/media/fox.09858cda.svg": "/static/media/fox.09858cda.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ecd872c3.js",
+    "static/js/2.8532379d.chunk.js",
+    "static/css/main.f30e2705.chunk.css",
+    "static/js/main.51026a1c.chunk.js"
+  ]
+}
