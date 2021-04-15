@@ -2,7 +2,7 @@ import React from "react";
 import logo from "./logo.svg";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
+import Navbarr from "./components/Navbar";
 import { Home } from "./components/Home";
 import { Contact } from "./components/Contact";
 import { About } from "./components/About";
@@ -13,7 +13,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<div className="App h-full">
-				<Navbar />
+				<Navbarr />
 				<Switch>
 					<Route exact path="/" component={Home}></Route>
 					<Route exact path="/ranking" component={Contact}></Route>

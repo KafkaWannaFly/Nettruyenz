@@ -1,17 +1,16 @@
 
-import {Tag} from "./Tag";
-import MangaPreview from "./MangaPreview";
 import AdvancedSearchBar from "./AdvancedSearchBar";
-
+import MangaPreviewList from "./MangaPreviewList";
+import {TagSection} from "./TagSection"
 
 export const Categories = (props) => {
 	console.log(props);
 	return (
         <>
             <div className="h-full">
-                <Tag />
-                <MangaPreview></MangaPreview>
                 <AdvancedSearchBar></AdvancedSearchBar>
+                <TagSection/>
+                <MangaPreviewList></MangaPreviewList>
             </div>
         </>
     );
