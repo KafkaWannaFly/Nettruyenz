@@ -44,9 +44,15 @@
 	--light_red: #ff6c6c;
 	--violet: #8e1aab;
 	--indigo: #3c6478;
+	--grey: #c0c0c0;
 }
 
-html,
+html {
+	margin: 0;
+	padding: 0;
+	background: var(--darkgrey);
+	min-width: 100%;
+}
 body {
 	margin: 0;
 	padding: 0;
@@ -55,13 +61,14 @@ body {
 
 .footer {
 	@apply grid grid-rows-6;
-	@apply fixed;
 	left: 0;
+	position:fixed;
 	bottom: 0;
 	width: 100%;
 	background-color: var(--indigo);
 	color: white;
 	@apply text-center;
+	margin-top: 40px;
 }
 
 #footer-container {
@@ -90,13 +97,13 @@ body {
 }
 
 #web-footer-logo-name {
-	/* font-family:  "RedHatDisplay-Regular", sans-serif; */
+	font-family:  "RedHatDisplay-Regular", sans-serif;
 	@apply text-5xl;
 	margin-left: 20px;
 }
 
 #web-footer-slogan {
-	/* font-family: "RobotoSlab-Regular", sans-serif; */
+	font-family: "RobotoSlab-Regular", sans-serif;
 	@apply text-2xl;
 	margin-left: 120px;
 	margin-top: 10px;
@@ -107,22 +114,21 @@ body {
 	@apply grid grid-rows-4 gap-4;
 	@apply flex flex-col items-start;
 	@apply text-xl;
-	/* font-family: "Kanit-Regular", sans-serif; */
+	font-family: "Kanit-Regular", sans-serif;
 }
 
 #contact-info-header {
-	/* font-family: "RobotoSlab-Regular", sans-serif; */
+	font-family: "RobotoSlab-Regular", sans-serif;
 	@apply text-3xl;
 	margin-left: auto;
 	margin-right: auto;
 }
 
 #more-information {
-	/* font-family: "MontserratSubrayada-Regular", sans-serif; */
+	font-family: "MontserratSubrayada-Regular";
 	@apply flex flex-col items-start;
 	@apply col-span-4;
 	@apply grid grid-rows-2 gap-4;
-	@apply underline;
 	@apply text-3xl;
 }
 
@@ -132,7 +138,7 @@ body {
 }
 
 #copyright {
-	/* font-family: "Sen-Regular", sans-serif; */
+	font-family: "Sen-Regular", sans-serif;
 	@apply row-span-1;
 	margin-left: auto;
 	margin-right: auto;
@@ -140,8 +146,115 @@ body {
 	@apply text-3xl;
 }
 
+#search-bars-container {
+	@apply flex flex-row justify-center;
+	@apply mx-5;
+}
+
+.each-search-bar {
+	@apply text-white;
+}
+
+.form {
+	@apply mx-5 my-3 !important;
+	@apply flex flex-row;
+}
+
+
+.search-bar-title, .dropdown-title {
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+	font-weight: 500;
+	font-size: 15px;
+	line-height: 35px;
+	margin-right: 10px;
+}
+
+.search-icon {
+	color:white;
+	@apply absolute;
+	line-height: 30px;
+	margin-left: 275px;
+	@apply cursor-pointer;
+}
+
+
+.search-field {
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+	font-weight: 300;
+	font-style: italic;
+	border: solid 1px white !important;
+	@apply rounded-lg !important;
+	@apply text-white;
+	@apply w-72 h-8 !important;
+	text-indent: 10px;
+	padding-right: 30px !important;
+}
+
+.select {
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+	font-weight: 300;
+	font-style: italic;
+	border: solid 1px white !important;
+	@apply rounded-lg !important;
+	@apply text-white;
+	@apply w-72 h-8 !important;
+	text-indent: 10px;
+	padding-right: 30px !important;
+}
+
+.each-selection {
+	@apply w-56 h-8;
+	@apply mx-5 my-3 !important;
+	@apply flex flex-row;
+}
+
+
+#tag-list {
+	@apply flex flex-row;
+}
+
+#tag-section {
+	@apply flex flex-row justify-center;
+}
+
+.tag-button {
+	@apply inline-flex flex-row justify-center content-center;
+	background-color: transparent;
+	@apply rounded-full;
+	border: 1px solid white;
+	color: white;
+	@apply text-lg;
+	padding: 5px 10px 5px 20px;
+	margin: 30px 12px 50px 12px;
+	@apply cursor-pointer;
+}
+
+.tag-button:active, .tag-button:hover {
+	background-color: white;
+	color: black;
+}
+
+
+.tag-content {
+	margin-right: 10px;
+	line-height: 25px;
+}
+
+.remove-tag-icon {
+	line-height: 20px;
+}
+
+#add-tag-button {
+	color: white;
+	@apply cursor-pointer;
+	margin: 30px 0px 12px;
+}
+
+.manga-list {
+	@apply flex flex-row;
+}
 .manga-preview-container {
-	@apply mx-8 my-14;
+	margin-left: 125px;
 	width: 300px;
 	height: 356px;
 	color: white;
@@ -161,30 +274,3 @@ body {
 	@apply flex flex-row justify-between;
 }
 
-.tag-button {
-	@apply inline-flex flex-row justify-center content-center;
-	background-color: transparent;
-	@apply rounded-full;
-	border: 1px solid white;
-	color: white;
-	@apply text-lg;
-	padding: 5px 10px 5px 20px;
-	margin: 30px 12px 50px 12px;
-	@apply cursor-pointer;
-}
-
-.tag-button:active {
-	background-color: white;
-	color: black;
-}
-
-.tag-content {
-	font-family: "MontserratSubrayada-Regular";
-	/* color: #e9204f; */
-	margin-right: 10px;
-	line-height: 25px;
-}
-
-.remove-tag-icon {
-	line-height: 20px;
-}
