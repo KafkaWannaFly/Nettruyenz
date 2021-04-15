@@ -8,6 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 
 import "./css/Misc.css";
 import "./css/Navbar.css";
+import "./css/Home.css";
 import "./styles/index.css";
 import './styles/tailwind.css';
 

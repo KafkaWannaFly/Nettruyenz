@@ -46,7 +46,7 @@ const Navbar = (props: any) => {
 		// 	</div>
 		// </nav>
 		<div className="w-full bg-black text-white">
-			<div className="table w-full">
+			<div className="table w-full pt-3">
 				<div className="table-row">
 					<div className="table-cell pl-20 py-2 text-sm">
 						<div className="left valign-wrapper">
