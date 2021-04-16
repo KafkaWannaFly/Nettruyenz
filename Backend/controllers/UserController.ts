@@ -3,12 +3,12 @@ import { User, UserModel } from "../models/UserModel";
 export const UserController = {
 	/**
 	 * Find user by username
-	 * @param username Username
+	 * @param email Username
 	 * @returns user object if found. undefined if not
 	 */
-	getUserAsync: async (username: string) => {
+	getUserAsync: async (email: string) => {
 		try {
-			let userDoc = await UserModel.findOne({ username: username }).exec();
+			let userDoc = await UserModel.findOne({ email: email }).exec();
 			return userDoc?.toObject() as User;
 		} catch (error) {
 			console.error(error);
@@ -22,7 +22,7 @@ export const UserController = {
 	 */
 	registerUserAsync: async (user: User) => {
 		try {
-			let existedUser = await UserController.getUserAsync(user.username);
+			let existedUser = await UserController.getUserAsync(user.email);
 			if (existedUser !== undefined) {
 				return false;
 			}

@@ -7,7 +7,7 @@ exports.ViewModel = void 0;
 const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const viewSchema = new Schema({
-    username: String,
+    email: String,
     manga: String,
     chapter: String,
 }, {

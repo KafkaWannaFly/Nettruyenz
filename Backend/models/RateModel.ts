@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const rateSchema = new Schema(
 	{
 		// _id: String,
-		username: String,
+		email: String,
 		manga: String,
 		rate: Number,
 		isDelete: Boolean,
@@ -20,7 +20,7 @@ export const RateModel = mongoose.model("Rate", rateSchema);
 
 export interface MangaRate {
 	id?: string;
-	username: string;
+	email: string;
 	manga: string;
 	rate: number;
 	isDelete?: boolean;

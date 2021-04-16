@@ -8,7 +8,7 @@ const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const rateSchema = new Schema({
     // _id: String,
-    username: String,
+    email: String,
     manga: String,
     rate: Number,
     isDelete: Boolean,

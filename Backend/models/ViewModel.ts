@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const viewSchema = new Schema(
 	{
-		username: String,
+		email: String,
 		manga: String,
 		chapter: String,
 	},
@@ -17,7 +17,7 @@ export const ViewModel = mongoose.model("View", viewSchema);
 
 export interface MangaChapterView {
 	id?: string;
-	username?: string;
+	email?: string;
 	manga?: string;
 	chapter?: string;
 	// isDelete?: boolean;

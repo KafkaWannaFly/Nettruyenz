@@ -9,7 +9,7 @@ const Schema = Preloader_1.default.Schema;
 const Id = Schema.Types.ObjectId;
 const commentSchema = new Schema({
     id: String,
-    username: String,
+    email: String,
     manga: String,
     chapter: String,
     replyTo: String,

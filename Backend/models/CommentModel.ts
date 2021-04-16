@@ -6,7 +6,7 @@ const Id = Schema.Types.ObjectId;
 const commentSchema = new Schema(
 	{
 		id: String,
-		username: String,
+		email: String,
 		manga: String,
 		chapter: String,
 		replyTo: String,
@@ -21,13 +21,14 @@ const commentSchema = new Schema(
 
 export interface Comment {
 	id?: string;
-	username: string;
+	email: string;
 	manga: string;
 	chapter?: string;
 	replyTo?: string;
 	repliedBy?: string[];
 	content: string;
-	createdAt: Date;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 export const CommentModel = mongoose.model("Comment", commentSchema);

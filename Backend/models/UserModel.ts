@@ -5,7 +5,7 @@ const Id = Schema.Types.ObjectId;
 
 const userSchema = new Schema(
 	{
-		username: String,
+		email: String,
 		password: String,
 		nickname: String,
 		avatar: String,
@@ -29,7 +29,7 @@ export enum UserLevel {
 }
 
 export interface User {
-	username: string;
+	email: string;
 	password: string;
 	nickname: string;
 	avatar?: string;

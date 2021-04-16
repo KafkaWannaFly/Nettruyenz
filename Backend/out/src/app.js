@@ -12,6 +12,8 @@ const passport_1 = __importDefault(require("passport"));
 const PassportConfig_1 = require("../controllers/PassportConfig");
 const Home_route_1 = __importDefault(require("../routes/Home.route"));
 const morgan_1 = __importDefault(require("morgan"));
+const SignUp_route_1 = __importDefault(require("../routes/SignUp.route"));
+const SignIn_route_1 = __importDefault(require("../routes/SignIn.route"));
 const app = express_1.default();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -27,10 +29,8 @@ app.use(passport_1.default.session());
 PassportConfig_1.initPassport(passport_1.default);
 app.use(morgan_1.default("dev"));
 app.use("/", Home_route_1.default);
-app.get("/test", (req, res) => {
-    console.log(req.query.tags);
-    res.json(req.query.tags);
-});
+app.use("/sign-up", SignUp_route_1.default);
+app.use("/sign-in", SignIn_route_1.default);
 app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
 });

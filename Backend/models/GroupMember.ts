@@ -3,7 +3,7 @@ import mongoose from "./Preloader";
 const Schema = mongoose.Schema;
 
 const groupMemberSchema = new Schema({
-	username: String,
+	email: String,
 	group: String,
 });
 
@@ -14,6 +14,6 @@ export const GroupMemberModel = mongoose.model(
 
 export interface GroupMember {
 	id?: string;
-	username: string;
+	email: string;
 	group: string;
 }
