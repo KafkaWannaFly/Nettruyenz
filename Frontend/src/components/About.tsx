@@ -1,10 +1,10 @@
 
 import React from 'react';
 interface AbcState {
-	error: any,
-	isLoaded: boolean,
-	homes: any[]
-  }
+  error: any,
+  isLoaded: boolean,
+  homes: any[]
+}
 class About extends React.Component<{}, AbcState> {
 
   constructor(props) {
@@ -36,12 +36,11 @@ class About extends React.Component<{}, AbcState> {
       )
   }
   render() {
-
     const { error, isLoaded, homes } = this.state;
-	console.log(homes);
-	for(let i of homes){
-		console.log(i._id);
-	}
+    console.log(homes);
+    for (let i of homes) {
+      console.log(i._id);
+    }
     if (error) {
       return (
         <div className="col">
