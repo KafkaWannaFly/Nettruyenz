@@ -8,7 +8,7 @@ const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const Id = Schema.Types.ObjectId;
 const userSchema = new Schema({
-    username: String,
+    email: String,
     password: String,
     nickname: String,
     avatar: String,

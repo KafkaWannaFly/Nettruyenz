@@ -5,12 +5,12 @@ const UserModel_1 = require("../models/UserModel");
 exports.UserController = {
     /**
      * Find user by username
-     * @param username Username
+     * @param email Username
      * @returns user object if found. undefined if not
      */
-    getUserAsync: async (username) => {
+    getUserAsync: async (email) => {
         try {
-            let userDoc = await UserModel_1.UserModel.findOne({ username: username }).exec();
+            let userDoc = await UserModel_1.UserModel.findOne({ email: email }).exec();
             return userDoc?.toObject();
         }
         catch (error) {
@@ -24,7 +24,7 @@ exports.UserController = {
      */
     registerUserAsync: async (user) => {
         try {
-            let existedUser = await exports.UserController.getUserAsync(user.username);
+            let existedUser = await exports.UserController.getUserAsync(user.email);
             if (existedUser !== undefined) {
                 return false;
             }

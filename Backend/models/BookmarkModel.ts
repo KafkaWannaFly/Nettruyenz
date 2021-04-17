@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const bookmarkSchema = new Schema(
 	{
 		// _id: String,
-		username: String,
+		email: String,
 		manga: String,
 		isDelete: Boolean,
 	},
@@ -18,7 +18,7 @@ const bookmarkSchema = new Schema(
 export const BookmarkModel = mongoose.model("Bookmark", bookmarkSchema);
 
 export interface Bookmark {
-	username: string;
+	email: string;
 	manga: string;
 	id?: string;
 	isDelete?: boolean;

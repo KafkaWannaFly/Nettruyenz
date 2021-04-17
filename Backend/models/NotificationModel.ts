@@ -19,10 +19,10 @@ export const NotificationModel = mongoose.model(
 	"Notification",
 	notificationSchema
 );
-export interface Notification {
+export interface UserNotification {
 	id: string;
 	url: string;
-	username: string;
+	email: string;
 	isRead: boolean;
 	message: string;
 	createdAt?: Date;

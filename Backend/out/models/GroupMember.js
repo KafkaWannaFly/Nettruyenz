@@ -7,7 +7,7 @@ exports.GroupMemberModel = void 0;
 const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const groupMemberSchema = new Schema({
-    username: String,
+    email: String,
     group: String,
 });
 exports.GroupMemberModel = Preloader_1.default.model("GroupMember", groupMemberSchema);
