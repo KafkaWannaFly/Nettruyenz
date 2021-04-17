@@ -20,7 +20,7 @@ async function createMangaRating() {
             let mangaRate = {
                 manga: mangas[i].id,
                 rate: faker_1.random.number(5),
-                username: user.username,
+                email: user.email,
             };
             mangaRates.push(mangaRate);
         }

@@ -10,7 +10,7 @@ async function createFakeUsers(number: number, defaultPass: string) {
 	let users: User[] = [];
 	for (let i = 0; i < number; i++) {
 		let user: User = {
-			username: faker.internet.userName(),
+			email: faker.internet.email(),
 			password: await bcrypt.hash(defaultPass, saltRound),
 			nickname: `${faker.name.firstName()} ${faker.name.lastName()}`,
 			avatar: faker.image.imageUrl(),
@@ -26,7 +26,7 @@ async function createFakeUsers(number: number, defaultPass: string) {
 try {
 	createFakeUsers(normalUserNumber, defaultPassword).then(async (users) => {
 		let mod: User = {
-			username: "kafka",
+			email: "18127084@student.hcmus.edu.vn",
 			password: await bcrypt.hash(defaultPassword, saltRound),
 			nickname: "Kafka Wanna Fly",
 			level: UserLevel.moderator,

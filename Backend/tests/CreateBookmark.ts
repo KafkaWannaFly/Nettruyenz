@@ -40,7 +40,7 @@ async function createFakeBookmarks() {
 		for (let i = 0; i < mangaNum; i++) {
 			let bookmark: Bookmark = {
 				manga: mangas[i].id,
-				username: user.username,
+				email: user.email,
 			};
 
 			bookmarks.push(bookmark);
