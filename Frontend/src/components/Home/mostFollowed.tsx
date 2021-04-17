@@ -1,23 +1,19 @@
+import mostView from './mostView';
 
-import React from 'react';
-interface AbcState {
-	error: any,
-	isLoaded: boolean,
-	homes: any[]
-  }
-class About extends React.Component<{}, AbcState> {
+class mostFollow extends mostView {
 
   constructor(props) {
     super(props);
     this.state = {
       error: null,
       isLoaded: false,
-      homes: new Array()
+      homes: new Array(),
+	  filter: true
     };
   }
 
   componentDidMount() {
-    fetch('http://localhost:3000/most-view?period=weekly')
+    fetch('http://localhost:3000/most-view?period=all')
       .then(res => res.json())
       .then(
         (result) => {
@@ -36,12 +32,9 @@ class About extends React.Component<{}, AbcState> {
       )
   }
   render() {
+    const { error, isLoaded, homes, filter } = this.state;
+    console.log(homes);
 
-    const { error, isLoaded, homes } = this.state;
-	console.log(homes);
-	for(let i of homes){
-		console.log(i._id);
-	}
     if (error) {
       return (
         <div className="col">
@@ -57,11 +50,10 @@ class About extends React.Component<{}, AbcState> {
     } else {
       return (
         <div className="col">
-          <h1>Mi Casa</h1>
-          <p>This is my house y'all!</p>
+          {this.homeDiv(homes, "Most Followed >",filter)}
         </div>
       );
     }
   }
 }
-export default About
+export default mostFollow

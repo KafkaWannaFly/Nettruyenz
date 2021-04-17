@@ -3,6 +3,8 @@ import { MangaController } from "../controllers/MangaController";
 const router = express.Router();
 
 router.get("/most-view", async (req, res) => {
+	res.header("Access-Control-Allow-Origin", "*");
+
 	let timePeriod = req.query.period === undefined ? req.query.period : "all";
 
 	let mangas = await MangaController.getTopMostViewAsync(5);

@@ -56,7 +56,7 @@ export const Slideshow = (props) => {
             </div>
             <div><img src={img4} ></img></div>
             <div><img src={img5} ></img></div>
-        </Carousel>;
+        </Carousel>
 		</div>
 	);
 };

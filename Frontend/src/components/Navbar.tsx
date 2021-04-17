@@ -45,8 +45,8 @@ const Navbar = (props: any) => {
 		// 		</div>
 		// 	</div>
 		// </nav>
-		<div className="w-full bg-black text-white">
-			<div className="table w-full pt-3">
+		<div className="w-full bg-black text-white ">
+			<div className="table w-full pt-3 px-20">
 				<div className="table-row">
 					<div className="table-cell pl-20 py-2 text-sm">
 						<div className="left valign-wrapper">
@@ -64,8 +64,8 @@ const Navbar = (props: any) => {
 							type="search" name="search" placeholder="Search"/>
 						</div>
 					</div>
-					<div className="table-cell pr-20 py-2 text-sm">
-						<div className="right">
+					<div className="table-cell pl-6 py-2 text-sm">
+						<div className="left">
 							<Link to="/">
 								<div className="">
 									<img src={avatar} alt="" id="avatar" className="rounded-full h-14 w-14 flex items-center justify-center"/>
@@ -75,7 +75,7 @@ const Navbar = (props: any) => {
 					</div>
 				</div>
 			</div>
-			<div className="table w-full px-60 py-6 font-mono text-lg">
+			<div className="table w-full px-60 pb-6 pt-4 font-mono text-2xl">
 				<div className="table-row text-center">
 					<div className="table-cell">
 						<NavLink to="/">Home</NavLink>

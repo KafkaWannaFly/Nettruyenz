@@ -27,10 +27,6 @@ app.use(passport_1.default.session());
 PassportConfig_1.initPassport(passport_1.default);
 app.use(morgan_1.default("dev"));
 app.use("/", Home_route_1.default);
-app.get("/test", (req, res) => {
-    console.log(req.query.tags);
-    res.json(req.query.tags);
-});
 app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
 });
