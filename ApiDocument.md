@@ -196,6 +196,20 @@ Trả về những bộ có tag: action, isekai và romance.
 
 
 
+## Mangas
+
+Nằm ở `https://hostname/mangas`. Đây là nơi ta lấy thông tin chi tiết của 1 bộ manga nhất định. Theo cú pháp:
+
+`https://hostname/mangas/<manga-id>`. 
+
+Ví dụ:
+
+`https://hostname/mangas/9ff07e48-0fd4-4f36-b42d-0e8f4e1c2bb1`
+
+Trả về 1 object có kiểu `CompletedMangaDto`
+
+
+
 ## Data Transfer Objects (DTOs)
 
 ### ChapterDto
@@ -244,6 +258,30 @@ enum MangaStatus {
 	OnGoing,
 	Complete,
 	Dropped,
+}
+```
+
+### CompletedMangaDto
+
+```typescript
+interface CompletedMangaDto extends Manga {
+	id: string;
+	names: string[];
+	cover: string;
+	tags: string[];
+	creators?: string[];
+	status?: MangaStatus;
+	description: string;
+
+	createdAt?: Date;
+	updatedAt?: Date;
+    
+	averageRate?: number;
+	bookmarks?: number;
+	views?: number;
+
+	chapters?: ChapterDto[];
+	comments?: CommentDto[];
 }
 ```
 
