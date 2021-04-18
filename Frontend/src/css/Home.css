@@ -1,3 +1,14 @@
 .w-81{
     width: 282px;
 }
+.fa-flag:hover {
+    color: red;
+}
+.bg-gray-1000 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(51, 52, 61, var(--tw-bg-opacity));
+}
+.bg-gray-1200 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(60, 61, 71, var(--tw-bg-opacity));
+}

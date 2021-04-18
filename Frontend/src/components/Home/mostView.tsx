@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Home } from './Home';
 import img1 from "../../logos/img1.jpg";
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 interface AbcState {
   error: any,
@@ -72,19 +73,21 @@ class mostView extends React.Component<{}, AbcState> {
       return (
         <>
           <div className="w-full md:w-6/12 lg:w-1/5 lg:mb-0 mb-12 px-2" key={item.id}>
-            <div className="max-w-sm rounded overflow-hidden shadow-lg">
+            <div className="max-w-sm px-1 rounded overflow-hidden shadow-lg bg-gray-1200">
               <img className="w-full h-64" src={item.cover} alt="Sunset in the mountains"></img>
-              <div className="px-6">
+              <div className="">
+              <div>
                 <Link to={"/" + item._id}>
                   <div className="font-bold text-xl pt-2 truncate">{item.names[0]}</div>
                 </Link>
-                <p className="text-gray-700 text-base truncate">
+                <p className="text-gray-300 text-base truncate">
                   {item.creators}
                 </p>
               </div>
-              <div className="px-6 pb-2">
-                <span className="inline-block bg-gray-200 rounded-full px-2 text-sm font-semibold text-gray-700 mr-2 mb-2">Chap ...</span>
-                <span className="inline-block bg-gray-200 rounded-full px-2 text-sm font-semibold text-gray-700 mr-2 mb-2">{new Date(item.updatedAt).toLocaleDateString()}</span>
+              <div className="pb-2 text-white">
+                <span className="inline-block px-2 text-sm font-semibold  mr-2 mb-2">Chap ...</span>
+                <span className="inline-block px-2 text-sm font-semibold mr-2 mb-2 right">{new Date(item.updatedAt).toLocaleDateString()}</span>
+              </div>
               </div>
             </div>
           </div>
@@ -129,6 +132,7 @@ class mostView extends React.Component<{}, AbcState> {
         </div>
       );
     } else {
+      
       return (
         <div className="col">
           {this.homeDiv(homes, "Most Viewed >", filter)}
