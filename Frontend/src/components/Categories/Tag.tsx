@@ -12,7 +12,7 @@ export const Tag = (props) => {
 }
     console.log(props)
     return (
-        <div className="tag-button" style={{borderColor: color}}>
+        <div className="tag-button" style={{borderColor: color }}>
             <div className="tag-content">LMAO</div>
             <div className="remove-tag-icon" style={{color: color}}>
                 <CloseIcon fontSize="small"/>

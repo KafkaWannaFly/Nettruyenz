@@ -8,6 +8,7 @@ const MangaPreviewList = (props) => {
             <MangaPreview/>
             <MangaPreview/>
             <MangaPreview/>
+            <MangaPreview/>
         </div>
     )
 }

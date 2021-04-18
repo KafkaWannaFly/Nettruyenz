@@ -59,10 +59,9 @@ body {
 	background: var(--darkgrey);
 }
 
-.footer {
+#footer {
 	@apply grid grid-rows-6;
 	left: 0;
-	position:fixed;
 	bottom: 0;
 	width: 100%;
 	background-color: var(--indigo);
@@ -196,7 +195,7 @@ body {
 	font-style: italic;
 	border: solid 1px white !important;
 	@apply rounded-lg !important;
-	@apply text-white;
+	@apply text-black;
 	@apply w-72 h-8 !important;
 	text-indent: 10px;
 	padding-right: 30px !important;
@@ -251,7 +250,7 @@ body {
 }
 
 .manga-list {
-	@apply flex flex-row;
+	@apply flex flex-row flex-wrap;
 }
 .manga-preview-container {
 	margin-left: 125px;
@@ -274,3 +273,109 @@ body {
 	@apply flex flex-row justify-between;
 }
 
+#tag-window {
+	@apply absolute;
+	left:50%;
+	top: 50%;
+	transform: translate(-50%, -75%);
+	background-color: var(--darkgrey);
+}
+
+#tag-window:target {
+	@apply visible block;
+}
+
+#tag-window-content {
+	@apply flex flex-col;
+	background-color: var(--darkgrey);
+	margin: 0 auto;
+	width: 75vw;
+	@apply relative;
+	z-index: 1px;
+	top: 25%;
+	padding: 30px;
+	box-shadow:0 0 10px rgba(0,0,0,0.25);
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+}
+
+#close-window-button {
+	@apply absolute;
+	top: 0%;
+	right: 0%;
+	margin-top: 10px;
+	margin-right: 10px;
+	color: white;
+	@apply cursor-pointer;
+}
+
+#search-tag {
+	border: solid 1px white;
+	width: 100%;
+	@apply rounded-full;
+	margin-top: 40px;
+	text-indent: 40px;
+	font-size: 25px;
+	font-style: italic;
+	font-weight: 500;
+	color: white;
+}
+
+#tag-container {
+	width: 100%;
+}
+
+.tag-button-initial {
+	@apply inline-flex flex-row justify-center content-center;
+	background-color: transparent;
+	@apply rounded-full;
+	border: 1px solid white;
+	color: white;
+	@apply text-lg;
+	padding: 5px 10px 5px 20px;
+	margin: 30px 12px 0px 12px;
+	@apply cursor-pointer;
+}
+
+.tag-button-initial:active, .tag-button-initial:hover {
+	background-color: white;
+	color: black;
+}
+
+#option-buttons-container {
+	@apply flex flex-row justify-end;
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+}
+
+
+#apply-button {
+	width: 160px;
+	height: 54px;
+	color: white;
+	background-color: #6C8DFF;
+	border: solid 1px transparent;
+	@apply cursor-pointer;
+	padding: 0 auto;
+	@apply flex items-center justify-center;
+	@apply rounded-2xl;
+	margin-right: 30px;
+}
+
+#cancel-button {
+	width: 160px;
+	height: 54px;
+	color: white;
+	background-color: transparent;
+	border: solid 1px white;
+	@apply cursor-pointer;
+	@apply flex items-center justify-center;
+	@apply rounded-2xl;
+}
+
+#invisible-layout {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: transparent;
+}

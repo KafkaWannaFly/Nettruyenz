@@ -12,6 +12,7 @@ import {Categories} from "./components/Categories/Categories";
 
 function App() {
 	return (
+		<>
 		<BrowserRouter>
 			<div className="App h-full">
 				<Navbar />
@@ -23,9 +24,11 @@ function App() {
 					<Route exact path="/history" component={About}></Route>
 					<Route path="/:id" component={Post}></Route>
 				</Switch>
-				{/* <Footer/> */}
+				
 			</div>
 		</BrowserRouter>
+		<Footer/>
+		</>
 	);
 }
 
