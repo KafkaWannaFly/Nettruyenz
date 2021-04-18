@@ -11,6 +11,7 @@ import homeRouter from "../routes/Home.route";
 import morgan from "morgan";
 import signUpRoute from "../routes/SignUp.route";
 import signInRoute from "../routes/SignIn.route";
+import mangaRoute from "../routes/Mangas.route";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,8 @@ app.use("/", homeRouter);
 app.use("/sign-up", signUpRoute);
 
 app.use("/sign-in", signInRoute);
+
+app.use("/mangas", mangaRoute);
 
 app.listen(port, () => {
 	return console.log(`server is listening on ${port}`);

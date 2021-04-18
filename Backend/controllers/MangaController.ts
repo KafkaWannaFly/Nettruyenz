@@ -1,10 +1,14 @@
 import { ChapterDto } from "../DTOs/ChapterDto";
 import { BriefMangaDto } from "../DTOs/BriefMangaDto";
 import { BookmarkModel } from "../models/BookmarkModel";
-import { ChapterModel } from "../models/ChapterModel";
+import { Chapter, ChapterModel } from "../models/ChapterModel";
 import { Manga, MangaModel } from "../models/MangaModel";
 import { RateModel } from "../models/RateModel";
 import { ViewModel } from "../models/ViewModel";
+import { CreatorModel } from "../models/CreatorModel";
+import { CompletedMangaDto } from "../DTOs/CompletedMangaDto";
+import { CommentDto } from "../models/CommentDto";
+import { CommentModel } from "../models/CommentModel";
 
 export const MangaController = {
 	/**
@@ -442,6 +446,86 @@ export const MangaController = {
 			});
 		} catch (error) {
 			console.error(error);
+		}
+	},
+
+	/**
+	 * Get one manga and all related data including views, bookmarks, comment
+	 * @param id Manga id
+	 * @returns CompletedangaDto or undefined if fount nothing
+	 */
+	getMangaAsync: async (id: string) => {
+		try {
+			let mangaAgg = [
+				{
+					$match: {
+						id: id,
+					},
+				},
+				{
+					$limit: 1,
+				},
+			];
+
+			let mangaDto: CompletedMangaDto = (
+				await MangaModel.aggregate(mangaAgg).exec()
+			)[0];
+			// let manga = ((await MangaModel.findOne({
+			// 	id: id,
+			// }).exec()) as unknown) as Manga;
+
+			// let mangaDto: CompletedMangaDto = manga;
+
+			let mangaRate = await getMangaRating(id);
+			mangaDto.averageRate = mangaRate.average;
+
+			mangaDto.bookmarks = await BookmarkModel.find({ manga: id })
+				.countDocuments()
+				.exec();
+
+			mangaDto.views = await ViewModel.find({ manga: id })
+				.countDocuments()
+				.exec();
+
+			// Get chapters belong to this manga and sort them from newest to oldest
+			let chapterAggregation = [
+				{
+					$match: {
+						manga: id,
+					},
+				},
+				{
+					$sort: {
+						index: -1,
+					},
+				},
+			];
+			let chapters: ChapterDto[] = await ChapterModel.aggregate(
+				chapterAggregation
+			).exec();
+			mangaDto.chapters = chapters;
+
+			// Get comments belong to this manga
+			let commentAgg = [
+				{
+					$match: {
+						manga: id,
+					},
+				},
+				{
+					$sort: {
+						createdAt: -1,
+					},
+				},
+			];
+			let comments: CommentDto[] = await CommentModel.aggregate(
+				commentAgg
+			).exec();
+			mangaDto.comments = comments;
+
+			return mangaDto;
+		} catch (e) {
+			console.error(e);
 		}
 	},
 };

@@ -10,7 +10,7 @@ const commentSchema = new Schema(
 		manga: String,
 		chapter: String,
 		replyTo: String,
-		repiledBy: [String],
+		// repiledBy: [String],
 		content: String,
 	},
 	{
@@ -25,7 +25,7 @@ export interface Comment {
 	manga: string;
 	chapter?: string;
 	replyTo?: string;
-	repliedBy?: string[];
+	// repliedBy?: string[];
 	content: string;
 	createdAt?: Date;
 	updatedAt?: Date;
