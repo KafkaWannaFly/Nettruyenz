@@ -13,7 +13,7 @@ const commentSchema = new Schema({
     manga: String,
     chapter: String,
     replyTo: String,
-    repiledBy: [String],
+    // repiledBy: [String],
     content: String,
 }, {
     _id: false,
