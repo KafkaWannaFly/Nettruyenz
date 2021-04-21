@@ -77,7 +77,7 @@ class mostView extends React.Component<{}, AbcState> {
               <img className="w-full h-64" src={item.cover} alt="Sunset in the mountains"></img>
               <div className="">
               <div>
-                <Link to={"/" + item._id}>
+                <Link to={"/comic/" + item.id}>
                   <div className="font-bold text-xl pt-2 truncate">{item.names[0]}</div>
                 </Link>
                 <p className="text-gray-300 text-base truncate">
