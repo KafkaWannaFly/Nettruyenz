@@ -101,7 +101,7 @@ const AdvancedSearchBar = (props) => {
 			<PeriodSelection/>      
 		</div>
 	);
-};
+}
 
 class SortSelection extends React.Component {
 	state = {
@@ -113,12 +113,12 @@ class SortSelection extends React.Component {
 	render() {
 		return (
 			<div className="each-selection">
-                <label className="dropdown-title">Sort by</label>
+                <label className="dropdown-title">Sort</label>
 				<Select 
 				defaultValue={{label: sort_options[0].label, value: sort_options[0].value}}
 				className="select"
 				options={sort_options}
-				style={selectStyle}/>
+				styles={selectStyle}/>
             </div>
 		)
 	}
