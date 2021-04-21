@@ -193,15 +193,16 @@ body {
 	font-family:  "RedHatDisplay-Regular", sans-serif;
 	font-weight: 300;
 	font-style: italic;
-	@apply rounded-lg ;
+	border: solid 1px white !important;
+	@apply rounded-lg !important;
 	@apply text-black;
-	@apply w-72 h-8 ;
+	@apply w-72 h-8 !important;
 	text-indent: 10px;
-	@apply block ;
+	padding-right: 30px !important;
 }
 
 .each-selection {
-	@apply w-72 h-8;
+	@apply w-56 h-8;
 	@apply mx-5 my-3 !important;
 	@apply flex flex-row;
 }
