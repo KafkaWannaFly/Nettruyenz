@@ -13,7 +13,8 @@ route.post("/", async (req, res, next) => {
         session: false,
     }, (err, user, info) => {
         if (err || !user) {
-            res.status(400).redirect("/error");
+            res.json(err);
+            return;
         }
         req.login(user, { session: false }, (err) => {
             if (err) {

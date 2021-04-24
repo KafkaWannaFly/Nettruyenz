@@ -40,6 +40,7 @@ exports.UserController = {
         catch (error) {
             console.error(error);
         }
+        return false;
     },
     resetUserPasswordAsync: async (email, newPassword) => {
         const user = (await exports.UserController.getUserAsync(email));

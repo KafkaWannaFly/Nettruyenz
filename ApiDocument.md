@@ -208,6 +208,154 @@ Ví dụ:
 
 Trả về 1 object có kiểu `CompletedMangaDto`
 
+## Sign Up
+
+Nằm ở `hostname/sign-up`. 
+
+### `/` Route mặc định:
+
+Phương thức `post` dùng để đăng ký 1 tài khoản mới. Chấp nhận request body dạng JSON, có cấu trúc như sau:
+
+```json
+{
+    "email": "18127084@student.hcmus.edu.vn",
+    "password": "123"
+}
+```
+
+
+
+Trả về `UserDto` nếu thành công. 
+
+```json
+{
+	"email": "18127084@student.hcmus.edu.vn",
+	"password": "$2b$10$nvdRI3zsz/P62L6Tn3tmQ.wyKT1bwqskmR1ZIdNE3ON6I8oIbIloG",
+	"level": 0
+}
+```
+
+
+
+Một tin nhắn thông báo nếu thất bại.
+
+```json
+{
+	"error": "Sign up fail. 18127084@student.hcmus.edu.vn has already existed"
+}
+```
+
+
+
+## Sign In
+
+Nằm ở `hostname/sign-in`.
+
+### `/` Route mặc định
+
+Phương thức `post` dùng để đăng nhập 1 tài khoản. Chấp nhận request body dạng JSON, có cấu trúc như sau:
+
+```json
+{
+	"email": "18127084@student.hcmus.edu.vn",
+	"password": "123"
+}
+```
+
+
+
+Trả về `UserDto` và 1 beerer `token` nếu thành công. Token nên được lưu lại để sử dụng tại những nơi yêu cầu người dùng đã đăng nhập.
+
+```json
+{
+	"user": {
+		"_id": "608454327064c300843f3726",
+		"email": "18127084@student.hcmus.edu.vn",
+		"password": "$2b$10$nvdRI3zsz/P62L6Tn3tmQ.wyKT1bwqskmR1ZIdNE3ON6I8oIbIloG",
+		"level": 0,
+		"createdAt": "2021-04-24T17:24:02.144Z",
+		"updatedAt": "2021-04-24T17:24:02.144Z",
+		"__v": 0
+	},
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg0NTQzMjcwNjRjMzAwODQzZjM3MjYiLCJlbWFpbCI6IjE4MTI3MDg0QHN0dWRlbnQuaGNtdXMuZWR1LnZuIiwicGFzc3dvcmQiOiIkMmIkMTAkbnZkUkkzenN6L1A2Mkw2VG4zdG1RLnd5S1QxYndxc2ttUjFaSWRORTNPTjZJOG9JYklsb0ciLCJsZXZlbCI6MCwiY3JlYXRlZEF0IjoiMjAyMS0wNC0yNFQxNzoyNDowMi4xNDRaIiwidXBkYXRlZEF0IjoiMjAyMS0wNC0yNFQxNzoyNDowMi4xNDRaIiwiX192IjowLCJpYXQiOjE2MTkyODUxOTh9.0i88Ni-kb2jvqX93oZsdWqMlIliF5ZJ10PsGy9xlbeY"
+}
+```
+
+
+
+Một tin nhắn thông báo nếu thất bại.
+
+```json
+{
+	"error": "Incorrect password"
+}
+```
+
+
+
+### Sử dụng token
+
+Tại những route yêu cầu cần phải là người dùng đã đăng nhập, header sẽ cần phải thêm thuộc tính `Authorization`. 
+
+```json
+// Header of request
+{
+    // Some defaults settings...
+    
+    "Authorization": "Beerer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg0NTQzMjcwNjRjMzAwODQzZjM3MjYiLCJlbWFpbCI6IjE4MTI3MDg0QHN0dWRlbnQuaGNtdXMuZWR1LnZuIiwicGFzc3dvcmQiOiIkMmIkMTAkbnZkUkkzenN6L1A2Mkw2VG4zdG1RLnd5S1QxYndxc2ttUjFaSWRORTNPTjZJOG9JYklsb0ciLCJsZXZlbCI6MCwiY3JlYXRlZEF0IjoiMjAyMS0wNC0yNFQxNzoyNDowMi4xNDRaIiwidXBkYXRlZEF0IjoiMjAyMS0wNC0yNFQxNzoyNDowMi4xNDRaIiwiX192IjowLCJpYXQiOjE2MTkyODUxOTh9.0i88Ni-kb2jvqX93oZsdWqMlIliF5ZJ10PsGy9xlbeY"
+}
+```
+
+Ví dụ:
+
+```json
+{
+    "Authorization": "Beerer <token>"
+}
+```
+
+
+
+## Forgot Password
+
+Nằm ở `hostname/forgot-password`, dùng để đổi mật khẩu tài khoản.
+
+### `/` Route mặc định
+
+#### Get
+
+Nhận 1 tham số query là `email`. Sẽ gửi 1 mã OTP về email này để xác nhận. Ví dụ:
+
+`localhost:3000/forgot-password?email=18127084@student.hcmus.edu.vn`
+
+Kết quả:
+
+```json
+{
+	"message": "Send OTP to 18127084@student.hcmus.edu.vn"
+}
+```
+
+#### Post
+
+Xác nhận mã OTP và mật khẩu mới. Dữ liệu được truyền từ request body:
+
+```json
+{
+    "email": "18127084@student.hcmus.edu.vn",
+    "code": "177013",
+    "newPassword": "123456"
+}
+```
+
+Trả về `UserDto` nếu nhập đúng. Tin nhắn thông báo nếu nhập sai.
+
+```json
+{
+	"error": "Wrong OTP"
+}
+```
+
 
 
 ## Data Transfer Objects (DTOs)
@@ -264,7 +412,7 @@ enum MangaStatus {
 ### CompletedMangaDto
 
 ```typescript
-interface CompletedMangaDto extends Manga {
+interface CompletedMangaDto {
 	id: string;
 	names: string[];
 	cover: string;

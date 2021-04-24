@@ -43,12 +43,12 @@ app.use("/user", User_route_1.default);
 app.get("/test", (req, res) => {
     res.json(req.headers);
 });
-app.get("/error", async (req, res) => {
-    const error = {
-        message: req.flash("error")[0],
-    };
-    res.json(error);
-});
+// app.get("/error", async (req, res) => {
+// 	const error = {
+// 		message: req.flash("error")[0],
+// 	};
+// 	res.json(error);
+// });
 app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
 });

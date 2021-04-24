@@ -12,6 +12,12 @@ route.get("/", async (req, res) => {
 	try {
 		const email = req.query.email as string;
 
+		if (email === undefined || email.length == 0) {
+			res.json({
+				error: "Empty email",
+			});
+		}
+
 		console.log(`Received email: ${email}`);
 
 		const sentCode = await otpService.sendOtp(email);
@@ -19,10 +25,10 @@ route.get("/", async (req, res) => {
 
 		console.log(`Get OTP: ${{ email, sentCode }}`);
 
-		res.status(200).send(`Send OTP to ${email}`);
+		res.status(200).json({ message: `Send OTP to ${email}` });
 	} catch (error) {
 		console.log(error);
-		res.status(500);
+		res.json(error);
 	}
 });
 
@@ -39,11 +45,11 @@ route.post("/", async (req, res) => {
 			)) as UserDto;
 			res.json(user);
 		} else {
-			res.send("Wrong OTP");
+			res.json({ error: "Wrong OTP" });
 		}
 	} catch (error) {
 		console.log(error);
-		res.status(500);
+		res.json(error);
 	}
 });
 

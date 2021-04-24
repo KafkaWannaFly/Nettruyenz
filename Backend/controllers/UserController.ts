@@ -36,6 +36,7 @@ export const UserController = {
 		} catch (error) {
 			console.error(error);
 		}
+		return false;
 	},
 
 	resetUserPasswordAsync: async (email: string, newPassword: string) => {
