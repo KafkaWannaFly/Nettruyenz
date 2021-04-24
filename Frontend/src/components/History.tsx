@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 interface AbcState {
@@ -37,32 +36,22 @@ class History extends React.Component<{}, AbcState> {
             )
     }
     componentDiv(history) {
-        const historyDiv = history.map((item) => {
-            return (
-                <>
-                    <div className="w-full md:w-6/12 lg:w-1/5 lg:mb-0 mb-12 px-2 text-left" key={item.id}>
-                        <div className="max-w-sm px-1 rounded overflow-hidden shadow-lg bg-gray-1200">
-                            <img className="w-full h-64" src={item.cover} alt="Sunset in the mountains"></img>
-                            <div className=" px-2">
-                                <div className="text-white">
-                                    <Link to={"/" + item._id}>
-                                        <div className="font-bold text-xl pt-2 truncate">{item.names[0]}</div>
-                                    </Link>
-                                    <p className="text-gray-300 text-base truncate">
-                                        {item.creators}
-                                    </p>
-                                </div>
-                                <div className="pb-2 text-white">
-                                    <span className="inline-block text-sm font-semibold  mr-2 mb-2">Chap ...</span>
-                                    <span className="inline-block text-sm font-semibold mr-2 mb-2 right">{new Date(item.updatedAt).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            );
-        });
-        return historyDiv;
+        console.log(history);
+		let i = history.lentgth;
+		const chapDiv = history.map((item) => {
+			console.log(item);
+			return (
+				<tr className="border-none hover:bg-gray-600">
+					<Link to={"/comic/" + item.id}>
+						<td>{item.names[0]}</td>
+					</Link>
+					<td>{item.creators}</td>
+					<td>Chapter 123</td>
+					<td>Update sau</td>
+				</tr>
+			);
+		})
+		return chapDiv;
     }
     historyDiv(history) {
         return (
@@ -78,9 +67,26 @@ class History extends React.Component<{}, AbcState> {
                         </div>
                     </div>
                 </section> */}
-                <section >
-                    <div className="grid grid-cols-4">
-                        {this.componentDiv(history)}
+                <section className="bg-black text-white mx-40 mt-6 px-4 border-2 border-gray-500 rounded-lg shadow-2xl">
+                    <div className="">
+                        <div>
+                            <h1 className="font-bold text-xl p-4 border-b-2">Lịch sử</h1>
+
+                        </div>
+                        <table className="table-fixed">
+                            <thead>
+                                <tr>
+                                    <th className="w-1/4">Tên truyện</th>
+                                    <th className="w-1/4">Người đăng</th>
+                                    <th className="w-1/4">Lượt xem</th>
+                                    <th className="w-1/4">Trường gì đó</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.componentDiv(history)}
+                                {this.componentDiv(history)}
+                            </tbody>
+                        </table>
                     </div>
                 </section>
             </>)
