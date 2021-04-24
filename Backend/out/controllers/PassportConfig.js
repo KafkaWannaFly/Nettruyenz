@@ -26,19 +26,18 @@ function initPassport(passport) {
             let user = await UserController_1.UserController.getUserAsync(email);
             if (user === undefined) {
                 console.log(`Login fail. Can't find user`);
-                done(null, undefined, {
+                req.flash("error", "Login fail. Can't find user");
+                done(null, false, {
                     message: "Login fail. Can't find user",
                 });
                 return;
             }
             if (await bcrypt_1.default.compare(password, user.password)) {
                 console.log(`Login success!\n${JSON.stringify(user, null, 4)}`);
-                return done(null, user, {
-                    message: "Login success!",
-                });
+                return done(null, user);
             }
             else {
-                done(null, undefined, {
+                done(null, false, {
                     message: "Incorrect password",
                 });
             }
@@ -65,9 +64,11 @@ function initPassport(passport) {
             done(null, user);
         }
         else {
-            console.log(`Sign up fail. ${user.email} has already existed`);
+            let errorMsg = `Sign up fail. ${user.email} has already existed`;
+            console.log(errorMsg);
+            req.flash("error", errorMsg);
             done(null, false, {
-                message: "User has already existed",
+                message: errorMsg,
             });
         }
     }));

@@ -13,3 +13,4 @@ const groupSchema = new Schema({
     // members: [String],
 });
 exports.GroupModel = Preloader_1.default.model("Group", groupSchema);
+//# sourceMappingURL=GroupModel.js.map

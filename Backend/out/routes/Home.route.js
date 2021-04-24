@@ -37,3 +37,4 @@ router.get("/newly-added", async (req, res) => {
 });
 const homeRouter = router;
 exports.default = homeRouter;
+//# sourceMappingURL=Home.route.js.map

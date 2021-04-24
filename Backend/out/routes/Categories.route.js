@@ -8,3 +8,4 @@ const router = express_1.default.Router();
 router.get("category/:tag", function (req, res) { });
 const cateRoute = router;
 exports.default = cateRoute;
+//# sourceMappingURL=Categories.route.js.map

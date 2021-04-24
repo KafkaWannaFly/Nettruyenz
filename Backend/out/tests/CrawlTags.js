@@ -49,3 +49,4 @@ crawlTags().then(async (tags) => {
     await TagModel_1.TagModel.insertMany(tags);
     console.log(`Create ${tags.length} tags`);
 });
+//# sourceMappingURL=CrawlTags.js.map

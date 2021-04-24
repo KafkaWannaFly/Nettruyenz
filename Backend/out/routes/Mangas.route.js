@@ -16,3 +16,4 @@ router.get("/:mangaId", async (req, res) => {
 });
 const mangaRoute = router;
 exports.default = mangaRoute;
+//# sourceMappingURL=Mangas.route.js.map

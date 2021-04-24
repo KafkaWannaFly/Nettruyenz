@@ -20,3 +20,4 @@ const chapterSchema = new Schema({
     timestamps: true,
 });
 exports.ChapterModel = Preloader_1.default.model("Chapter", chapterSchema);
+//# sourceMappingURL=ChapterModel.js.map

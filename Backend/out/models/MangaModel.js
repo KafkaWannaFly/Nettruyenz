@@ -32,3 +32,4 @@ var MangaStatus;
     MangaStatus[MangaStatus["Complete"] = 1] = "Complete";
     MangaStatus[MangaStatus["Dropped"] = 2] = "Dropped";
 })(MangaStatus = exports.MangaStatus || (exports.MangaStatus = {}));
+//# sourceMappingURL=MangaModel.js.map

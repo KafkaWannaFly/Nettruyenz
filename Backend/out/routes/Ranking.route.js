@@ -18,3 +18,4 @@ router.post("/", function (req, res) {
 });
 const rankRouter = router;
 exports.default = rankRouter;
+//# sourceMappingURL=Ranking.route.js.map

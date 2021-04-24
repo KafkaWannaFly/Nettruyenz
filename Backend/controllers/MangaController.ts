@@ -7,7 +7,7 @@ import { RateModel } from "../models/RateModel";
 import { ViewModel } from "../models/ViewModel";
 import { CreatorModel } from "../models/CreatorModel";
 import { CompletedMangaDto } from "../DTOs/CompletedMangaDto";
-import { CommentDto } from "../models/CommentDto";
+import { CommentDto } from "../DTOs/CommentDto";
 import { CommentModel } from "../models/CommentModel";
 
 export const MangaController = {

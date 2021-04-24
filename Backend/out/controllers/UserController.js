@@ -1,7 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const UserModel_1 = require("../models/UserModel");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const EnvironmentConstants_1 = require("../constants/EnvironmentConstants");
 exports.UserController = {
     /**
      * Find user by username
@@ -36,4 +41,11 @@ exports.UserController = {
             console.error(error);
         }
     },
+    resetUserPasswordAsync: async (email, newPassword) => {
+        const user = (await exports.UserController.getUserAsync(email));
+        user.password = await bcrypt_1.default.hash(newPassword, EnvironmentConstants_1.SALT);
+        await UserModel_1.UserModel.updateOne({ email: email }, user).exec();
+        return user;
+    },
 };
+//# sourceMappingURL=UserController.js.map

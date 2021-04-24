@@ -20,3 +20,4 @@ const commentSchema = new Schema({
     timestamps: true,
 });
 exports.CommentModel = Preloader_1.default.model("Comment", commentSchema);
+//# sourceMappingURL=CommentModel.js.map

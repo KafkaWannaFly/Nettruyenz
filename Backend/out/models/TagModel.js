@@ -11,3 +11,4 @@ const tagSchema = new Schema({
     name: String,
 });
 exports.TagModel = Preloader_1.default.model("Tag", tagSchema);
+//# sourceMappingURL=TagModel.js.map

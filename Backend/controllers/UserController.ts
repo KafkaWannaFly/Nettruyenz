@@ -1,4 +1,6 @@
 import { User, UserModel } from "../models/UserModel";
+import bcrypt from "bcrypt";
+import { SALT } from "../constants/EnvironmentConstants";
 
 export const UserController = {
 	/**
@@ -34,5 +36,13 @@ export const UserController = {
 		} catch (error) {
 			console.error(error);
 		}
+	},
+
+	resetUserPasswordAsync: async (email: string, newPassword: string) => {
+		const user: User = (await UserController.getUserAsync(email)) as User;
+		user.password = await bcrypt.hash(newPassword, SALT!);
+
+		await UserModel.updateOne({ email: email }, user).exec();
+		return user;
 	},
 };

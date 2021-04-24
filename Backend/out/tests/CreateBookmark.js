@@ -45,3 +45,4 @@ async function createFakeBookmarks() {
 createFakeBookmarks().then(() => {
     console.log(`Done!`);
 });
+//# sourceMappingURL=CreateBookmark.js.map

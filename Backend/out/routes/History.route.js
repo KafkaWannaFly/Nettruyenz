@@ -7,3 +7,4 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const historyRouter = router;
 exports.default = historyRouter;
+//# sourceMappingURL=History.route.js.map

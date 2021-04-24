@@ -17,3 +17,4 @@ const rateSchema = new Schema({
     timestamps: true,
 });
 exports.RateModel = Preloader_1.default.model("Rate", rateSchema);
+//# sourceMappingURL=RateModel.js.map

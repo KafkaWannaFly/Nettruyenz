@@ -256,3 +256,4 @@ fetchMangaUrl().then(async (res) => {
         }
     }
 });
+//# sourceMappingURL=CrawlMangas.js.map

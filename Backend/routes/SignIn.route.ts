@@ -1,24 +1,31 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import passport from "passport";
-import { UserDto } from "../DTOs/UserDto";
+import { SECRET } from "../constants/EnvironmentConstants";
 
 const route = express.Router();
 
-route.post(
-	"/",
-	passport.authenticate("local-signin", {
-		successRedirect: "/sign-in/success",
-		failureRedirect: "/sign-in/fail",
-	})
-);
+route.post("/", async (req, res, next) => {
+	passport.authenticate(
+		"local-signin",
+		{
+			session: false,
+		},
+		(err, user, info) => {
+			if (err || !user) {
+				res.status(400).redirect("/error");
+			}
 
-route.get("/success", (req, res) => {
-	let userDto = req.user as UserDto;
-	res.json(userDto);
-});
+			req.login(user, { session: false }, (err) => {
+				if (err) {
+					res.send(err);
+				}
 
-route.get("/fail", (req, res) => {
-	res.send("Incorrect email or password.");
+				const token = jwt.sign(user, SECRET as string);
+				return res.json({ user, token });
+			});
+		}
+	)(req, res);
 });
 
 const signInRoute = route;

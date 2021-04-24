@@ -474,3 +474,4 @@ function getMonthlyFilter() {
         },
     };
 }
+//# sourceMappingURL=MangaController.js.map

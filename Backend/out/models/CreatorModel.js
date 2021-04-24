@@ -15,3 +15,4 @@ const creatorSchema = new Schema({
 });
 exports.CreatorModel = Preloader_1.default.model("Creator", creatorSchema);
 // export default creatorModel;
+//# sourceMappingURL=CreatorModel.js.map

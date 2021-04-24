@@ -27,3 +27,4 @@ var UserLevel;
     UserLevel[UserLevel["normal"] = 0] = "normal";
     UserLevel[UserLevel["moderator"] = 1] = "moderator";
 })(UserLevel = exports.UserLevel || (exports.UserLevel = {}));
+//# sourceMappingURL=UserModel.js.map

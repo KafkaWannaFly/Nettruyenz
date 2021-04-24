@@ -31,3 +31,4 @@ async function createMangaRating() {
 createMangaRating().then(() => {
     console.log(`Done!!`);
 });
+//# sourceMappingURL=CreateMangaRating.js.map

@@ -18,3 +18,4 @@ async function CreateComment(numComment, atManga, atChapter) {
     await CommentModel_1.CommentModel.insertMany(comments);
 }
 CreateComment(10, "6e5c9054-8ff6-47d1-8c5c-5905683125d3").then(() => { });
+//# sourceMappingURL=CreateComments.js.map

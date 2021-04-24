@@ -16,3 +16,4 @@ const bookmarkSchema = new Schema({
     timestamps: true,
 });
 exports.BookmarkModel = Preloader_1.default.model("Bookmark", bookmarkSchema);
+//# sourceMappingURL=BookmarkModel.js.map

@@ -1,5 +1,5 @@
 import { Chapter } from "../models/ChapterModel";
-import { CommentDto } from "../models/CommentDto";
+import { CommentDto } from "./CommentDto";
 import { Manga, MangaStatus } from "../models/MangaModel";
 import { ChapterDto } from "./ChapterDto";
 

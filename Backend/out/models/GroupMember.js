@@ -11,3 +11,4 @@ const groupMemberSchema = new Schema({
     group: String,
 });
 exports.GroupMemberModel = Preloader_1.default.model("GroupMember", groupMemberSchema);
+//# sourceMappingURL=GroupMember.js.map

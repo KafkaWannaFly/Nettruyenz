@@ -1,8 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import passportLocal from "passport-local";
+import passportJWT from "passport-jwt";
 import bcrypt from "bcrypt";
 import _passport from "passport";
-import { User, UserLevel } from "../models/UserModel";
-import { UserController } from "./UserController";
+import { User, UserLevel, UserModel } from "../models/UserModel";
+import { UserController } from "../controllers/UserController";
+import { SALT } from "../constants/EnvironmentConstants";
+
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
 
 export function initPassport(passport: typeof _passport) {
 	passport.serializeUser((user, done) => {
@@ -15,6 +23,7 @@ export function initPassport(passport: typeof _passport) {
 		done(null, user);
 	});
 
+	// local-signin
 	passport.use(
 		"local-signin",
 		new passportLocal.Strategy(
@@ -29,19 +38,23 @@ export function initPassport(passport: typeof _passport) {
 					if (user === undefined) {
 						console.log(`Login fail. Can't find user`);
 
-						done(null, undefined, {
+						req.flash("error", "Login fail. Can't find user");
+
+						done(null, false, {
 							message: "Login fail. Can't find user",
 						});
 						return;
 					}
 					if (await bcrypt.compare(password, user.password)) {
 						console.log(`Login success!\n${JSON.stringify(user, null, 4)}`);
-						return done(null, user, {
-							message: "Login success!",
-						});
+						return done(null, user);
 					} else {
-						done(null, undefined, {
-							message: "Incorrect password",
+						let message = "Incorrect password";
+						console.log(message);
+
+						req.flash("error", message);
+						done(null, false, {
+							message: message,
 						});
 					}
 				} catch (error) {
@@ -51,6 +64,7 @@ export function initPassport(passport: typeof _passport) {
 		)
 	);
 
+	// local-signup
 	passport.use(
 		"local-signup",
 		new passportLocal.Strategy(
@@ -60,7 +74,7 @@ export function initPassport(passport: typeof _passport) {
 				passReqToCallback: true,
 			},
 			async (req, email, password, done) => {
-				let hash = await bcrypt.hash(password, 10);
+				let hash = await bcrypt.hash(password, SALT);
 				let user: User = {
 					email: email,
 					password: hash,
@@ -81,11 +95,39 @@ export function initPassport(passport: typeof _passport) {
 
 					done(null, user);
 				} else {
-					console.log(`Sign up fail. ${user.email} has already existed`);
+					let errorMsg = `Sign up fail. ${user.email} has already existed`;
+
+					console.log(errorMsg);
+
+					req.flash("error", errorMsg);
 
 					done(null, false, {
-						message: "User has already existed",
+						message: errorMsg,
 					});
+				}
+			}
+		)
+	);
+
+	// jwt
+	passport.use(
+		new JWTStrategy(
+			{
+				jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+				secretOrKey: process.env.SECRET,
+			},
+			async (jwtPayload, done) => {
+				try {
+					console.log(
+						`JWT authorization. Payload: ${JSON.stringify(jwtPayload, null, 4)}`
+					);
+
+					let user = ((await UserModel.findOne({
+						email: jwtPayload.email,
+					}).exec()) as unknown) as User;
+					done(null, user);
+				} catch (error) {
+					done(error, false);
 				}
 			}
 		)

@@ -16,3 +16,4 @@ const notificationSchema = new Schema({
     timestamps: true,
 });
 exports.NotificationModel = Preloader_1.default.model("Notification", notificationSchema);
+//# sourceMappingURL=NotificationModel.js.map

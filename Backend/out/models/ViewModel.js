@@ -14,3 +14,4 @@ const viewSchema = new Schema({
     timestamps: true,
 });
 exports.ViewModel = Preloader_1.default.model("View", viewSchema);
+//# sourceMappingURL=ViewModel.js.map

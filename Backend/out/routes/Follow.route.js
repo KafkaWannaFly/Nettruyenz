@@ -7,3 +7,4 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const followRouter = router;
 exports.default = followRouter;
+//# sourceMappingURL=Follow.route.js.map
