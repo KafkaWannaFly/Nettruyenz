@@ -1,4 +1,8 @@
+import { BookmarkDto } from "./BookmarkModel";
+import { Group } from "./GroupModel";
 import mongoose from "./Preloader";
+import { MangaRate } from "./MangaRateModel";
+import { MangaChapterView } from "./MangaChapterViewModel";
 
 const Schema = mongoose.Schema;
 const Id = Schema.Types.ObjectId;
@@ -21,7 +25,7 @@ const userSchema = new Schema(
 	}
 );
 
-export const UserModel = mongoose.model("User", userSchema);
+export const userModel = mongoose.model("user", userSchema);
 
 export enum UserLevel {
 	normal,
@@ -34,10 +38,13 @@ export interface User {
 	nickname: string;
 	avatar?: string;
 	level: UserLevel;
-	// groups?: string[];
-	// bookmarks?: string[];
-	// history?: string[];
-	// notifications?: string[];
-	// ratesMade?: string[];
 	createdAt?: Date;
+}
+
+export interface UserDto extends User {
+	groups?: Group[];
+	bookmarks?: BookmarkDto[];
+	history?: MangaChapterView[];
+	notifications?: Notification[];
+	ratesMade?: MangaRate[];
 }

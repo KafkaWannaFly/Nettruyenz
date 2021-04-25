@@ -1,6 +1,5 @@
 import express from "express";
 import { MangaController } from "../controllers/MangaController";
-import { CompletedMangaDto } from "../DTOs/CompletedMangaDto";
 const router = express.Router();
 
 router.get("/:mangaId", async (req, res) => {

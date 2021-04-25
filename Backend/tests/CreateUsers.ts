@@ -1,6 +1,6 @@
 import faker from "faker";
 import bcrypt from "bcrypt";
-import { User, UserLevel, UserModel } from "../models/UserModel";
+import { User, UserLevel, userModel } from "../models/UserModel";
 
 const saltRound = 10;
 const normalUserNumber = 20;

@@ -12,7 +12,10 @@ const groupSchema = new Schema({
 export interface Group {
 	id?: string;
 	name: string;
-	// members: string[];
 }
 
-export const GroupModel = mongoose.model("Group", groupSchema);
+export interface GroupDto extends Group {
+	members?: string[];
+}
+
+export const groupModel = mongoose.model("group", groupSchema);

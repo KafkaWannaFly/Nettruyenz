@@ -2,20 +2,16 @@ import axios from "axios";
 import { JSDOM } from "jsdom";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { Chapter, ChapterModel } from "../models/ChapterModel";
+import { Chapter, chapterModel } from "../models/ChapterModel";
 import { Tag } from "../models/TagModel";
-import { Manga, MangaModel, MangaStatus } from "../models/MangaModel";
-
-export async function crawlHtml(url: string, path: string) {
-	let res = await axios.get(url);
-	let dom = new JSDOM(res.data, {
-		contentType: "text/html",
-	}).window.document;
-
-	fs.writeFileSync(path, res.data);
-
-	return dom;
-}
+import { Manga, mangaModel, MangaStatus } from "../models/MangaModel";
+import { crawlHtml } from "./Util";
+import {
+	MangaCreator,
+	mangaCreatorModel,
+	MangaTag,
+	mangaTagModel,
+} from "../models";
 
 interface IMangaPage {
 	title?: string;
@@ -51,13 +47,14 @@ async function fetchMangaUrl() {
 	return mangas;
 }
 
-/**
- * Crawl chapter data of an manga
- * @param mangaPage Infomation about that manga
- * @param mangaId Its ID in database
- * @param howManyChap default is 10
- * @returns List of Chapter
- */
+// /**
+//  * Crawl chapter data of an manga
+//  * @param mangaPage Infomation about that manga
+//  * @param mangaId Its ID in database
+//  * @param howManyChap default is 10
+//  * @returns List of Chapter
+//  */
+let chapterIdCount = 0;
 async function crawlChapters(
 	mangaPage: IMangaPage,
 	mangaId: string,
@@ -108,14 +105,14 @@ async function crawlChapters(
 			}
 
 			let chapter: Chapter = {
-				id: uuidv4(),
-				group: "0",
+				id: `${mangaId}-${++chapterIdCount}`,
+				// group: "0",
 				images: [],
 				index: chapterIndex,
 				manga: mangaId,
 				tittle: "",
 				uploader: "0",
-				views: 0,
+				// views: 0,
 			};
 
 			let chapterPageData = await axios.get(chapterAnchor.href);
@@ -147,9 +144,10 @@ async function crawlChapters(
 	return chapters;
 }
 
-/**
- * Crawl manga without chapter data
- * */
+// /**
+//  * Crawl manga without chapter data
+//  * */
+let mangaIdCount = 0;
 async function crawlMangaData(mangaPage: IMangaPage) {
 	let url = mangaPage.url!;
 	let path = `./tests/html/${mangaPage.title?.replace(/\//g, "")}.html`;
@@ -168,8 +166,8 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 
 	let infoDocument = dom.querySelector(".__info")?.querySelectorAll("p");
 	let alterNames: string[],
-		tagsText: string[],
-		authorsText: string[],
+		tagsText: string[] = [],
+		authorsText: string[] = [],
 		groupsText: string[],
 		status: MangaStatus,
 		briefText: string;
@@ -209,7 +207,7 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 				tagsText = [...v.querySelectorAll("a")].map((anchor, _) => {
 					return anchor.innerHTML;
 				});
-				// console.log(tagsText);
+				console.log(tagsText);
 				break;
 			}
 			case 2: {
@@ -217,7 +215,7 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 				authorsText = [...v.querySelectorAll("a")].map((anchor, _) => {
 					return anchor.innerHTML;
 				});
-				// console.log(authorsText);
+				console.log(authorsText);
 				break;
 			}
 			case 3: {
@@ -253,27 +251,34 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 	});
 
 	let manga: Manga = {
-		id: uuidv4(),
-		// chapters: [],
+		id: (++mangaIdCount).toString(),
 		cover: img.src,
 		names: [mangaPage.title!, ...alterNames!],
-		tags: tagsText!,
-		creators: authorsText!,
-		// creators: ["0"],
-		// groups: [...groupsText!],
-		// groups: ["0"],
 		description: briefText!,
-		// rateNum: 0,
-		// rating: 0,
-		// bookmarks: 0,
-		// views: 0,
 		status: MangaStatus.OnGoing,
-		// comments: [],
 	};
 
 	// manga.chapters = await crawlChapters(mangaPage, manga._id, chapAmount);
 
-	return manga;
+	const mangaTags = tagsText.map((tagText) => {
+		let mangaTag: MangaTag = {
+			manga: manga.id,
+			tag: tagText,
+		};
+
+		return mangaTag;
+	});
+
+	const mangaCreators = authorsText.map((author) => {
+		let mangaCreator: MangaCreator = {
+			manga: manga.id,
+			creator: author,
+		};
+
+		return mangaCreator;
+	});
+
+	return { manga, mangaTags, mangaCreators };
 }
 
 // DELETE ALL TAGS AND REWRITE AGAIN
@@ -286,11 +291,13 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 // });
 
 // CREATE SAMPLE DATA, TOOK LONG TIME TO RUN, BE AWARE!
-fetchMangaUrl().then(async (res) => {
-	for (let i = 0; i < res.length; i++) {
+fetchMangaUrl().then(async (mangaPages) => {
+	for (let i = 0; i < mangaPages.length; i++) {
 		try {
-			let manga = await crawlMangaData(res[i]);
-			let chapter = await crawlChapters(res[i], manga.id);
+			let { manga, mangaTags, mangaCreators } = await crawlMangaData(
+				mangaPages[i]
+			);
+			let chapter = await crawlChapters(mangaPages[i], manga.id);
 
 			// manga.chapters = chapter.map((val, _) => val._id);
 
@@ -298,16 +305,18 @@ fetchMangaUrl().then(async (res) => {
 			// await mangaModel.create(manga);
 
 			await Promise.all([
-				ChapterModel.insertMany(chapter),
-				MangaModel.create(manga),
+				mangaModel.create(manga),
+				chapterModel.insertMany(chapter),
+				mangaTagModel.insertMany(mangaTags),
+				mangaCreatorModel.insertMany(mangaCreators),
 			]);
 
 			console.log(`Insert ${manga.names[0]} into DB`);
 			console.log(`Insert ${chapter.length} chapters into DB`);
+			console.log(`Insert ${mangaTags.length} mangaTags into DB`);
+			console.log(`Insert ${mangaCreators.length} mangaCreators into DB`);
 		} catch (error) {
 			console.error(error);
 		}
 	}
 });
-
-export {};

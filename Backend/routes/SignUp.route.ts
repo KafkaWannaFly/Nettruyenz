@@ -1,25 +1,38 @@
 import express from "express";
 import passport from "passport";
-import { UserDto } from "../DTOs/UserDto";
+import { UserDto } from "../models";
 
 const route = express.Router();
 
 route.post(
 	"/",
-	passport.authenticate("local-signup", {
-		successRedirect: "/sign-up/success",
-		failureRedirect: "/sign-up/fail",
-	})
+	async (req, res, next) => {
+		passport.authenticate(
+			"local-signup",
+			{
+				session: false,
+				passReqToCallback: true,
+			},
+			(err, user, info) => {
+				console.log(`Authenticate callback`);
+
+				if (err || !user) {
+					res.json(err);
+					return;
+				}
+
+				console.log(`Next middleware`);
+				req.user = user;
+				next();
+			}
+		)(req, res);
+	},
+	async (req, res) => {
+		let userDto = req.user as UserDto;
+		console.log(`Response userDto: ${JSON.stringify(userDto, null, 4)}`);
+		res.json(userDto);
+	}
 );
-
-route.get("/fail", (req, res) => {
-	res.send("Email has already existed.");
-});
-
-route.get("/success", (req, res) => {
-	let userDto = req.user as UserDto;
-	res.json(userDto);
-});
 
 const signUpRoute = route;
 export default signUpRoute;

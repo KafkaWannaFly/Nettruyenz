@@ -1,7 +1,7 @@
 import { random } from "faker";
-import { Bookmark, BookmarkModel } from "../models/BookmarkModel";
-import { Manga, MangaModel } from "../models/MangaModel";
-import { User, UserModel } from "../models/UserModel";
+import { Manga, mangaModel } from "../models";
+import { Bookmark, bookmarkModel } from "../models/BookmarkModel";
+import { User, userModel } from "../models/UserModel";
 
 export function shuffle(array: any[]) {
 	var currentIndex = array.length,
@@ -24,11 +24,11 @@ export function shuffle(array: any[]) {
 }
 
 async function createFakeBookmarks() {
-	let users = (await UserModel.find({}).lean().exec()).map((v, i) => {
+	let users = (await userModel.find({}).lean().exec()).map((v, i) => {
 		return v as User;
 	});
 
-	let mangas = (await MangaModel.find({}).lean().exec()).map((v, i) => {
+	let mangas = (await mangaModel.find({}).lean().exec()).map((v, i) => {
 		return v as Manga;
 	});
 
@@ -46,7 +46,7 @@ async function createFakeBookmarks() {
 			bookmarks.push(bookmark);
 		}
 
-		await BookmarkModel.insertMany(bookmarks);
+		await bookmarkModel.insertMany(bookmarks);
 		console.log(`${user.nickname} has followed ${bookmarks.length} mangas`);
 	});
 }

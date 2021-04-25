@@ -7,8 +7,8 @@ const groupMemberSchema = new Schema({
 	group: String,
 });
 
-export const GroupMemberModel = mongoose.model(
-	"GroupMember",
+export const groupMemberModel = mongoose.model(
+	"group-member",
 	groupMemberSchema
 );
 
@@ -17,3 +17,5 @@ export interface GroupMember {
 	email: string;
 	group: string;
 }
+
+export interface GroupMemberDto extends GroupMember {}

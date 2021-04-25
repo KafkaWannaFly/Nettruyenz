@@ -15,13 +15,15 @@ const bookmarkSchema = new Schema(
 	}
 );
 
-export const BookmarkModel = mongoose.model("Bookmark", bookmarkSchema);
+export const bookmarkModel = mongoose.model("bookmark", bookmarkSchema);
 
 export interface Bookmark {
+	id?: string;
 	email: string;
 	manga: string;
-	id?: string;
 	isDelete?: boolean;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
+
+export interface BookmarkDto extends Bookmark {}

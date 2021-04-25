@@ -21,3 +21,30 @@
 	padding-left: 5%;
 	padding-right: 5%;
 }
+.max-w-70rem{
+	max-width: 70rem;
+}
+input[type=text] {
+    border-bottom: 0px !important; 
+	margin: 0 0 0 0 !important;
+}
+input[type=password]{
+	border-bottom: 0px !important;
+	margin: 0 0 0 0 !important;
+}
+input[type=text]:focus {
+  border-bottom: none !important;
+  box-shadow: none!important;
+}
+input[type=password]:focus {
+  border-bottom: none !important;
+  box-shadow: none!important;
+}
+input[type=search] {
+    border-bottom: 0px !important; 
+	margin: 0 0 0 0 !important;
+}
+input[type=search]:focus {
+  border-bottom: none !important;
+  box-shadow: none!important;
+}
