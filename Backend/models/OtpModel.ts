@@ -13,7 +13,8 @@ const otpSchema = new Schema(
 	}
 );
 
-export const OtpModel = mongoose.model("otp", otpSchema);
+export const otpModel = mongoose.model("otp", otpSchema);
+
 export interface Otp {
 	_id?: string;
 	email: string;

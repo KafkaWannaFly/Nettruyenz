@@ -1,14 +1,15 @@
-import { ChapterDto } from "../DTOs/ChapterDto";
-import { BriefMangaDto } from "../DTOs/BriefMangaDto";
-import { BookmarkModel } from "../models/BookmarkModel";
-import { Chapter, ChapterModel } from "../models/ChapterModel";
-import { Manga, MangaModel } from "../models/MangaModel";
-import { RateModel } from "../models/RateModel";
-import { ViewModel } from "../models/ViewModel";
-import { CreatorModel } from "../models/CreatorModel";
-import { CompletedMangaDto } from "../DTOs/CompletedMangaDto";
-import { CommentDto } from "../DTOs/CommentDto";
-import { CommentModel } from "../models/CommentModel";
+import {
+	bookmarkModel,
+	BriefMangaDto,
+	ChapterDto,
+	chapterModel,
+	CommentDto,
+	userCommentModel,
+	CompletedMangaDto,
+	mangaChapterViewModel,
+	mangaModel,
+	mangaRateModel,
+} from "../models";
 
 export const MangaController = {
 	/**
@@ -56,11 +57,14 @@ export const MangaController = {
 			}
 
 			// Most view mangas
-			mangaViewDocs = await ViewModel.aggregate(aggregationStatements).exec();
+			mangaViewDocs = await mangaChapterViewModel
+				.aggregate(aggregationStatements)
+				.exec();
 
 			// Find them in Manga table
 			mangaDtos = (
-				await MangaModel.find()
+				await mangaModel
+					.find()
 					.where("id")
 					.in(mangaViewDocs.map((v) => v._id))
 					.lean()
@@ -78,9 +82,10 @@ export const MangaController = {
 				// console.log(mangaView);
 
 				mangaDtos[i].views = mangaView?.views;
-				mangaDtos[i].bookmarks = await BookmarkModel.find({
-					manga: mangaDtos[i].id,
-				})
+				mangaDtos[i].bookmarks = await bookmarkModel
+					.find({
+						manga: mangaDtos[i].id,
+					})
 					.countDocuments()
 					.exec();
 
@@ -93,10 +98,11 @@ export const MangaController = {
 				mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
 
 				// Give manga lastest chapter
-				let chapter = (await ChapterModel.find()
+				let chapter = ((await chapterModel
+					.find()
 					.sort({ index: -1 })
 					.limit(1)
-					.exec()) as ChapterDto[];
+					.exec()) as unknown) as ChapterDto[];
 
 				mangaDtos[i].newestChapter = chapter[0];
 			}
@@ -157,12 +163,13 @@ export const MangaController = {
 			}
 
 			// Find them in Manga table
-			mangaBookmarks = await BookmarkModel.aggregate(
-				aggregationStatements
-			).exec();
+			mangaBookmarks = await bookmarkModel
+				.aggregate(aggregationStatements)
+				.exec();
 
 			mangaDtos = (
-				await MangaModel.find()
+				await mangaModel
+					.find()
 					.where("id")
 					.in(mangaBookmarks.map((v) => v._id))
 					.lean()
@@ -178,18 +185,20 @@ export const MangaController = {
 				);
 				mangaDtos[i].bookmarks = mangaBookmark?.bookmarks;
 
-				mangaDtos[i].views = await ViewModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].views = await mangaChapterViewModel
+					.find({ manga: mangaDtos[i].id })
 					.countDocuments()
 					.exec();
 
 				let mangaRate = await getMangaRating(mangaDtos[i].id);
 				mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
 
-				mangaDtos[i].newestChapter = (
-					await ChapterModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].newestChapter = ((
+					await chapterModel
+						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as ChapterDto;
+				)[0] as unknown) as ChapterDto;
 			}
 
 			return mangaDtos.sort((a, b) => {
@@ -257,10 +266,11 @@ export const MangaController = {
 				// Have nothing to do here :))
 			}
 
-			mangaRates = await RateModel.aggregate(aggregationStatements).exec();
+			mangaRates = await mangaRateModel.aggregate(aggregationStatements).exec();
 
 			mangaDtos = (
-				await MangaModel.find()
+				await mangaModel
+					.find()
 					.where("id")
 					.in(mangaRates.map((v) => v._id))
 					.lean()
@@ -273,21 +283,24 @@ export const MangaController = {
 				let mangaRate = mangaRates.find((item) => item._id === mangaDtos[i].id);
 				mangaDtos[i].averageRate = mangaRate?.average;
 
-				mangaDtos[i].views = await ViewModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].views = await mangaChapterViewModel
+					.find({ manga: mangaDtos[i].id })
 					.countDocuments()
 					.exec();
 
-				mangaDtos[i].bookmarks = await BookmarkModel.find({
-					manga: mangaDtos[i].id,
-				})
+				mangaDtos[i].bookmarks = await bookmarkModel
+					.find({
+						manga: mangaDtos[i].id,
+					})
 					.countDocuments()
 					.exec();
 
-				mangaDtos[i].newestChapter = (
-					await ChapterModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].newestChapter = ((
+					await chapterModel
+						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as ChapterDto;
+				)[0] as unknown) as ChapterDto;
 			}
 
 			return mangaDtos.sort((a, b) => {
@@ -343,13 +356,14 @@ export const MangaController = {
 			];
 
 			// Get newest chapters
-			let recentUploadChapters: IRecentUploaded[] = await ChapterModel.aggregate(
-				aggregationStatements
-			).exec();
+			let recentUploadChapters: IRecentUploaded[] = await chapterModel
+				.aggregate(aggregationStatements)
+				.exec();
 
 			// Find its manga
 			let mangaDtos: BriefMangaDto[] = (
-				await MangaModel.find()
+				await mangaModel
+					.find()
 					.where("id")
 					.in(recentUploadChapters.map((v) => v._id))
 					.lean()
@@ -367,13 +381,15 @@ export const MangaController = {
 					await getMangaRating(mangaDtos[i].id)
 				).average;
 
-				mangaDtos[i].views = await ViewModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].views = await mangaChapterViewModel
+					.find({ manga: mangaDtos[i].id })
 					.countDocuments()
 					.exec();
 
-				mangaDtos[i].bookmarks = await BookmarkModel.find({
-					manga: mangaDtos[i].id,
-				})
+				mangaDtos[i].bookmarks = await bookmarkModel
+					.find({
+						manga: mangaDtos[i].id,
+					})
 					.countDocuments()
 					.exec();
 			}
@@ -412,28 +428,31 @@ export const MangaController = {
 				},
 			];
 
-			let mangaDtos: BriefMangaDto[] = await MangaModel.aggregate(
-				aggregationStatements
-			).exec();
+			let mangaDtos: BriefMangaDto[] = await mangaModel
+				.aggregate(aggregationStatements)
+				.exec();
 
 			for (let i = 0; i < mangaDtos.length; i++) {
-				mangaDtos[i].newestChapter = (
-					await ChapterModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].newestChapter = ((
+					await chapterModel
+						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as ChapterDto;
+				)[0] as unknown) as ChapterDto;
 
 				mangaDtos[i].averageRate = (
 					await getMangaRating(mangaDtos[i].id)
 				).average;
 
-				mangaDtos[i].views = await ViewModel.find({ manga: mangaDtos[i].id })
+				mangaDtos[i].views = await mangaChapterViewModel
+					.find({ manga: mangaDtos[i].id })
 					.countDocuments()
 					.exec();
 
-				mangaDtos[i].bookmarks = await BookmarkModel.find({
-					manga: mangaDtos[i].id,
-				})
+				mangaDtos[i].bookmarks = await bookmarkModel
+					.find({
+						manga: mangaDtos[i].id,
+					})
 					.countDocuments()
 					.exec();
 			}
@@ -468,7 +487,7 @@ export const MangaController = {
 			];
 
 			let mangaDto: CompletedMangaDto = (
-				await MangaModel.aggregate(mangaAgg).exec()
+				await mangaModel.aggregate(mangaAgg).exec()
 			)[0];
 			// let manga = ((await MangaModel.findOne({
 			// 	id: id,
@@ -479,11 +498,13 @@ export const MangaController = {
 			let mangaRate = await getMangaRating(id);
 			mangaDto.averageRate = mangaRate.average;
 
-			mangaDto.bookmarks = await BookmarkModel.find({ manga: id })
+			mangaDto.bookmarks = await bookmarkModel
+				.find({ manga: id })
 				.countDocuments()
 				.exec();
 
-			mangaDto.views = await ViewModel.find({ manga: id })
+			mangaDto.views = await mangaChapterViewModel
+				.find({ manga: id })
 				.countDocuments()
 				.exec();
 
@@ -500,9 +521,9 @@ export const MangaController = {
 					},
 				},
 			];
-			let chapters: ChapterDto[] = await ChapterModel.aggregate(
-				chapterAggregation
-			).exec();
+			let chapters: ChapterDto[] = await chapterModel
+				.aggregate(chapterAggregation)
+				.exec();
 			mangaDto.chapters = chapters;
 
 			// Get comments belong to this manga
@@ -518,9 +539,9 @@ export const MangaController = {
 					},
 				},
 			];
-			let comments: CommentDto[] = await CommentModel.aggregate(
-				commentAgg
-			).exec();
+			let comments: CommentDto[] = await userCommentModel
+				.aggregate(commentAgg)
+				.exec();
 			mangaDto.comments = comments;
 
 			return mangaDto;
@@ -557,7 +578,9 @@ async function getMangaRating(id: string) {
 		},
 	];
 
-	let mangaRate: IMangaRate = (await RateModel.aggregate(rateAgg).exec())[0];
+	let mangaRate: IMangaRate = (
+		await mangaRateModel.aggregate(rateAgg).exec()
+	)[0];
 	mangaRate.average = mangaRate.sum / mangaRate.numRate;
 	return mangaRate;
 }

@@ -1,13 +1,13 @@
 import faker from "faker";
-import { Comment, CommentModel } from "../models/CommentModel";
+import { UserComment, userCommentModel } from "../models/UserCommentModel";
 async function CreateComment(
 	numComment: number,
 	atManga: string,
 	atChapter?: string
 ) {
-	let comments: Comment[] = [];
+	let comments: UserComment[] = [];
 	for (let i = 0; i < numComment; i++) {
-		let comment: Comment = {
+		let comment: UserComment = {
 			content: faker.lorem.words(15),
 			email: "kafkawannafly@gmail.com",
 			manga: atManga,
@@ -16,7 +16,7 @@ async function CreateComment(
 		comments.push(comment);
 	}
 
-	await CommentModel.insertMany(comments);
+	await userCommentModel.insertMany(comments);
 }
 
 CreateComment(10, "6e5c9054-8ff6-47d1-8c5c-5905683125d3").then(() => {});

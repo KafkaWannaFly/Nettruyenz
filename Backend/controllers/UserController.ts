@@ -1,4 +1,4 @@
-import { User, UserModel } from "../models/UserModel";
+import { User, userModel } from "../models";
 import bcrypt from "bcrypt";
 import { SALT } from "../constants/EnvironmentConstants";
 
@@ -10,7 +10,7 @@ export const UserController = {
 	 */
 	getUserAsync: async (email: string) => {
 		try {
-			let userDoc = await UserModel.findOne({ email: email }).exec();
+			let userDoc = await userModel.findOne({ email: email }).exec();
 			return userDoc?.toObject() as User;
 		} catch (error) {
 			console.error(error);
@@ -29,8 +29,8 @@ export const UserController = {
 				return false;
 			}
 
-			let userModel = new UserModel(user);
-			let registeredDoc = await userModel.save();
+			let model = new userModel(user);
+			let registeredDoc = await model.save();
 
 			return true;
 		} catch (error) {
@@ -43,7 +43,7 @@ export const UserController = {
 		const user: User = (await UserController.getUserAsync(email)) as User;
 		user.password = await bcrypt.hash(newPassword, SALT!);
 
-		await UserModel.updateOne({ email: email }, user).exec();
+		await userModel.updateOne({ email: email }, user).exec();
 		return user;
 	},
 };

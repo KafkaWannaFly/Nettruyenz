@@ -1,8 +1,7 @@
 import express from "express";
 import { OtpController } from "../controllers/OtpController";
 import { UserController } from "../controllers/UserController";
-import { UserDto } from "../DTOs/UserDto";
-import { User } from "../models/UserModel";
+import { UserDto } from "../models";
 import { otpService } from "../services/OtpService";
 
 const route = express.Router();

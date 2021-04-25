@@ -9,8 +9,8 @@ const chapterSchema = new Schema(
 		images: [String],
 		manga: String,
 		uploader: String,
-		views: Number,
-		group: String,
+		// views: Number,
+		// group: String,
 		index: Number,
 		tittle: String,
 	},
@@ -26,10 +26,14 @@ export interface Chapter {
 	index?: number;
 	tittle?: string;
 	uploader?: string;
-	views?: number;
-	group?: string;
+	// views?: number;
+	// group?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
 
-export const ChapterModel = mongoose.model("Chapter", chapterSchema);
+export interface ChapterDto extends Chapter {
+	views: number;
+}
+
+export const chapterModel = mongoose.model("Chapter", chapterSchema);

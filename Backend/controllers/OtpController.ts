@@ -1,4 +1,4 @@
-import { Otp, OtpModel } from "../models/OtpModel";
+import { Otp, otpModel } from "../models";
 
 export const OtpController = {
 	/**
@@ -13,7 +13,7 @@ export const OtpController = {
 			isUsed: false,
 		};
 
-		await new OtpModel(otp).save();
+		await new otpModel(otp).save();
 	},
 
 	/**
@@ -40,7 +40,7 @@ export const OtpController = {
 			},
 		];
 
-		const otp: Otp = (await OtpModel.aggregate(agg).exec())[0];
+		const otp: Otp = (await otpModel.aggregate(agg).exec())[0];
 
 		console.log(`Find OTP ${JSON.stringify(otp, null, 4)}`);
 
@@ -55,10 +55,9 @@ export const OtpController = {
 		}
 
 		otp.isUsed = true;
-		await OtpModel.findOneAndUpdate(
-			{ _id: otp._id },
-			{ isUsed: otp.isUsed }
-		).exec();
+		await otpModel
+			.findOneAndUpdate({ _id: otp._id }, { isUsed: otp.isUsed })
+			.exec();
 
 		console.log(`Reset password successfully`);
 

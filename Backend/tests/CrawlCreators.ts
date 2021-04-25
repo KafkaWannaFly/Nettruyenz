@@ -1,9 +1,7 @@
 // Crawl authors data from hocvientruyentranh
 import axios from "axios";
 import { JSDOM } from "jsdom";
-import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
-import { Creator, CreatorModel } from "../models/CreatorModel";
+import { Creator, creatorModel } from "../models/CreatorModel";
 
 const pageCount = 180;
 const urlTemplate = "https://hocvientruyentranh.net/authors?page=";
@@ -48,7 +46,7 @@ try {
 
 		console.log(`Found ${authors.length} creators`);
 
-		await CreatorModel.insertMany(authors);
+		await creatorModel.insertMany(authors);
 		console.log(`Push ${authors.length} creators into DB`);
 	});
 } catch (error) {

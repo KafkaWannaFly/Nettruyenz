@@ -5,7 +5,7 @@ import passportJWT from "passport-jwt";
 import passportLocal from "passport-local";
 import { SALT, SECRET } from "../constants/EnvironmentConstants";
 import { UserController } from "../controllers/UserController";
-import { User, UserLevel, UserModel } from "../models/UserModel";
+import { User, UserLevel, userModel } from "../models";
 dotenv.config();
 
 const JWTStrategy = passportJWT.Strategy;
@@ -130,9 +130,11 @@ export function initPassport(passport: typeof passportType) {
 						`JWT authorization. Payload: ${JSON.stringify(jwtPayload, null, 4)}`
 					);
 
-					let user = ((await UserModel.findOne({
-						email: jwtPayload.email,
-					}).exec()) as unknown) as User;
+					let user = ((await userModel
+						.findOne({
+							email: jwtPayload.email,
+						})
+						.exec()) as unknown) as User;
 					done(null, user);
 				} catch (error) {
 					done(error, false);

@@ -1,31 +1,24 @@
+import { ChapterDto } from "./ChapterModel";
+import { CommentDto } from "./UserCommentModel";
 import mongoose from "./Preloader";
 const Schema = mongoose.Schema;
-
-const Id = Schema.Types.ObjectId;
 
 const mangaSchema = new Schema(
 	{
 		id: String,
 		names: [String],
 		cover: String,
-		creators: [String],
-		tags: [String],
-		// rating: Number,
-		// rateNum: Number,
-		// bookmarks: Number,
-		// views: Number,
+		// creators: [String],
+		// tags: [String],
 		status: Number,
-		// groups: [String],
 		description: String,
-		// chapters: [String],
-		// comments: [String],
 	},
 	{
 		timestamps: true,
 	}
 );
 
-export const MangaModel = mongoose.model("Manga", mangaSchema);
+export const mangaModel = mongoose.model("manga", mangaSchema);
 
 export enum MangaStatus {
 	OnGoing,
@@ -37,11 +30,44 @@ export interface Manga {
 	id: string;
 	names: string[];
 	cover: string;
-	tags: string[];
-	creators?: string[];
+
 	status?: MangaStatus;
 	description: string;
 
 	createdAt?: Date;
 	updatedAt?: Date;
+}
+
+export interface BriefMangaDto extends Manga {
+	// id: string;
+	// name: string[];
+	// cover: string;
+	tags?: string[];
+	// creators: string[];
+	// description: string;
+	// status: MangaStatus;
+
+	averageRate?: number;
+	bookmarks?: number;
+	views?: number;
+
+	newestChapter?: ChapterDto;
+}
+
+export interface CompletedMangaDto extends Manga {
+	// id: string;
+	// names: string[];
+	// cover: string;
+	tags?: string[];
+	// creators?: string[];
+	// status?: MangaStatus;
+	// description: string;
+	// createdAt?: Date;
+	// updatedAt?: Date;
+	averageRate?: number;
+	bookmarks?: number;
+	views?: number;
+
+	chapters?: ChapterDto[];
+	comments?: CommentDto[];
 }

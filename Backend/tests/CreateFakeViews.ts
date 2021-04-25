@@ -1,9 +1,12 @@
 import { random } from "faker";
-import { Chapter, ChapterModel } from "../models/ChapterModel";
-import { MangaChapterView, ViewModel } from "../models/ViewModel";
+import { Chapter, chapterModel } from "../models/ChapterModel";
+import {
+	MangaChapterView,
+	mangaChapterViewModel,
+} from "../models/MangaChapterViewModel";
 
 async function createFakeViews() {
-	let chaptersDoc = await ChapterModel.find({}).lean().exec();
+	let chaptersDoc = await chapterModel.find({}).lean().exec();
 	let chapters = chaptersDoc.map((v, i) => {
 		return v as Chapter;
 	});
@@ -11,23 +14,25 @@ async function createFakeViews() {
 
 	for (let i = 0; i < chapters.length; i++) {
 		let viewCount = random.number(100);
-		chapters[i].views = viewCount;
+		// chapters[i].views = viewCount;
 
 		let views: MangaChapterView[] = [];
 		for (let count = 0; count < viewCount; count++) {
 			let view: MangaChapterView = {
-				chapter: chapters[i].id,
-				manga: chapters[i].manga,
+				chapter: chapters[i].id!,
+				manga: chapters[i].manga!,
 			};
 
 			views.push(view);
 		}
-		await ViewModel.insertMany(views);
-		await ChapterModel.findOneAndUpdate(
-			{ id: chapters[i].id },
-			{ views: viewCount },
-			{ new: true, useFindAndModify: false }
-		).exec();
+		await mangaChapterViewModel.insertMany(views);
+		await chapterModel
+			.findOneAndUpdate(
+				{ id: chapters[i].id },
+				{ views: viewCount },
+				{ new: true, useFindAndModify: false }
+			)
+			.exec();
 		console.log(`${i}. Create ${views.length} views!`);
 	}
 

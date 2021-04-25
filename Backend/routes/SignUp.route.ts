@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { UserDto } from "../DTOs/UserDto";
+import { UserDto } from "../models";
 
 const route = express.Router();
 
