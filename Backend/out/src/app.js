@@ -15,6 +15,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const SignUp_route_1 = __importDefault(require("../routes/SignUp.route"));
 const SignIn_route_1 = __importDefault(require("../routes/SignIn.route"));
 const Mangas_route_1 = __importDefault(require("../routes/Mangas.route"));
+const Categories_route_1 = __importDefault(require("../routes/Categories.route"));
 const app = express_1.default();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -33,6 +34,7 @@ app.use("/", Home_route_1.default);
 app.use("/sign-up", SignUp_route_1.default);
 app.use("/sign-in", SignIn_route_1.default);
 app.use("/mangas", Mangas_route_1.default);
+app.use('/categories', Categories_route_1.default);
 app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
 });

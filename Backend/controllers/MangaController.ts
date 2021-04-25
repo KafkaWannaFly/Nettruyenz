@@ -9,6 +9,7 @@ import { CreatorModel } from "../models/CreatorModel";
 import { CompletedMangaDto } from "../DTOs/CompletedMangaDto";
 import { CommentDto } from "../models/CommentDto";
 import { CommentModel } from "../models/CommentModel";
+import { TagModel } from "../models/TagModel";
 
 export const MangaController = {
 	/**
@@ -528,6 +529,85 @@ export const MangaController = {
 			console.error(e);
 		}
 	},
+
+	getMangaTags: async () => {
+		const tagAgg = [
+			{
+				$match:{}
+			}
+		]
+		
+		let mangaTags = await (TagModel.aggregate(tagAgg).exec())[0];
+		return mangaTags;
+	},
+	
+	getMangasForCate: async (top: number, period: string = "all", _tags: string[], undoneName: string) => {
+		try {
+			// Find tag
+			let listAuthors = getAuthor(undoneName);
+
+			let aggregationStatements: any[] = [
+				{
+					$project: {
+						_id: "$id"
+					},
+				},
+				{
+					$match:{
+
+					}
+				},
+				{
+					$sort: {
+						average: -1,
+					},
+				},
+				{
+					$limit: top,
+				},
+			];
+
+			let mangaDtos: BriefMangaDto[] = [];
+
+			if (period === "weekly") {
+				let weeklyFilter = getWeeklyFilter();
+				aggregationStatements = [weeklyFilter, ...aggregationStatements];
+			} else if (period === "monthly") {
+				let monthlyFilter = getMonthlyFilter();
+				aggregationStatements = [monthlyFilter, ...aggregationStatements];
+			} else {
+				// Have nothing to do here :))
+			}
+
+			let mangasByTag = [];
+			mangasByTag = await TagModel.aggregate(aggregationStatements).exec();
+
+			mangaDtos = (
+				await MangaModel.find()
+					.where("id")
+					.in(mangasByTag.map((v: any) => v._id))
+					.lean()
+					.exec()
+			).map((manga) => {
+				return manga as BriefMangaDto;
+			});
+
+			return mangaDtos.sort((a, b) => {
+				if (
+					b.newestChapter?.createdAt === undefined ||
+					a.newestChapter?.createdAt === undefined
+				) {
+					return -1;
+				}
+				return (
+					b.newestChapter.createdAt.getSeconds() -
+					a.newestChapter.createdAt?.getSeconds()
+				);
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	},
 };
 
 interface IMangaRate {
@@ -535,6 +615,19 @@ interface IMangaRate {
 	sum: number;
 	numRate: number;
 	average: number;
+}
+
+async function getAuthor(words:string) {
+	const nameAgg = [{
+		$match:{
+			name: {
+				$regex: `.*${words}.*`
+			}
+		}
+	}];
+
+	let authors = (await CreatorModel.aggregate(nameAgg).exec())[0];
+	return authors[0];
 }
 
 async function getMangaRating(id: string) {

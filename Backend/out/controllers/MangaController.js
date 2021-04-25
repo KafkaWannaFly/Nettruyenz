@@ -6,7 +6,9 @@ const ChapterModel_1 = require("../models/ChapterModel");
 const MangaModel_1 = require("../models/MangaModel");
 const RateModel_1 = require("../models/RateModel");
 const ViewModel_1 = require("../models/ViewModel");
+const CreatorModel_1 = require("../models/CreatorModel");
 const CommentModel_1 = require("../models/CommentModel");
+const TagModel_1 = require("../models/TagModel");
 exports.MangaController = {
     /**
      * Get top most view mangas in a period of time
@@ -424,7 +426,83 @@ exports.MangaController = {
             console.error(e);
         }
     },
+    getMangaTags: async () => {
+        const tagAgg = [
+            {
+                $match: {}
+            }
+        ];
+        let mangaTags = await (TagModel_1.TagModel.aggregate(tagAgg).exec())[0];
+        return mangaTags;
+    },
+    getMangasForCate: async (top, period = "all", _tags, undoneName) => {
+        try {
+            // Find tag
+            let listAuthors = getAuthor(undoneName);
+            let aggregationStatements = [
+                {
+                    $project: {
+                        _id: "$id"
+                    },
+                },
+                {
+                    $match: {}
+                },
+                {
+                    $sort: {
+                        average: -1,
+                    },
+                },
+                {
+                    $limit: top,
+                },
+            ];
+            let mangaDtos = [];
+            if (period === "weekly") {
+                let weeklyFilter = getWeeklyFilter();
+                aggregationStatements = [weeklyFilter, ...aggregationStatements];
+            }
+            else if (period === "monthly") {
+                let monthlyFilter = getMonthlyFilter();
+                aggregationStatements = [monthlyFilter, ...aggregationStatements];
+            }
+            else {
+                // Have nothing to do here :))
+            }
+            let mangasByTag = [];
+            mangasByTag = await TagModel_1.TagModel.aggregate(aggregationStatements).exec();
+            mangaDtos = (await MangaModel_1.MangaModel.find()
+                .where("id")
+                .in(mangasByTag.map((v) => v._id))
+                .lean()
+                .exec()).map((manga) => {
+                return manga;
+            });
+            return mangaDtos.sort((a, b) => {
+                if (b.newestChapter?.createdAt === undefined ||
+                    a.newestChapter?.createdAt === undefined) {
+                    return -1;
+                }
+                return (b.newestChapter.createdAt.getSeconds() -
+                    a.newestChapter.createdAt?.getSeconds());
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
 };
+async function getAuthor(words) {
+    const nameAgg = [{
+            $match: {
+                name: {
+                    $regex: `.*${words}.*`
+                }
+            }
+        }];
+    let authors = (await CreatorModel_1.CreatorModel.aggregate(nameAgg).exec())[0];
+    return authors[0];
+}
 async function getMangaRating(id) {
     const rateAgg = [
         {
