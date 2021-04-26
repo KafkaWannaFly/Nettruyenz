@@ -17,6 +17,7 @@ const Home_route_1 = __importDefault(require("../routes/Home.route"));
 const Mangas_route_1 = __importDefault(require("../routes/Mangas.route"));
 const SignIn_route_1 = __importDefault(require("../routes/SignIn.route"));
 const SignUp_route_1 = __importDefault(require("../routes/SignUp.route"));
+const Tag_route_1 = __importDefault(require("../routes/Tag.route"));
 const User_route_1 = __importDefault(require("../routes/User.route"));
 dotenv_1.default.config();
 const app = express_1.default();
@@ -39,6 +40,7 @@ app.use("/sign-up", SignUp_route_1.default);
 app.use("/sign-in", SignIn_route_1.default);
 app.use("/forgot-password", ForgotPassword_1.default);
 app.use("/mangas", Mangas_route_1.default);
+app.use("/tags", Tag_route_1.default);
 app.use("/user", User_route_1.default);
 app.get("/test", (req, res) => {
     res.json(req.headers);

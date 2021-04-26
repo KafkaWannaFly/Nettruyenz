@@ -12,6 +12,7 @@ import homeRouter from "../routes/Home.route";
 import mangaRoute from "../routes/Mangas.route";
 import signInRoute from "../routes/SignIn.route";
 import signUpRoute from "../routes/SignUp.route";
+import tagRoute from "../routes/Tag.route";
 import userRoute from "../routes/User.route";
 dotenv.config();
 
@@ -46,6 +47,8 @@ app.use("/sign-in", signInRoute);
 app.use("/forgot-password", forgotPasswordRoute);
 
 app.use("/mangas", mangaRoute);
+
+app.use("/tags", tagRoute);
 
 app.use("/user", userRoute);
 

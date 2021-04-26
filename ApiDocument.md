@@ -194,7 +194,13 @@ Lọc theo 1 hoặc nhiều tag. Ví dụ:
 
 Trả về những bộ có tag: action, isekai và romance.
 
+## Tags
 
+Nằm ở `hostname/tags`. Là nơi lấy tất cả những tag hiện có.
+
+### `/` Route mặc định
+
+Trả về 1 mảng `TagDto` là tất cả những tag hiện có. 
 
 ## Mangas
 
@@ -430,6 +436,14 @@ interface CompletedMangaDto {
 
 	chapters?: ChapterDto[];
 	comments?: CommentDto[];
+}
+```
+
+### TagDto
+
+```typescript
+interface TagDto {
+	name: string;
 }
 ```
 
