@@ -490,11 +490,6 @@ export const MangaController = {
 			let mangaDto: CompletedMangaDto = (
 				await mangaModel.aggregate(mangaAgg).exec()
 			)[0];
-			// let manga = ((await MangaModel.findOne({
-			// 	id: id,
-			// }).exec()) as unknown) as Manga;
-
-			// let mangaDto: CompletedMangaDto = manga;
 
 			let mangaRate = await getMangaRating(id);
 			mangaDto.averageRate = mangaRate.average;
@@ -554,15 +549,20 @@ export const MangaController = {
 	getMangaTags: async () => {
 		const tagAgg = [
 			{
-				$match:{}
-			}
-		]
-		
-		let mangaTags = await (tagModel.aggregate(tagAgg).exec())[0];
+				$match: {},
+			},
+		];
+
+		let mangaTags = await tagModel.aggregate(tagAgg).exec()[0];
 		return mangaTags;
 	},
-	
-	getMangasForCate: async (top: number, period: string = "all", _tags: string[], undoneName: string) => {
+
+	getMangasForCate: async (
+		top: number,
+		period: string = "all",
+		_tags: string[],
+		undoneName: string
+	) => {
 		try {
 			// Find tag
 			// let listAuthors = getAuthor(undoneName);
@@ -570,13 +570,11 @@ export const MangaController = {
 			let aggregationStatements: any[] = [
 				{
 					$project: {
-						_id: "$id"
+						_id: "$id",
 					},
 				},
 				{
-					$match:{
-
-					}
+					$match: {},
 				},
 				{
 					$sort: {
@@ -604,7 +602,8 @@ export const MangaController = {
 			mangasByTag = await tagModel.aggregate(aggregationStatements).exec();
 
 			mangaDtos = (
-				await mangaModel.find()
+				await mangaModel
+					.find()
 					.where("id")
 					.in(mangasByTag.map((v: any) => v._id))
 					.lean()

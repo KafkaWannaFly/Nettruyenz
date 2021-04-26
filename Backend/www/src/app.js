@@ -41,7 +41,7 @@ app.use("/sign-up", SignUp_route_1.default);
 app.use("/sign-in", SignIn_route_1.default);
 app.use("/forgot-password", ForgotPassword_1.default);
 app.use("/mangas", Mangas_route_1.default);
-app.use('/categories', Categories_route_1.default);
+app.use("/categories", Categories_route_1.default);
 app.use("/tags", Tag_route_1.default);
 app.use("/user", User_route_1.default);
 app.get("/test", (req, res) => {

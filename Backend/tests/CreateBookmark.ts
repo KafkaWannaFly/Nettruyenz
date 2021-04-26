@@ -2,26 +2,7 @@ import { random } from "faker";
 import { Manga, mangaModel } from "../models";
 import { Bookmark, bookmarkModel } from "../models/BookmarkModel";
 import { User, userModel } from "../models/UserModel";
-
-export function shuffle(array: any[]) {
-	var currentIndex = array.length,
-		temporaryValue,
-		randomIndex;
-
-	// While there remain elements to shuffle...
-	while (0 !== currentIndex) {
-		// Pick a remaining element...
-		randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex -= 1;
-
-		// And swap it with the current element.
-		temporaryValue = array[currentIndex];
-		array[currentIndex] = array[randomIndex];
-		array[randomIndex] = temporaryValue;
-	}
-
-	return array;
-}
+import { shuffle } from "./Util";
 
 async function createFakeBookmarks() {
 	let users = (await userModel.find({}).lean().exec()).map((v, i) => {
@@ -47,7 +28,7 @@ async function createFakeBookmarks() {
 		}
 
 		await bookmarkModel.insertMany(bookmarks);
-		console.log(`${user.nickname} has followed ${bookmarks.length} mangas`);
+		console.log(`${user.email} has followed ${bookmarks.length} mangas`);
 	});
 }
 

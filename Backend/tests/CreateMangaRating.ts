@@ -2,7 +2,7 @@ import { random } from "faker";
 import { Manga, mangaModel } from "../models/MangaModel";
 import { MangaRate, mangaRateModel } from "../models/MangaRateModel";
 import { User, userModel } from "../models/UserModel";
-import { shuffle } from "./CreateBookmark";
+import { shuffle } from "./Util";
 
 async function createMangaRating() {
 	let users = (await userModel.find({}).lean().exec()).map((v, i) => {
@@ -21,7 +21,7 @@ async function createMangaRating() {
 		for (let i = 0; i < mangaNum; i++) {
 			let mangaRate: MangaRate = {
 				manga: mangas[i].id,
-				rate: random.number(5),
+				rate: random.number({ min: 1, max: 5 }),
 				email: user.email,
 				isDeleted: false,
 			};
@@ -30,7 +30,7 @@ async function createMangaRating() {
 		}
 
 		await mangaRateModel.insertMany(mangaRates);
-		console.log(`${user.nickname} has rated ${mangaRates.length} mangas`);
+		console.log(`${user.email} has rated ${mangaRates.length} mangas`);
 	});
 }
 

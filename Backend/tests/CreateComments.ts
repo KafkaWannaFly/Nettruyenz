@@ -1,22 +1,55 @@
-import faker from "faker";
+import faker, { random } from "faker";
+import { Manga, mangaModel } from "../models";
 import { UserComment, userCommentModel } from "../models/UserCommentModel";
-async function CreateComment(
-	numComment: number,
-	atManga: string,
-	atChapter?: string
-) {
-	let comments: UserComment[] = [];
-	for (let i = 0; i < numComment; i++) {
-		let comment: UserComment = {
-			content: faker.lorem.words(15),
-			email: "kafkawannafly@gmail.com",
-			manga: atManga,
-		};
+import { getRandomUser } from "./Util";
 
-		comments.push(comment);
-	}
+// async function CreateComment(
+// 	numComment: number,
+// 	atManga: string,
+// 	atChapter?: string
+// ) {
+// 	let comments: UserComment[] = [];
+// 	for (let i = 0; i < numComment; i++) {
+// 		let comment: UserComment = {
+// 			content: faker.lorem.words(15),
+// 			email: "kafkawannafly@gmail.com",
+// 			manga: atManga,
+// 		};
 
-	await userCommentModel.insertMany(comments);
+// 		comments.push(comment);
+// 	}
+
+// 	await userCommentModel.insertMany(comments);
+// }
+
+async function createFakeComments() {
+	const mangas: Manga[] = (await mangaModel.find({}).lean().exec()).map(
+		(item) => item as Manga
+	);
+	const userComments: UserComment[] = [];
+
+	mangas.forEach(async (manga, index) => {
+		const commentNum = random.number(20);
+
+		for (let i = 0; i < commentNum; i++) {
+			const user = await getRandomUser();
+			const userComment: UserComment = {
+				email: user.email,
+				manga: manga.id,
+				content: faker.lorem.words(random.number({ min: 10, max: 25 })),
+			};
+
+			userComments.push(userComment);
+
+			console.log(`${userComment.email} commented at ${manga.names[0]}`);
+		}
+
+		await userCommentModel.insertMany(userComments);
+	});
+
+	console.log(`Total ${userComments.length} comments has made`);
 }
 
-CreateComment(10, "6e5c9054-8ff6-47d1-8c5c-5905683125d3").then(() => {});
+createFakeComments().then(() => {
+	console.log(`Done!!`);
+});

@@ -395,10 +395,6 @@ exports.MangaController = {
                 },
             ];
             let mangaDto = (await models_1.mangaModel.aggregate(mangaAgg).exec())[0];
-            // let manga = ((await MangaModel.findOne({
-            // 	id: id,
-            // }).exec()) as unknown) as Manga;
-            // let mangaDto: CompletedMangaDto = manga;
             let mangaRate = await getMangaRating(id);
             mangaDto.averageRate = mangaRate.average;
             mangaDto.bookmarks = await models_1.bookmarkModel
@@ -452,10 +448,10 @@ exports.MangaController = {
     getMangaTags: async () => {
         const tagAgg = [
             {
-                $match: {}
-            }
+                $match: {},
+            },
         ];
-        let mangaTags = await (models_1.tagModel.aggregate(tagAgg).exec())[0];
+        let mangaTags = await models_1.tagModel.aggregate(tagAgg).exec()[0];
         return mangaTags;
     },
     getMangasForCate: async (top, period = "all", _tags, undoneName) => {
@@ -465,11 +461,11 @@ exports.MangaController = {
             let aggregationStatements = [
                 {
                     $project: {
-                        _id: "$id"
+                        _id: "$id",
                     },
                 },
                 {
-                    $match: {}
+                    $match: {},
                 },
                 {
                     $sort: {
@@ -494,7 +490,8 @@ exports.MangaController = {
             }
             let mangasByTag = [];
             mangasByTag = await models_1.tagModel.aggregate(aggregationStatements).exec();
-            mangaDtos = (await models_1.mangaModel.find()
+            mangaDtos = (await models_1.mangaModel
+                .find()
                 .where("id")
                 .in(mangasByTag.map((v) => v._id))
                 .lean()

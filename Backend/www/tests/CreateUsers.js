@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const faker_1 = __importDefault(require("faker"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserModel_1 = require("../models/UserModel");
-const saltRound = 10;
+const EnvironmentConstants_1 = require("../constants/EnvironmentConstants");
+const saltRound = EnvironmentConstants_1.SALT;
 const normalUserNumber = 20;
-const defaultPassword = "meowmeow";
+const defaultPassword = "123";
 async function createFakeUsers(number, defaultPass) {
     let users = [];
     for (let i = 0; i < number; i++) {
@@ -25,6 +26,7 @@ async function createFakeUsers(number, defaultPass) {
 }
 try {
     createFakeUsers(normalUserNumber, defaultPassword).then(async (users) => {
+        // Create a boss
         let mod = {
             email: "18127084@student.hcmus.edu.vn",
             password: await bcrypt_1.default.hash(defaultPassword, saltRound),
@@ -34,8 +36,8 @@ try {
         };
         users.push(mod);
         console.log(users);
-        // await UserModel.insertMany(users);
-        // console.log(`Insert ${users.length} into DB`);
+        await UserModel_1.userModel.insertMany(users);
+        console.log(`Insert ${users.length} into DB`);
     });
 }
 catch (error) {

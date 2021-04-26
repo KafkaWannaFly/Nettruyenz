@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const faker_1 = require("faker");
 const ChapterModel_1 = require("../models/ChapterModel");
 const MangaChapterViewModel_1 = require("../models/MangaChapterViewModel");
+const Util_1 = require("./Util");
 async function createFakeViews() {
     let chaptersDoc = await ChapterModel_1.chapterModel.find({}).lean().exec();
     let chapters = chaptersDoc.map((v, i) => {
@@ -11,12 +12,13 @@ async function createFakeViews() {
     console.log(`Found ${chapters.length} chapters`);
     for (let i = 0; i < chapters.length; i++) {
         let viewCount = faker_1.random.number(100);
-        // chapters[i].views = viewCount;
         let views = [];
+        let user = await Util_1.getRandomUser();
         for (let count = 0; count < viewCount; count++) {
             let view = {
                 chapter: chapters[i].id,
                 manga: chapters[i].manga,
+                email: user.email,
             };
             views.push(view);
         }

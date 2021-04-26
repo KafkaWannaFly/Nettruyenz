@@ -1,9 +1,11 @@
 import { random } from "faker";
+import { User, userModel } from "../models";
 import { Chapter, chapterModel } from "../models/ChapterModel";
 import {
 	MangaChapterView,
 	mangaChapterViewModel,
 } from "../models/MangaChapterViewModel";
+import { getRandomUser } from "./Util";
 
 async function createFakeViews() {
 	let chaptersDoc = await chapterModel.find({}).lean().exec();
@@ -14,13 +16,14 @@ async function createFakeViews() {
 
 	for (let i = 0; i < chapters.length; i++) {
 		let viewCount = random.number(100);
-		// chapters[i].views = viewCount;
 
 		let views: MangaChapterView[] = [];
+		let user = await getRandomUser();
 		for (let count = 0; count < viewCount; count++) {
 			let view: MangaChapterView = {
 				chapter: chapters[i].id!,
 				manga: chapters[i].manga!,
+				email: user.email,
 			};
 
 			views.push(view);

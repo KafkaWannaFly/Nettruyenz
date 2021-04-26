@@ -48,7 +48,8 @@ app.use("/sign-in", signInRoute);
 app.use("/forgot-password", forgotPasswordRoute);
 
 app.use("/mangas", mangaRoute);
-app.use('/categories', cateRoute);
+
+app.use("/categories", cateRoute);
 
 app.use("/tags", tagRoute);
 
