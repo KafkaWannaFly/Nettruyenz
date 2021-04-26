@@ -449,7 +449,83 @@ exports.MangaController = {
             console.error(e);
         }
     },
+    getMangaTags: async () => {
+        const tagAgg = [
+            {
+                $match: {}
+            }
+        ];
+        let mangaTags = await (models_1.tagModel.aggregate(tagAgg).exec())[0];
+        return mangaTags;
+    },
+    getMangasForCate: async (top, period = "all", _tags, undoneName) => {
+        try {
+            // Find tag
+            // let listAuthors = getAuthor(undoneName);
+            let aggregationStatements = [
+                {
+                    $project: {
+                        _id: "$id"
+                    },
+                },
+                {
+                    $match: {}
+                },
+                {
+                    $sort: {
+                        average: -1,
+                    },
+                },
+                {
+                    $limit: top,
+                },
+            ];
+            let mangaDtos = [];
+            if (period === "weekly") {
+                let weeklyFilter = getWeeklyFilter();
+                aggregationStatements = [weeklyFilter, ...aggregationStatements];
+            }
+            else if (period === "monthly") {
+                let monthlyFilter = getMonthlyFilter();
+                aggregationStatements = [monthlyFilter, ...aggregationStatements];
+            }
+            else {
+                // Have nothing to do here :))
+            }
+            let mangasByTag = [];
+            mangasByTag = await models_1.tagModel.aggregate(aggregationStatements).exec();
+            mangaDtos = (await models_1.mangaModel.find()
+                .where("id")
+                .in(mangasByTag.map((v) => v._id))
+                .lean()
+                .exec()).map((manga) => {
+                return manga;
+            });
+            return mangaDtos.sort((a, b) => {
+                if (b.newestChapter?.createdAt === undefined ||
+                    a.newestChapter?.createdAt === undefined) {
+                    return -1;
+                }
+                return (b.newestChapter.createdAt.getSeconds() -
+                    a.newestChapter.createdAt?.getSeconds());
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
 };
+// async function getAuthor(words:string) {
+// 	const nameAgg = [{
+// 		$match:{
+// 			name: {
+// 				$regex: `.*${words}.*`
+// 			}
+// 		}
+// 	}];
+// 	let authors = (await CreatorModel.aggregate(nameAgg).exec())[0];
+// 	return authors[0];
+// }
 async function getMangaRating(id) {
     const rateAgg = [
         {

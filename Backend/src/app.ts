@@ -10,6 +10,7 @@ import { initPassport } from "../middlewares/PassportConfig";
 import forgotPasswordRoute from "../routes/ForgotPassword";
 import homeRouter from "../routes/Home.route";
 import mangaRoute from "../routes/Mangas.route";
+import cateRoute from "../routes/Categories.route";
 import signInRoute from "../routes/SignIn.route";
 import signUpRoute from "../routes/SignUp.route";
 import tagRoute from "../routes/Tag.route";
@@ -47,6 +48,7 @@ app.use("/sign-in", signInRoute);
 app.use("/forgot-password", forgotPasswordRoute);
 
 app.use("/mangas", mangaRoute);
+app.use('/categories', cateRoute);
 
 app.use("/tags", tagRoute);
 
