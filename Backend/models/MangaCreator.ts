@@ -17,4 +17,4 @@ export interface MangaCreator {
 	creator: string; // creator name
 }
 
-// export interface MangaCreatorDto extends MangaCreator {}
+export interface MangaCreatorDto extends MangaCreator {}

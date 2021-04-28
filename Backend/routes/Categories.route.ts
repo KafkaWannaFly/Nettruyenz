@@ -21,14 +21,14 @@ router.get("/find-manga", async (req, res) => {
     let tags = req.query.tags as string[];
     let authName = req.query.author as string;
 
-    let mangas = MangaController.getMangasForCate(16, timePeriod, tags, authName);
+    let mangas = MangaController.getMangasForCate(16, tags, authName);
     res.json(mangas);
 })
 
-router.get("/get-tags", async(req,res) => {
-    let tags = MangaController.getMangaTags;
-    res.json(tags);
-})
+// router.get("/get-tags", async(req,res) => {
+//     let tags = MangaController.getMangaTags;
+//     res.json(tags);
+// })
 
 const cateRoute = router;
 

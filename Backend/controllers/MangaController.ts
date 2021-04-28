@@ -9,8 +9,13 @@ import {
 	mangaChapterViewModel,
 	mangaModel,
 	mangaRateModel,
-	tagModel,
+	mangaTagModel,
+	mangaCreatorModel,
+	creatorModel,
+	MangaCreator,
+	MangaTagDto,
 } from "../models";
+import { MangaCreatorDto } from "../models/MangaCreator";
 
 export const MangaController = {
 	/**
@@ -546,71 +551,147 @@ export const MangaController = {
 		}
 	},
 
-	getMangaTags: async () => {
-		const tagAgg = [
-			{
-				$match: {},
-			},
-		];
+	// getMangaTags: async () => {
+	// 	const tagAgg = [
+	// 		{
+	// 			$match: {},
+	// 		},
+	// 	];
 
-		let mangaTags = await tagModel.aggregate(tagAgg).exec()[0];
-		return mangaTags;
-	},
+	// 	let mangaTags = await tagModel.aggregate(tagAgg).exec()[0];
+	// 	return mangaTags;
+	// },
 
 	getMangasForCate: async (
 		top: number,
-		period: string = "all",
-		_tags: string[],
+		tags: string[],
 		undoneName: string
 	) => {
 		try {
 			// Find tag
 			// let listAuthors = getAuthor(undoneName);
-
-			let aggregationStatements: any[] = [
+			let mangaCreatorAgg = [
 				{
 					$project: {
-						_id: "$id",
+						_id:"$manga",
 					},
-				},
-				{
-					$match: {},
-				},
-				{
-					$sort: {
-						average: -1,
+					$match: {
+						creator: {
+							$regex: `.*${undoneName}.*`
+						}
 					},
-				},
-				{
-					$limit: top,
-				},
+				}
 			];
 
-			let mangaDtos: BriefMangaDto[] = [];
+			let creator: MangaCreatorDto[] = await mangaCreatorModel
+				.aggregate(mangaCreatorAgg)
+				.exec()[0];
 
-			if (period === "weekly") {
-				let weeklyFilter = getWeeklyFilter();
-				aggregationStatements = [weeklyFilter, ...aggregationStatements];
-			} else if (period === "monthly") {
-				let monthlyFilter = getMonthlyFilter();
-				aggregationStatements = [monthlyFilter, ...aggregationStatements];
-			} else {
-				// Have nothing to do here :))
+			let getTags: MangaTagDto[] = await mangaTagModel
+				.aggregate([
+					{
+						$match: {}
+					}
+				])
+				.exec();
+
+			for (let i = 0; i < tags.length; i++){
+				let mangaTagsAgg = [
+					{
+						$project: {
+							_id: "$manga",
+						},
+						$match: {
+							tag: `.*${tags[i]}.*`
+						},
+					}
+				];
+
+				let tempTagsList: MangaTagDto[] = await mangaTagModel
+					.aggregate(mangaTagsAgg)
+					.exec();
+
+				let anotherTempList: MangaTagDto[] = [];
+				for (let each1 of getTags){
+					for (let each2 of tempTagsList){
+						if (each1.manga === each2.manga){
+							anotherTempList.push(each1);
+							break;
+						}
+					}
+				}
+
+				getTags = [];
+				anotherTempList.forEach(element => {
+					getTags.push(element);
+				});
 			}
 
-			let mangasByTag = [];
-			mangasByTag = await tagModel.aggregate(aggregationStatements).exec();
+			let listMangaNeed: string[] = []
+			for (let each1 of creator){
+				for (let each2 of getTags){
+					if (each1.manga === each2.manga){
+						listMangaNeed.push(each1.manga)
+						break
+					}
+				}
+			}
+			
+			let mangaDtos: BriefMangaDto[] = [];
 
-			mangaDtos = (
-				await mangaModel
-					.find()
-					.where("id")
-					.in(mangasByTag.map((v: any) => v._id))
-					.lean()
-					.exec()
-			).map((manga) => {
-				return manga as BriefMangaDto;
-			});
+			let i = 0;
+
+			for(let each of listMangaNeed){
+				let aggregationStatements: any[] = [
+					{
+						$project: {
+							_id: "$id",
+						},
+					},
+					{
+						$match: {
+							_id: each
+						},
+					},
+					{
+						$sort: {
+							average: -1,
+						},
+					},
+					{
+						$limit: top,
+					},
+				];
+
+				mangaDtos[i] = await mangaModel.aggregate(aggregationStatements).exec();
+				i++
+				
+			}
+
+			for (let i = 0; i < mangaDtos.length; i++) {
+				mangaDtos[i].newestChapter = ((
+					await chapterModel
+						.find({ manga: mangaDtos[i].id })
+						.sort({ index: -1 })
+						.limit(1)
+				)[0] as unknown) as ChapterDto;
+
+				mangaDtos[i].averageRate = (
+					await getMangaRating(mangaDtos[i].id)
+				).average;
+
+				mangaDtos[i].views = await mangaChapterViewModel
+					.find({ manga: mangaDtos[i].id })
+					.countDocuments()
+					.exec();
+
+				mangaDtos[i].bookmarks = await bookmarkModel
+					.find({
+						manga: mangaDtos[i].id,
+					})
+					.countDocuments()
+					.exec();
+			}
 
 			return mangaDtos.sort((a, b) => {
 				if (
