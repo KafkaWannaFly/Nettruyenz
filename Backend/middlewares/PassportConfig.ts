@@ -4,7 +4,7 @@ import passportType from "passport";
 import passportJWT from "passport-jwt";
 import passportLocal from "passport-local";
 import { SALT, SECRET } from "../constants/EnvironmentConstants";
-import { UserController } from "../controllers/UserController";
+import { userController } from "../controllers/UserController";
 import { User, UserLevel, userModel } from "../models";
 dotenv.config();
 
@@ -18,7 +18,7 @@ export function initPassport(passport: typeof passportType) {
 	});
 
 	passport.deserializeUser(async (email: string, done) => {
-		let user = await UserController.getUserAsync(email);
+		let user = await userController.getUserAsync(email);
 		done(null, user);
 	});
 
@@ -33,7 +33,7 @@ export function initPassport(passport: typeof passportType) {
 			},
 			async (req, email, password, done) => {
 				try {
-					let user = await UserController.getUserAsync(email);
+					let user = await userController.getUserAsync(email);
 					if (user === undefined) {
 						console.log(`Login fail. Can't find user`);
 
@@ -92,7 +92,7 @@ export function initPassport(passport: typeof passportType) {
 						)}`
 					);
 
-					if (await UserController.registerUserAsync(user)) {
+					if (await userController.registerUserAsync(user)) {
 						console.log(`Sign up successully. Welcome, ${user.email}`);
 
 						done(null, user);
@@ -126,10 +126,6 @@ export function initPassport(passport: typeof passportType) {
 			},
 			async (jwtPayload, done) => {
 				try {
-					console.log(
-						`JWT authorization. Payload: ${JSON.stringify(jwtPayload, null, 4)}`
-					);
-
 					let user = ((await userModel
 						.findOne({
 							email: jwtPayload.email,

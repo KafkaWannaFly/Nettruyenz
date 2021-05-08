@@ -20,7 +20,7 @@ function initPassport(passport) {
         done(null, myUser.email);
     });
     passport.deserializeUser(async (email, done) => {
-        let user = await UserController_1.UserController.getUserAsync(email);
+        let user = await UserController_1.userController.getUserAsync(email);
         done(null, user);
     });
     // local-signin
@@ -30,7 +30,7 @@ function initPassport(passport) {
         passReqToCallback: true,
     }, async (req, email, password, done) => {
         try {
-            let user = await UserController_1.UserController.getUserAsync(email);
+            let user = await UserController_1.userController.getUserAsync(email);
             if (user === undefined) {
                 console.log(`Login fail. Can't find user`);
                 return done({
@@ -68,7 +68,7 @@ function initPassport(passport) {
                 level: models_1.UserLevel.normal,
             };
             console.log(`Sign up request. Create an account.\n${JSON.stringify(user, null, 4)}`);
-            if (await UserController_1.UserController.registerUserAsync(user)) {
+            if (await UserController_1.userController.registerUserAsync(user)) {
                 console.log(`Sign up successully. Welcome, ${user.email}`);
                 done(null, user);
             }
@@ -91,7 +91,6 @@ function initPassport(passport) {
         secretOrKey: EnvironmentConstants_1.SECRET,
     }, async (jwtPayload, done) => {
         try {
-            console.log(`JWT authorization. Payload: ${JSON.stringify(jwtPayload, null, 4)}`);
             let user = (await models_1.userModel
                 .findOne({
                 email: jwtPayload.email,

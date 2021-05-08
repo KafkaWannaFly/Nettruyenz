@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserLevel = exports.userModel = void 0;
+exports.userDtoOf = exports.UserLevel = exports.userModel = void 0;
 const Preloader_1 = __importDefault(require("./Preloader"));
 const Schema = Preloader_1.default.Schema;
 const Id = Schema.Types.ObjectId;
@@ -27,3 +27,14 @@ var UserLevel;
     UserLevel[UserLevel["normal"] = 0] = "normal";
     UserLevel[UserLevel["moderator"] = 1] = "moderator";
 })(UserLevel = exports.UserLevel || (exports.UserLevel = {}));
+function userDtoOf(user) {
+    const userDto = {
+        email: user.email,
+        level: user.level,
+        nickname: user.nickname,
+        avatar: user.avatar,
+        password: user.password,
+    };
+    return userDto;
+}
+exports.userDtoOf = userDtoOf;

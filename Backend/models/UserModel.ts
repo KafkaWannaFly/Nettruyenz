@@ -1,7 +1,7 @@
-import { BookmarkDto } from "./BookmarkModel";
+import { Bookmark, BookmarkDto } from "./BookmarkModel";
 import { Group } from "./GroupModel";
 import mongoose from "./Preloader";
-import { MangaRate } from "./MangaRateModel";
+import { MangaRate, MangaRateDto } from "./MangaRateModel";
 import { MangaChapterView } from "./MangaChapterViewModel";
 
 const Schema = mongoose.Schema;
@@ -43,8 +43,20 @@ export interface User {
 
 export interface UserDto extends User {
 	groups?: Group[];
-	bookmarks?: BookmarkDto[];
+	bookmarks?: Bookmark[];
 	history?: MangaChapterView[];
 	notifications?: Notification[];
-	ratesMade?: MangaRate[];
+	ratesMade?: MangaRateDto[];
+}
+
+export function userDtoOf(user: User): UserDto {
+	const userDto: UserDto = {
+		email: user.email,
+		level: user.level,
+		nickname: user.nickname,
+		avatar: user.avatar,
+		password: user.password,
+	};
+
+	return userDto;
 }

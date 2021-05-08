@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
+exports.userController = void 0;
 const models_1 = require("../models");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const EnvironmentConstants_1 = require("../constants/EnvironmentConstants");
-exports.UserController = {
+exports.userController = {
     /**
      * Find user by username
      * @param email Username
@@ -29,7 +29,7 @@ exports.UserController = {
      */
     registerUserAsync: async (user) => {
         try {
-            let existedUser = await exports.UserController.getUserAsync(user.email);
+            let existedUser = await exports.userController.getUserAsync(user.email);
             if (existedUser !== undefined) {
                 return false;
             }
@@ -43,9 +43,49 @@ exports.UserController = {
         return false;
     },
     resetUserPasswordAsync: async (email, newPassword) => {
-        const user = (await exports.UserController.getUserAsync(email));
+        const user = (await exports.userController.getUserAsync(email));
         user.password = await bcrypt_1.default.hash(newPassword, EnvironmentConstants_1.SALT);
         await models_1.userModel.updateOne({ email: email }, user).exec();
         return user;
+    },
+    getUserBookmarks: async (email) => {
+        const agg = [
+            {
+                $match: {
+                    email: email,
+                },
+            },
+        ];
+        const bookmarks = await models_1.bookmarkModel.aggregate(agg).exec();
+        return bookmarks;
+    },
+    getUserRatesMade: async (email) => {
+        const agg = [
+            {
+                $match: {
+                    email: email,
+                },
+            },
+        ];
+        const ratesMade = await models_1.mangaRateModel.aggregate(agg).exec();
+        return ratesMade;
+    },
+    getUserViewedChapters: async (email) => {
+        const agg = [
+            {
+                $match: {
+                    email: email,
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
+        ];
+        const mangaChapterViews = await models_1.mangaChapterViewModel
+            .aggregate(agg)
+            .exec();
+        return mangaChapterViews;
     },
 };

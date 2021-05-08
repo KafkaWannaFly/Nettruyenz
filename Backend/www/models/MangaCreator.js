@@ -11,4 +11,3 @@ const mangaCreatorSchema = new Schema({
     creator: String,
 });
 exports.mangaCreatorModel = Preloader_1.default.model("manga-creator", mangaCreatorSchema);
-// export interface MangaCreatorDto extends MangaCreator {}

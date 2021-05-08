@@ -19,7 +19,7 @@ import {
 import { Otp, otpModel } from "./OtpModel";
 import { MangaRate, MangaRateDto, mangaRateModel } from "./MangaRateModel";
 import { Tag, TagDto, tagModel } from "./TagModel";
-import { User, UserDto, UserLevel, userModel } from "./UserModel";
+import { User, UserDto, userDtoOf, UserLevel, userModel } from "./UserModel";
 import {
 	MangaChapterView,
 	MangaChapterViewDto,
@@ -87,4 +87,5 @@ export {
 	User,
 	UserDto,
 	UserLevel,
+	userDtoOf,
 };

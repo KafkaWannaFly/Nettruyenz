@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
-import { UserDto } from "../models";
+import { userController } from "../controllers/UserController";
+import { User, UserDto, userDtoOf } from "../models";
 
 const route = express.Router();
 
@@ -10,7 +11,17 @@ route.get(
 		session: false,
 	}),
 	async (req, res) => {
-		res.json(req.headers);
+		const user = req.user as User;
+
+		let userDto: UserDto = userDtoOf(user);
+
+		userDto.bookmarks = await userController.getUserBookmarks(userDto.email);
+
+		userDto.ratesMade = await userController.getUserRatesMade(userDto.email);
+
+		userDto.history = await userController.getUserViewedChapters(userDto.email);
+
+		res.json(userDto);
 	}
 );
 

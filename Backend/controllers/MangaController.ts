@@ -562,25 +562,21 @@ export const MangaController = {
 	// 	return mangaTags;
 	// },
 
-	getMangasForCate: async (
-		top: number,
-		tags: string[],
-		undoneName: string
-	) => {
+	getMangasForCate: async (top: number, tags: string[], undoneName: string) => {
 		try {
 			// Find tag
 			// let listAuthors = getAuthor(undoneName);
 			let mangaCreatorAgg = [
 				{
 					$project: {
-						_id:"$manga",
+						_id: "$manga",
 					},
 					$match: {
 						creator: {
-							$regex: `.*${undoneName}.*`
-						}
+							$regex: `.*${undoneName}.*`,
+						},
 					},
-				}
+				},
 			];
 
 			let creator: MangaCreatorDto[] = await mangaCreatorModel
@@ -590,21 +586,21 @@ export const MangaController = {
 			let getTags: MangaTagDto[] = await mangaTagModel
 				.aggregate([
 					{
-						$match: {}
-					}
+						$match: {},
+					},
 				])
 				.exec();
 
-			for (let i = 0; i < tags.length; i++){
+			for (let i = 0; i < tags.length; i++) {
 				let mangaTagsAgg = [
 					{
 						$project: {
 							_id: "$manga",
 						},
 						$match: {
-							tag: `.*${tags[i]}.*`
+							tag: `.*${tags[i]}.*`,
 						},
-					}
+					},
 				];
 
 				let tempTagsList: MangaTagDto[] = await mangaTagModel
@@ -612,9 +608,9 @@ export const MangaController = {
 					.exec();
 
 				let anotherTempList: MangaTagDto[] = [];
-				for (let each1 of getTags){
-					for (let each2 of tempTagsList){
-						if (each1.manga === each2.manga){
+				for (let each1 of getTags) {
+					for (let each2 of tempTagsList) {
+						if (each1.manga === each2.manga) {
 							anotherTempList.push(each1);
 							break;
 						}
@@ -622,26 +618,26 @@ export const MangaController = {
 				}
 
 				getTags = [];
-				anotherTempList.forEach(element => {
+				anotherTempList.forEach((element) => {
 					getTags.push(element);
 				});
 			}
 
-			let listMangaNeed: string[] = []
-			for (let each1 of creator){
-				for (let each2 of getTags){
-					if (each1.manga === each2.manga){
-						listMangaNeed.push(each1.manga)
-						break
+			let listMangaNeed: string[] = [];
+			for (let each1 of creator) {
+				for (let each2 of getTags) {
+					if (each1.manga === each2.manga) {
+						listMangaNeed.push(each1.manga);
+						break;
 					}
 				}
 			}
-			
+
 			let mangaDtos: BriefMangaDto[] = [];
 
 			let i = 0;
 
-			for(let each of listMangaNeed){
+			for (let each of listMangaNeed) {
 				let aggregationStatements: any[] = [
 					{
 						$project: {
@@ -650,7 +646,7 @@ export const MangaController = {
 					},
 					{
 						$match: {
-							_id: each
+							_id: each,
 						},
 					},
 					{
@@ -664,8 +660,7 @@ export const MangaController = {
 				];
 
 				mangaDtos[i] = await mangaModel.aggregate(aggregationStatements).exec();
-				i++
-				
+				i++;
 			}
 
 			for (let i = 0; i < mangaDtos.length; i++) {

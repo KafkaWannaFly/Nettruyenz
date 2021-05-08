@@ -34,7 +34,7 @@ route.post("/", async (req, res) => {
         const { email, code, newPassword } = req.body;
         const isSuccess = await OtpController_1.OtpController.verifyOtp(email, code);
         if (isSuccess) {
-            const user = (await UserController_1.UserController.resetUserPasswordAsync(email, newPassword));
+            const user = (await UserController_1.userController.resetUserPasswordAsync(email, newPassword));
             res.json(user);
         }
         else {

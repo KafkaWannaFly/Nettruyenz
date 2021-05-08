@@ -1,6 +1,6 @@
 import express from "express";
 import { OtpController } from "../controllers/OtpController";
-import { UserController } from "../controllers/UserController";
+import { userController } from "../controllers/UserController";
 import { UserDto } from "../models";
 import { otpService } from "../services/OtpService";
 
@@ -38,7 +38,7 @@ route.post("/", async (req, res) => {
 		const isSuccess = await OtpController.verifyOtp(email, code);
 
 		if (isSuccess) {
-			const user: UserDto = (await UserController.resetUserPasswordAsync(
+			const user: UserDto = (await userController.resetUserPasswordAsync(
 				email,
 				newPassword
 			)) as UserDto;

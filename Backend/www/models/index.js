@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserLevel = exports.userModel = exports.mangaChapterViewModel = exports.mangaTagModel = exports.tagModel = exports.mangaRateModel = exports.otpModel = exports.notificationModel = exports.groupMemberModel = exports.groupModel = exports.creatorModel = exports.userCommentModel = exports.chapterModel = exports.bookmarkModel = exports.mangaCreatorModel = exports.mangaModel = void 0;
+exports.userDtoOf = exports.UserLevel = exports.userModel = exports.mangaChapterViewModel = exports.mangaTagModel = exports.tagModel = exports.mangaRateModel = exports.otpModel = exports.notificationModel = exports.groupMemberModel = exports.groupModel = exports.creatorModel = exports.userCommentModel = exports.chapterModel = exports.bookmarkModel = exports.mangaCreatorModel = exports.mangaModel = void 0;
 const BookmarkModel_1 = require("./BookmarkModel");
 Object.defineProperty(exports, "bookmarkModel", { enumerable: true, get: function () { return BookmarkModel_1.bookmarkModel; } });
 const ChapterModel_1 = require("./ChapterModel");
@@ -26,6 +26,7 @@ Object.defineProperty(exports, "mangaRateModel", { enumerable: true, get: functi
 const TagModel_1 = require("./TagModel");
 Object.defineProperty(exports, "tagModel", { enumerable: true, get: function () { return TagModel_1.tagModel; } });
 const UserModel_1 = require("./UserModel");
+Object.defineProperty(exports, "userDtoOf", { enumerable: true, get: function () { return UserModel_1.userDtoOf; } });
 Object.defineProperty(exports, "UserLevel", { enumerable: true, get: function () { return UserModel_1.UserLevel; } });
 Object.defineProperty(exports, "userModel", { enumerable: true, get: function () { return UserModel_1.userModel; } });
 const MangaChapterViewModel_1 = require("./MangaChapterViewModel");

@@ -445,59 +445,121 @@ exports.MangaController = {
             console.error(e);
         }
     },
-    getMangaTags: async () => {
-        const tagAgg = [
-            {
-                $match: {},
-            },
-        ];
-        let mangaTags = await models_1.tagModel.aggregate(tagAgg).exec()[0];
-        return mangaTags;
-    },
-    getMangasForCate: async (top, period = "all", _tags, undoneName) => {
+    // getMangaTags: async () => {
+    // 	const tagAgg = [
+    // 		{
+    // 			$match: {},
+    // 		},
+    // 	];
+    // 	let mangaTags = await tagModel.aggregate(tagAgg).exec()[0];
+    // 	return mangaTags;
+    // },
+    getMangasForCate: async (top, tags, undoneName) => {
         try {
             // Find tag
             // let listAuthors = getAuthor(undoneName);
-            let aggregationStatements = [
+            let mangaCreatorAgg = [
                 {
                     $project: {
-                        _id: "$id",
+                        _id: "$manga",
+                    },
+                    $match: {
+                        creator: {
+                            $regex: `.*${undoneName}.*`,
+                        },
                     },
                 },
+            ];
+            let creator = await models_1.mangaCreatorModel
+                .aggregate(mangaCreatorAgg)
+                .exec()[0];
+            let getTags = await models_1.mangaTagModel
+                .aggregate([
                 {
                     $match: {},
                 },
-                {
-                    $sort: {
-                        average: -1,
+            ])
+                .exec();
+            for (let i = 0; i < tags.length; i++) {
+                let mangaTagsAgg = [
+                    {
+                        $project: {
+                            _id: "$manga",
+                        },
+                        $match: {
+                            tag: `.*${tags[i]}.*`,
+                        },
                     },
-                },
-                {
-                    $limit: top,
-                },
-            ];
+                ];
+                let tempTagsList = await models_1.mangaTagModel
+                    .aggregate(mangaTagsAgg)
+                    .exec();
+                let anotherTempList = [];
+                for (let each1 of getTags) {
+                    for (let each2 of tempTagsList) {
+                        if (each1.manga === each2.manga) {
+                            anotherTempList.push(each1);
+                            break;
+                        }
+                    }
+                }
+                getTags = [];
+                anotherTempList.forEach((element) => {
+                    getTags.push(element);
+                });
+            }
+            let listMangaNeed = [];
+            for (let each1 of creator) {
+                for (let each2 of getTags) {
+                    if (each1.manga === each2.manga) {
+                        listMangaNeed.push(each1.manga);
+                        break;
+                    }
+                }
+            }
             let mangaDtos = [];
-            if (period === "weekly") {
-                let weeklyFilter = getWeeklyFilter();
-                aggregationStatements = [weeklyFilter, ...aggregationStatements];
+            let i = 0;
+            for (let each of listMangaNeed) {
+                let aggregationStatements = [
+                    {
+                        $project: {
+                            _id: "$id",
+                        },
+                    },
+                    {
+                        $match: {
+                            _id: each,
+                        },
+                    },
+                    {
+                        $sort: {
+                            average: -1,
+                        },
+                    },
+                    {
+                        $limit: top,
+                    },
+                ];
+                mangaDtos[i] = await models_1.mangaModel.aggregate(aggregationStatements).exec();
+                i++;
             }
-            else if (period === "monthly") {
-                let monthlyFilter = getMonthlyFilter();
-                aggregationStatements = [monthlyFilter, ...aggregationStatements];
+            for (let i = 0; i < mangaDtos.length; i++) {
+                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                    .find({ manga: mangaDtos[i].id })
+                    .sort({ index: -1 })
+                    .limit(1))[0];
+                mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
+                mangaDtos[i].views = await models_1.mangaChapterViewModel
+                    .find({ manga: mangaDtos[i].id })
+                    .countDocuments()
+                    .exec();
+                mangaDtos[i].bookmarks = await models_1.bookmarkModel
+                    .find({
+                    manga: mangaDtos[i].id,
+                })
+                    .countDocuments()
+                    .exec();
             }
-            else {
-                // Have nothing to do here :))
-            }
-            let mangasByTag = [];
-            mangasByTag = await models_1.tagModel.aggregate(aggregationStatements).exec();
-            mangaDtos = (await models_1.mangaModel
-                .find()
-                .where("id")
-                .in(mangasByTag.map((v) => v._id))
-                .lean()
-                .exec()).map((manga) => {
-                return manga;
-            });
             return mangaDtos.sort((a, b) => {
                 if (b.newestChapter?.createdAt === undefined ||
                     a.newestChapter?.createdAt === undefined) {

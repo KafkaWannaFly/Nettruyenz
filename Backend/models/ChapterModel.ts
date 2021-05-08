@@ -26,8 +26,6 @@ export interface Chapter {
 	index?: number;
 	tittle?: string;
 	uploader?: string;
-	// views?: number;
-	// group?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
