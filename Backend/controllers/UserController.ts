@@ -91,6 +91,7 @@ export const userController = {
 			{
 				$match: {
 					email: email,
+					isDeleted: false,
 				},
 			},
 			{

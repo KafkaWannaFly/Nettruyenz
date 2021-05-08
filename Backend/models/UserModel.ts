@@ -46,7 +46,7 @@ export interface UserDto extends User {
 	bookmarks?: Bookmark[];
 	history?: MangaChapterView[];
 	notifications?: Notification[];
-	ratesMade?: MangaRateDto[];
+	ratesMade?: MangaRate[];
 }
 
 export function userDtoOf(user: User): UserDto {

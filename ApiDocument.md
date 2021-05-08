@@ -362,6 +362,66 @@ Trả về `UserDto` nếu nhập đúng. Tin nhắn thông báo nếu nhập sa
 }
 ```
 
+## User
+
+Nằm ở `hostname/user/`
+
+### Route mặc định
+
+#### Get
+
+Yêu cầu phải đăng là người dùng đã đăng nhập.
+
+Tại header của request cần trường `Authorization` với giá trị là `Bearer <token>`
+
+Trả về `UserDto` object chứa những thông tin liên quan đến người dùng đã đăng nhập.
+
+```json
+{
+	"email": "18127084@student.hcmus.edu.vn",
+	"level": 1,
+	"nickname": "Kafka Wanna Fly",
+	"avatar": "https://en.gravatar.com/userimage/160211096/bb2f6fdf53965cbc01bb4c2f7e8c320d.jpg?size=200",
+	"password": "$2b$10$Z3WdvKHVvb/LjJmvdi6kA.hlw4v9E1Cgdn5s.OjFkRbA9VF.v9xky",
+	"bookmarks": [
+		{
+			"_id": "6086d781ea2a040ef860a30e",
+			"manga": "33",
+			"email": "18127084@student.hcmus.edu.vn",
+			"__v": 0,
+			"createdAt": "2021-04-26T15:08:49.805Z",
+			"updatedAt": "2021-04-26T15:08:49.805Z"
+		},
+        // Many more
+	],
+	"ratesMade": [
+		{
+			"_id": "6086d8179c3b811d04339d74",
+			"manga": "16",
+			"rate": 1,
+			"email": "18127084@student.hcmus.edu.vn",
+			"isDeleted": false,
+			"__v": 0,
+			"createdAt": "2021-04-26T15:11:19.403Z",
+			"updatedAt": "2021-04-26T15:11:19.403Z"
+		},
+        // Many more
+	],
+    "history": [
+		{
+			"_id": "6086d5f949dc6007704984b5",
+			"chapter": "40-384",
+			"manga": "40",
+			"email": "18127084@student.hcmus.edu.vn",
+			"__v": 0,
+			"createdAt": "2021-04-26T15:02:17.407Z",
+			"updatedAt": "2021-04-26T15:02:17.407Z"
+		},
+        // Many more
+	]
+}
+```
+
 
 
 ## Data Transfer Objects (DTOs)
@@ -444,6 +504,64 @@ interface CompletedMangaDto {
 ```typescript
 interface TagDto {
 	name: string;
+}
+```
+
+### UserDto
+
+```typescript
+interface UserDto {
+    email: string;
+	password: string;
+	nickname: string;
+	avatar?: string;
+	level: UserLevel;
+	createdAt?: Date;
+	groups?: Group[];
+	bookmarks?: Bookmark[];
+	history?: MangaChapterView[];
+	notifications?: Notification[];
+	ratesMade?: MangaRate[];
+}
+```
+
+### Bookmark
+
+```typescript
+interface Bookmark {
+	id?: string;
+	email: string;
+	manga: string;
+	isDelete?: boolean;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
+```
+
+### MangaChapterView
+
+```typescript
+interface MangaChapterView {
+	id?: string;
+	email: string;
+	manga: string;
+	chapter: string;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
+```
+
+### MangaRate
+
+```typescript
+interface MangaRate {
+	id?: string;
+	email: string;
+	manga: string;
+	rate: number;
+	isDeleted: boolean;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 ```
 

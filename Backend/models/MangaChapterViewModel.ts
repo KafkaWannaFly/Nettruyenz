@@ -20,7 +20,6 @@ export interface MangaChapterView {
 	email: string;
 	manga: string;
 	chapter: string;
-	// isDelete?: boolean;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
