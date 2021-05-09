@@ -16,12 +16,15 @@ router.get("/", async (req, res) => {
 })
 
 router.get("/find-manga", async (req, res) => {
-    let timePeriod = req.query.period === undefined ? req.query.period: "all";
+    let subPeriod = req.query.period === undefined ? req.query.period: "all";
 
     let tags = req.query.tags as string[];
     let authName = req.query.author as string;
+    let mangaTitle = req.query.title as string;
+    let sort = req.query.sort as string;
+    let order = req.query.status as string;
 
-    let mangas = MangaController.getMangasForCate(16, tags, authName);
+    let mangas = MangaController.getMangasForCate(tags, mangaTitle, authName, subPeriod, sort, order);
     res.json(mangas);
 })
 

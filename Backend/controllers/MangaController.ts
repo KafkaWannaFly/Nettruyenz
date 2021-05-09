@@ -551,26 +551,10 @@ export const MangaController = {
 		}
 	},
 
-	// getMangaTags: async () => {
-	// 	const tagAgg = [
-	// 		{
-	// 			$match: {},
-	// 		},
-	// 	];
-
-	// 	let mangaTags = await tagModel.aggregate(tagAgg).exec()[0];
-	// 	return mangaTags;
-	// },
-
-	getMangasForCate: async (top: number, tags: string[], undoneName: string) => {
+	getMangasForCate: async (tags: string[], title: string, undoneName: string, period: string = "all", sort: string, order: string) => {
 		try {
-			// Find tag
-			// let listAuthors = getAuthor(undoneName);
 			let mangaCreatorAgg = [
 				{
-					$project: {
-						_id: "$manga",
-					},
 					$match: {
 						creator: {
 							$regex: `.*${undoneName}.*`,
@@ -594,9 +578,6 @@ export const MangaController = {
 			for (let i = 0; i < tags.length; i++) {
 				let mangaTagsAgg = [
 					{
-						$project: {
-							_id: "$manga",
-						},
 						$match: {
 							tag: `.*${tags[i]}.*`,
 						},
@@ -640,24 +621,29 @@ export const MangaController = {
 			for (let each of listMangaNeed) {
 				let aggregationStatements: any[] = [
 					{
-						$project: {
-							_id: "$id",
+						$sort: {
+							updatedAt: -1,
 						},
 					},
 					{
 						$match: {
-							_id: each,
+							id: each,
 						},
 					},
 					{
-						$sort: {
-							average: -1,
+						$match: {
+							$regex: `.*${title}.*`,
 						},
-					},
-					{
-						$limit: top,
 					},
 				];
+
+				if (period === "weekly") {
+					let weeklyFilter = getWeeklyFilter();
+					aggregationStatements = [weeklyFilter, ...aggregationStatements];
+				} else if (period === "monthly") {
+					let monthlyFilter = getMonthlyFilter();
+					aggregationStatements = [monthlyFilter, ...aggregationStatements];
+				}
 
 				mangaDtos[i] = await mangaModel.aggregate(aggregationStatements).exec();
 				i++;
@@ -688,18 +674,80 @@ export const MangaController = {
 					.exec();
 			}
 
-			return mangaDtos.sort((a, b) => {
-				if (
-					b.newestChapter?.createdAt === undefined ||
-					a.newestChapter?.createdAt === undefined
-				) {
-					return -1;
+
+			if (sort === "View"){
+				if (order === "Descending"){
+					mangaDtos.sort((a, b) => {
+						if (b.views === undefined || a.views === undefined) {
+							return -1;
+						}
+						return b.views - a.views;
+					});
+				} else if (order === "Ascending") {
+					mangaDtos.sort((a, b) => {
+						if (b.views === undefined || a.views === undefined) {
+							return -1;
+						}
+						return a.views - b.views;
+					});
 				}
-				return (
-					b.newestChapter.createdAt.getSeconds() -
-					a.newestChapter.createdAt?.getSeconds()
-				);
-			});
+			} else if (sort === "Followed"){
+				if (order === "Descending"){
+					mangaDtos.sort((a, b) => {
+						if (b.bookmarks === undefined || a.bookmarks === undefined) {
+							return -1;
+						}
+						return b.bookmarks - a.bookmarks;
+					});
+				} else if (order === "Ascending") {
+					mangaDtos.sort((a, b) => {
+						if (b.bookmarks === undefined || a.bookmarks === undefined) {
+							return -1;
+						}
+						return a.bookmarks - b.bookmarks;
+					});
+				}
+			} else if (sort === "Rate"){
+				if (order === "Descending"){
+					mangaDtos.sort((a, b) => {
+						if (b.averageRate === undefined || a.averageRate === undefined) {
+							return -1;
+						}
+						return b.averageRate - a.averageRate;
+					});
+				} else if (order === "Ascending") {
+					mangaDtos.sort((a, b) => {
+						if (b.averageRate === undefined || a.averageRate === undefined) {
+							return -1;
+						}
+						return a.averageRate - b.averageRate;
+					});
+				}
+			} else if (sort === "Name"){
+				if (order === "Descending"){
+					mangaDtos.sort((a, b) => (a.names < b.names) ? 1 : -1);
+				} else if (order === "Ascending") {
+					mangaDtos.sort((a, b) => (a.names > b.names) ? 1 : -1);
+				}
+			} else if (sort === "Date"){
+				if (order === "Descending"){
+					mangaDtos.sort((a, b) => {
+						if (b.updatedAt === undefined || a.updatedAt === undefined) {
+							return -1;
+						}
+						return b.updatedAt.getSeconds() - a.updatedAt.getSeconds();
+					});
+				} else if (order === "Ascending"){
+					mangaDtos.sort((a, b) => {
+						if (b.createdAt === undefined || a.createdAt === undefined) {
+							return -1;
+						}
+						return - b.createdAt.getSeconds() + a.createdAt.getSeconds();
+					});
+				}
+			}
+
+			return mangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
