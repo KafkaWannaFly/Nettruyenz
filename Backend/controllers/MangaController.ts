@@ -474,6 +474,94 @@ export const MangaController = {
 		}
 	},
 
+	getAllRecentlyUploaded: async () => {
+		interface IRecentUploaded {
+			_id: string; //manga id
+			newestChapter: ChapterDto;
+		}
+
+		try {
+			let aggregationStatements: any[] = [
+				{
+					$sort: {
+						manga: 1,
+						updatedAt: 1,
+					},
+				},
+				{
+					$group: {
+						_id: "$manga",
+						date: {
+							$last: "$$ROOT.updatedAt",
+						},
+						newestChapter: {
+							$last: "$$ROOT",
+						},
+					},
+				},
+				{
+					$sort: {
+						date: -1,
+					},
+				},
+			];
+
+			// Get newest chapters
+			let recentUploadChapters: IRecentUploaded[] = await chapterModel
+				.aggregate(aggregationStatements)
+				.exec();
+
+			// Find its manga
+			let mangaDtos: BriefMangaDto[] = (
+				await mangaModel
+					.find()
+					.where("id")
+					.in(recentUploadChapters.map((v) => v._id))
+					.lean()
+					.exec()
+			).map((item) => item as BriefMangaDto);
+
+			// Fill the rest infomation
+			for (let i = 0; i < mangaDtos.length; i++) {
+				let recentUploadChapter = recentUploadChapters.find(
+					(item) => item._id == mangaDtos[i].id
+				);
+				mangaDtos[i].newestChapter = recentUploadChapter?.newestChapter;
+
+				mangaDtos[i].averageRate = (
+					await getMangaRating(mangaDtos[i].id)
+				).average;
+
+				mangaDtos[i].views = await mangaChapterViewModel
+					.find({ manga: mangaDtos[i].id })
+					.countDocuments()
+					.exec();
+
+				mangaDtos[i].bookmarks = await bookmarkModel
+					.find({
+						manga: mangaDtos[i].id,
+					})
+					.countDocuments()
+					.exec();
+			}
+
+			return mangaDtos.sort((a, b) => {
+				if (
+					b.newestChapter?.createdAt === undefined ||
+					a.newestChapter?.createdAt === undefined
+				) {
+					return -1;
+				}
+				return (
+					b.newestChapter.createdAt.getSeconds() -
+					a.newestChapter.createdAt?.getSeconds()
+				);
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	},
+
 	/**
 	 * Get one manga and all related data including views, bookmarks, comment
 	 * @param id Manga id
@@ -551,7 +639,40 @@ export const MangaController = {
 		}
 	},
 
+	getAllAuthor: async (author: string) => {
+		try{
+			let mangaCreatorAgg = [
+				{
+					$match: {
+						creator: {
+							$regex: `'.*${author}.*'`,
+						},
+					},
+				},
+			];
+
+			let creators: MangaCreatorDto[] = await mangaCreatorModel
+				.aggregate(mangaCreatorAgg)
+				.exec()[0];
+
+			return creators;
+		} catch (e) {
+			console.error(e);
+		}
+	},
+
 	getMangasForCate: async (tags: string[], title: string, undoneName: string, period: string = "all", sort: string, order: string) => {
+		if (tags === undefined){
+			tags = [];
+			tags.push("");
+		};
+
+		if (title === undefined)
+			title = "";
+
+		if (undoneName === undefined)
+			title = "";
+
 		try {
 			let mangaCreatorAgg = [
 				{
