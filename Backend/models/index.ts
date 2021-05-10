@@ -1,5 +1,16 @@
-import { Bookmark, BookmarkDto, bookmarkModel } from "./BookmarkModel";
-import { Chapter, ChapterDto, chapterModel } from "./ChapterModel";
+import {
+	Bookmark,
+	BookmarkDto,
+	bookmarkDtoOf,
+	bookmarkModel,
+} from "./BookmarkModel";
+import {
+	BriefChapterDto,
+	briefChapterDtoOf,
+	Chapter,
+	ChapterDto,
+	chapterModel,
+} from "./ChapterModel";
 import { CommentDto, userCommentModel, UserComment } from "./UserCommentModel";
 import { Creator, CreatorDto, creatorModel } from "./CreatorModel";
 import { GroupMember, GroupMemberDto, groupMemberModel } from "./GroupMember";
@@ -17,12 +28,18 @@ import {
 	UserNotificationDto,
 } from "./UserNotificationModel";
 import { Otp, otpModel } from "./OtpModel";
-import { MangaRate, MangaRateDto, mangaRateModel } from "./MangaRateModel";
+import {
+	MangaRate,
+	MangaRateDto,
+	mangaRateDtoOf,
+	mangaRateModel,
+} from "./MangaRateModel";
 import { Tag, TagDto, tagModel } from "./TagModel";
 import { User, UserDto, userDtoOf, UserLevel, userModel } from "./UserModel";
 import {
 	MangaChapterView,
 	MangaChapterViewDto,
+	mangaChapterViewDtoOf,
 	mangaChapterViewModel,
 } from "./MangaChapterViewModel";
 import { MangaTag, MangaTagDto, mangaTagModel } from "./MangaTagModel";
@@ -39,10 +56,13 @@ export {
 	bookmarkModel,
 	Bookmark,
 	BookmarkDto,
+	bookmarkDtoOf,
 	//
 	chapterModel,
 	Chapter,
 	ChapterDto,
+	BriefChapterDto,
+	briefChapterDtoOf,
 	//
 	userCommentModel,
 	UserComment,
@@ -70,6 +90,7 @@ export {
 	mangaRateModel,
 	MangaRate,
 	MangaRateDto,
+	mangaRateDtoOf,
 	//
 	tagModel,
 	Tag,
@@ -82,6 +103,7 @@ export {
 	mangaChapterViewModel,
 	MangaChapterView,
 	MangaChapterViewDto,
+	mangaChapterViewDtoOf,
 	//
 	userModel,
 	User,

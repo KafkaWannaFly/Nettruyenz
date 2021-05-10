@@ -34,4 +34,24 @@ export interface ChapterDto extends Chapter {
 	views: number;
 }
 
+export interface BriefChapterDto {
+	manga?: string;
+	mangaNames?: string[];
+	index?: number;
+	tittle?: string;
+	views: number;
+	createdAt?: Date;
+}
+
+export function briefChapterDtoOf(data: any): BriefChapterDto {
+	return {
+		manga: data.manga,
+		index: data.index,
+		tittle: data.tittle,
+		views: data.views,
+		createdAt: data.createdAt,
+		mangaNames: data.mangaNames,
+	};
+}
+
 export const chapterModel = mongoose.model("Chapter", chapterSchema);

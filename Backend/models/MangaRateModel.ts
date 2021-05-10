@@ -29,3 +29,12 @@ export interface MangaRate {
 }
 
 export interface MangaRateDto extends MangaRate {}
+
+export function mangaRateDtoOf(data: any): MangaRateDto {
+	return {
+		email: data.email,
+		isDeleted: data.isDeleted,
+		rate: data.rate,
+		manga: data.manga,
+	};
+}

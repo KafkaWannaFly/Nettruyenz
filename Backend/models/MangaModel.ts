@@ -38,20 +38,23 @@ export interface Manga {
 	updatedAt?: Date;
 }
 
-export interface BriefMangaDto extends Manga {
-	// id: string;
-	// name: string[];
-	// cover: string;
+export interface BriefMangaDto {
+	id: string;
+	names: string[];
+	cover: string;
 	tags?: string[];
-	// creators: string[];
-	// description: string;
-	// status: MangaStatus;
+	creators: string[];
+	description: string;
+	status: MangaStatus;
 
 	averageRate?: number;
 	bookmarks?: number;
 	views?: number;
 
 	newestChapter?: ChapterDto;
+
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 export interface CompletedMangaDto extends Manga {

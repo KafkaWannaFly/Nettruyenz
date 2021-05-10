@@ -51,13 +51,113 @@ exports.userController = {
     getUserBookmarks: async (email) => {
         const agg = [
             {
-                $match: {
-                    email: email,
+                $lookup: {
+                    from: "mangas",
+                    localField: "manga",
+                    foreignField: "id",
+                    as: "manga",
+                },
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: [
+                            {
+                                $arrayElemAt: ["$manga", 0],
+                            },
+                            "$$ROOT",
+                        ],
+                    },
+                },
+            },
+            {
+                $project: {
+                    manga: 0,
+                },
+            },
+            {
+                $lookup: {
+                    from: "manga-tags",
+                    localField: "id",
+                    foreignField: "manga",
+                    as: "manga_tags",
+                },
+            },
+            {
+                $set: {
+                    tags: "$manga_tags.tag",
+                },
+            },
+            {
+                $lookup: {
+                    from: "manga-creators",
+                    localField: "id",
+                    foreignField: "manga",
+                    as: "manga_creators",
+                },
+            },
+            {
+                $set: {
+                    creators: "$manga_creators.creator",
                 },
             },
         ];
-        const bookmarks = await models_1.bookmarkModel.aggregate(agg).exec();
-        return bookmarks;
+        const bookmarksDto = await models_1.bookmarkModel
+            .aggregate(agg)
+            .exec();
+        return bookmarksDto;
+    },
+    getUserFollowedList: async (email) => {
+        try {
+            const mangaDtos = [];
+            const agg = [
+                {
+                    $match: {
+                        email: email,
+                    },
+                },
+            ];
+            const bookmarks = await models_1.bookmarkModel.aggregate(agg).exec();
+            for (let each of bookmarks) {
+                let bookmarkAgg = [
+                    {
+                        $match: {
+                            id: each.manga,
+                        },
+                    },
+                ];
+                let manga = await models_1.mangaModel
+                    .aggregate(bookmarkAgg)
+                    .exec()[0];
+                mangaDtos.push(manga);
+            }
+            for (let i = 0; i < mangaDtos.length; i++) {
+                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                    .find({ manga: mangaDtos[i].id })
+                    .sort({ index: -1 })
+                    .limit(1))[0];
+                mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
+                mangaDtos[i].views = await models_1.mangaChapterViewModel
+                    .find({ manga: mangaDtos[i].id })
+                    .countDocuments()
+                    .exec();
+                mangaDtos[i].bookmarks = await models_1.bookmarkModel
+                    .find({
+                    manga: mangaDtos[i].id,
+                })
+                    .countDocuments()
+                    .exec();
+            }
+            return mangaDtos.sort((a, b) => {
+                if (b.createdAt === undefined || a.createdAt === undefined) {
+                    return -1;
+                }
+                return b.createdAt.getSeconds() - a.createdAt.getSeconds();
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
     },
     getUserRatesMade: async (email) => {
         const agg = [
@@ -75,6 +175,7 @@ exports.userController = {
             {
                 $match: {
                     email: email,
+                    isDeleted: false,
                 },
             },
             {
@@ -88,4 +189,76 @@ exports.userController = {
             .exec();
         return mangaChapterViews;
     },
+    getUserReadingHistory: async (email) => {
+        try {
+            const mangaDtos = [];
+            const agg = [
+                {
+                    $match: {
+                        email: email,
+                        isDeleted: false,
+                    },
+                },
+                {
+                    $sort: {
+                        createdAt: -1,
+                    },
+                },
+            ];
+            const mangaChapterViews = await models_1.mangaChapterViewModel
+                .aggregate(agg)
+                .exec();
+            for (let each of mangaChapterViews) {
+                let viewedAgg = [
+                    {
+                        $match: {
+                            id: each.manga,
+                        },
+                    },
+                ];
+                let manga = await models_1.mangaModel
+                    .aggregate(viewedAgg)
+                    .exec()[0];
+                mangaDtos.push(manga);
+            }
+            for (let i = 0; i < mangaDtos.length; i++) {
+                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                    .find({ manga: mangaDtos[i].id })
+                    .sort({ index: -1 })
+                    .limit(1))[0];
+            }
+            return mangaDtos.sort((a, b) => {
+                if (b.createdAt === undefined || a.createdAt === undefined) {
+                    return -1;
+                }
+                return b.createdAt.getSeconds() - a.createdAt.getSeconds();
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
 };
+async function getMangaRating(id) {
+    const rateAgg = [
+        {
+            $group: {
+                _id: "$manga",
+                numRate: {
+                    $sum: 1,
+                },
+                sum: {
+                    $sum: "$rate",
+                },
+            },
+        },
+        {
+            $match: {
+                _id: id,
+            },
+        },
+    ];
+    let mangaRate = (await models_1.mangaRateModel.aggregate(rateAgg).exec())[0];
+    mangaRate.average = mangaRate.sum / mangaRate.numRate;
+    return mangaRate;
+}

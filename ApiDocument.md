@@ -517,28 +517,25 @@ interface UserDto {
 	avatar?: string;
 	level: UserLevel;
 	createdAt?: Date;
-	groups?: Group[];
-	bookmarks?: Bookmark[];
-	history?: MangaChapterView[];
-	notifications?: Notification[];
-	ratesMade?: MangaRate[];
+	// groups?: Group[]; // Add later
+	bookmarks?: BookmarkDto[];
+	history?: MangaChapterViewDto[];
+	// notifications?: Notification[]; // Add later
+	ratesMade?: MangaRateDto[];
 }
 ```
 
-### Bookmark
+### BookmarkDto
 
 ```typescript
 interface Bookmark {
 	id?: string;
 	email: string;
-	manga: string;
-	isDelete?: boolean;
-	createdAt?: Date;
-	updatedAt?: Date;
+	briefMangaDto: BriefMangaDto;
 }
 ```
 
-### MangaChapterView
+### MangaChapterViewDto
 
 ```typescript
 interface MangaChapterView {
@@ -548,10 +545,24 @@ interface MangaChapterView {
 	chapter: string;
 	createdAt?: Date;
 	updatedAt?: Date;
+    briefChapterDto: BriefChapterDto;
 }
 ```
 
-### MangaRate
+### BriefChapterDto
+
+```typescript
+interface BriefChapterDto {
+	manga?: string;
+	mangaNames?: string[];
+	index?: number;
+	tittle?: string;
+	views: number;
+	createdAt?: Date;
+}
+```
+
+### MangaRateDto
 
 ```typescript
 interface MangaRate {

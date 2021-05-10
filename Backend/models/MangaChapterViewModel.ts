@@ -1,3 +1,5 @@
+import { BriefChapterDto } from ".";
+import { briefChapterDtoOf } from "./ChapterModel";
 import mongoose from "./Preloader";
 
 const Schema = mongoose.Schema;
@@ -24,4 +26,19 @@ export interface MangaChapterView {
 	updatedAt?: Date;
 }
 
-export interface MangaChapterViewDto extends MangaChapterView {}
+export interface MangaChapterViewDto extends MangaChapterView {
+	briefChapterDto: BriefChapterDto;
+}
+
+export function mangaChapterViewDtoOf(data: any): MangaChapterViewDto {
+	const chapterData = data.briefChapterDto;
+
+	return {
+		id: data.id,
+		email: data.email,
+		manga: data.manga,
+		chapter: data.chapter,
+		createdAt: data.createdAt,
+		briefChapterDto: briefChapterDtoOf(chapterData),
+	};
+}
