@@ -324,7 +324,7 @@ export const userController = {
 			}
 
 			for (let i = 0; i < mangaDtos.length; i++) {
-				mangaDtos[i].newestChapter = ((
+				mangaDtos[i].briefChapterDto = ((
 					await chapterModel
 						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })

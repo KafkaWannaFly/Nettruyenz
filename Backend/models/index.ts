@@ -9,6 +9,7 @@ import {
 	briefChapterDtoOf,
 	Chapter,
 	ChapterDto,
+	chapterDtoOf,
 	chapterModel,
 } from "./ChapterModel";
 import { CommentDto, userCommentModel, UserComment } from "./UserCommentModel";
@@ -63,6 +64,7 @@ export {
 	ChapterDto,
 	BriefChapterDto,
 	briefChapterDtoOf,
+	chapterDtoOf,
 	//
 	userCommentModel,
 	UserComment,

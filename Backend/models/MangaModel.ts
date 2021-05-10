@@ -1,4 +1,4 @@
-import { ChapterDto } from "./ChapterModel";
+import { BriefChapterDto, ChapterDto } from "./ChapterModel";
 import { CommentDto } from "./UserCommentModel";
 import mongoose from "./Preloader";
 const Schema = mongoose.Schema;
@@ -51,7 +51,7 @@ export interface BriefMangaDto {
 	bookmarks?: number;
 	views?: number;
 
-	newestChapter?: ChapterDto;
+	briefChapterDto?: BriefChapterDto;
 
 	createdAt?: Date;
 	updatedAt?: Date;

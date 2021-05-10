@@ -1,4 +1,5 @@
 import { date } from "faker";
+import { briefChapterDtoOf } from "./ChapterModel";
 import { BriefMangaDto } from "./MangaModel";
 import mongoose from "./Preloader";
 
@@ -55,14 +56,7 @@ export function bookmarkDtoOf(data: any): BookmarkDto {
 
 			updatedAt: briefMangaDto.updatedAt,
 
-			newestChapter: {
-				index: newestChapter.index,
-				tittle: newestChapter.tittle,
-				images: newestChapter.images,
-				updatedAt: newestChapter.updatedAt,
-				views: newestChapter.views,
-				uploader: newestChapter.uploader,
-			},
+			briefChapterDto: briefChapterDtoOf(newestChapter),
 		},
 	};
 }
