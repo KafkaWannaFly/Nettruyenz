@@ -1,7 +1,7 @@
 
 import AdvancedSearchBar from "./AdvancedSearchBar";
 import MangaPreviewList from "./MangaPreviewList";
-import {TagSection} from "./TagSection"
+import TagSection from "./TagSection"
 
 
 export const Categories = (props) => {
