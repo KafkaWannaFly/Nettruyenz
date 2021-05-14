@@ -51,113 +51,141 @@ exports.userController = {
     getUserBookmarks: async (email) => {
         const agg = [
             {
+                $match: {
+                    email: email,
+                },
+            },
+            {
                 $lookup: {
                     from: "mangas",
                     localField: "manga",
                     foreignField: "id",
-                    as: "manga",
+                    as: "briefMangaDto",
                 },
             },
             {
-                $replaceRoot: {
-                    newRoot: {
-                        $mergeObjects: [
-                            {
-                                $arrayElemAt: ["$manga", 0],
+                $set: {
+                    briefMangaDto: {
+                        $arrayElemAt: ["$briefMangaDto", 0],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "chapters",
+                    localField: "briefMangaDto.id",
+                    foreignField: "manga",
+                    as: "chapterDocs",
+                },
+            },
+            {
+                $set: {
+                    "briefMangaDto.newestChapter": {
+                        $filter: {
+                            input: "$chapterDocs",
+                            as: "chapter",
+                            cond: {
+                                $eq: [
+                                    "$$chapter.index",
+                                    {
+                                        $max: "$chapterDocs.index",
+                                    },
+                                ],
                             },
-                            "$$ROOT",
+                        },
+                    },
+                },
+            },
+            {
+                $set: {
+                    "briefMangaDto.newestChapter": {
+                        $arrayElemAt: ["$briefMangaDto.newestChapter", 0],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "views",
+                    localField: "manga",
+                    foreignField: "manga",
+                    as: "viewDocs",
+                },
+            },
+            {
+                $set: {
+                    "briefMangaDto.views": {
+                        $size: "$viewDocs",
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "manga-rates",
+                    localField: "manga",
+                    foreignField: "manga",
+                    as: "mangaRateDocs",
+                },
+            },
+            {
+                $set: {
+                    "briefMangaDto.averageRate": {
+                        $divide: [
+                            {
+                                $sum: "$mangaRateDocs.rate",
+                            },
+                            {
+                                $size: "$mangaRateDocs",
+                            },
                         ],
                     },
                 },
             },
             {
-                $project: {
-                    manga: 0,
-                },
-            },
-            {
                 $lookup: {
-                    from: "manga-tags",
-                    localField: "id",
+                    from: "bookmarks",
+                    localField: "manga",
                     foreignField: "manga",
-                    as: "manga_tags",
+                    as: "bookmarkDocs",
                 },
             },
             {
                 $set: {
-                    tags: "$manga_tags.tag",
+                    "briefMangaDto.bookmarks": {
+                        $size: "$bookmarkDocs",
+                    },
                 },
             },
             {
                 $lookup: {
-                    from: "manga-creators",
-                    localField: "id",
-                    foreignField: "manga",
-                    as: "manga_creators",
+                    from: "views",
+                    localField: "briefMangaDto.newestChapter.id",
+                    foreignField: "chapter",
+                    as: "chapterViewDocs",
                 },
             },
             {
                 $set: {
-                    creators: "$manga_creators.creator",
+                    "briefMangaDto.newestChapter.views": {
+                        $size: "$chapterViewDocs",
+                    },
                 },
+            },
+            {
+                $unset: [
+                    "chapterDocs",
+                    "viewDocs",
+                    "mangaRateDocs",
+                    "bookmarkDocs",
+                    "chapterViewDocs",
+                ],
             },
         ];
-        const bookmarksDto = await models_1.bookmarkModel
-            .aggregate(agg)
-            .exec();
+        const data = await models_1.bookmarkModel.aggregate(agg).exec();
+        let bookmarksDto = [];
+        if (data.length > 0) {
+            bookmarksDto = data.map((item) => models_1.bookmarkDtoOf(item));
+        }
         return bookmarksDto;
-    },
-    getUserFollowedList: async (email) => {
-        try {
-            const mangaDtos = [];
-            const agg = [
-                {
-                    $match: {
-                        email: email,
-                    },
-                },
-            ];
-            const bookmarks = await models_1.bookmarkModel.aggregate(agg).exec();
-            for (let each of bookmarks) {
-                let bookmarkAgg = [
-                    {
-                        $match: {
-                            id: each.manga,
-                        },
-                    },
-                ];
-                let manga = await models_1.mangaModel
-                    .aggregate(bookmarkAgg)
-                    .exec()[0];
-                mangaDtos.push(manga);
-            }
-            for (let i = 0; i < mangaDtos.length; i++) {
-                mangaDtos[i].newestChapter = (await models_1.chapterModel
-                    .find({ manga: mangaDtos[i].id })
-                    .sort({ index: -1 })
-                    .limit(1))[0];
-                mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
-                mangaDtos[i].views = await models_1.mangaChapterViewModel
-                    .find({ manga: mangaDtos[i].id })
-                    .countDocuments()
-                    .exec();
-                mangaDtos[i].bookmarks = await models_1.bookmarkModel
-                    .find({
-                    manga: mangaDtos[i].id,
-                })
-                    .countDocuments()
-                    .exec();
-            }
-            return mangaDtos.sort((a, b) => {
-                if (b.createdAt === undefined || a.createdAt === undefined) {
-                    return -1;
-                }
-                return b.createdAt.getSeconds() - a.createdAt.getSeconds();
-            });
-        }
-        catch (error) {
-            console.error(error);
-        }
     },
     getUserRatesMade: async (email) => {
         const agg = [
@@ -167,7 +195,11 @@ exports.userController = {
                 },
             },
         ];
-        const ratesMade = await models_1.mangaRateModel.aggregate(agg).exec();
+        let ratesMade = [];
+        let data = await models_1.mangaRateModel.aggregate(agg).exec();
+        if (data.length > 0) {
+            ratesMade = data.map((item) => models_1.mangaRateDtoOf(item));
+        }
         return ratesMade;
     },
     getUserViewedChapters: async (email) => {
@@ -175,18 +207,47 @@ exports.userController = {
             {
                 $match: {
                     email: email,
-                    isDeleted: false,
                 },
             },
             {
-                $sort: {
-                    createdAt: -1,
+                $lookup: {
+                    from: "chapters",
+                    localField: "chapter",
+                    foreignField: "id",
+                    as: "chapterDocs",
                 },
             },
+            {
+                $set: {
+                    briefChapterDto: {
+                        $arrayElemAt: ["$chapterDocs", 0],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "mangas",
+                    localField: "manga",
+                    foreignField: "id",
+                    as: "mangaDocs",
+                },
+            },
+            {
+                $set: {
+                    "briefChapterDto.mangaNames": {
+                        $arrayElemAt: ["$mangaDocs.names", 0],
+                    },
+                },
+            },
+            {
+                $unset: ["chapterDocs", "mangaDocs"],
+            },
         ];
-        const mangaChapterViews = await models_1.mangaChapterViewModel
-            .aggregate(agg)
-            .exec();
+        let mangaChapterViews = [];
+        const data = await models_1.mangaChapterViewModel.aggregate(agg).exec();
+        if (data.length > 0) {
+            mangaChapterViews = data.map((item) => models_1.mangaChapterViewDtoOf(item));
+        }
         return mangaChapterViews;
     },
     getUserReadingHistory: async (email) => {
@@ -222,7 +283,7 @@ exports.userController = {
                 mangaDtos.push(manga);
             }
             for (let i = 0; i < mangaDtos.length; i++) {
-                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                mangaDtos[i].briefChapterDto = (await models_1.chapterModel
                     .find({ manga: mangaDtos[i].id })
                     .sort({ index: -1 })
                     .limit(1))[0];

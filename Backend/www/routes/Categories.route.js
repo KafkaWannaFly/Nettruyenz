@@ -6,28 +6,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const MangaController_1 = require("../controllers/MangaController");
 const router = express_1.default.Router();
-router.get("/", async (req, res) => {
-    // let timePeriod = req.query.period === undefined ? req.query.period:"all";
-    // let title = req.query.title;
-    // let author = req.query.author
-    // let tags = req.query.tags
-    // res.send(`title=${title} author=${author} tags=${JSON.stringify(tags, null, 3)}`)
-    let mangas = MangaController_1.MangaController.getRecentlyUploadedAsync(16);
-    res.json(mangas);
-});
 router.get("/find-manga", async (req, res) => {
     let subPeriod = req.query.period === undefined ? req.query.period : "all";
     let tags = req.query.tags;
-    let authName = req.query.author;
+    let authName = req.query.creator;
     let mangaTitle = req.query.title;
     let sort = req.query.sort;
     let order = req.query.status;
-    let mangas = MangaController_1.MangaController.getMangasForCate(tags, mangaTitle, authName, subPeriod, sort, order);
-    res.json(mangas);
+    if (tags === undefined
+        && authName === undefined
+        && mangaTitle === undefined
+        && sort === undefined
+        && order === undefined) {
+        let mangas = await MangaController_1.MangaController.getAllRecentlyUploaded();
+        res.json(mangas);
+    }
+    else {
+        let mangas = MangaController_1.MangaController.getMangasForCate(tags, mangaTitle, authName, subPeriod, sort, order);
+        res.json(mangas);
+    }
 });
-// router.get("/get-tags", async(req,res) => {
-//     let tags = MangaController.getMangaTags;
-//     res.json(tags);
-// })
+router.get("/all-author", async (req, res) => {
+    let name = req.query.creator;
+    let creators = await MangaController_1.MangaController.getAllAuthor(name);
+    res.json(creators);
+});
 const cateRoute = router;
 exports.default = cateRoute;

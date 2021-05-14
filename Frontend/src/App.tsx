@@ -9,7 +9,6 @@ import Follow from "./components/Follow";
 import Post from "./components/Post";
 import Footer from "./components/Footer";
 import {Categories} from "./components/Categories/Categories";
-import UserProfile from "./components/UserProfile";
 import { HistoryOutlined } from "@material-ui/icons";
 import handleAccount from "./components/Signin";
 
@@ -22,7 +21,7 @@ function App() {
 		<>
 		<BrowserRouter>
 			<>
-				<Navbar authentication = {true}></Navbar>
+				<Navbar authentication = {false}></Navbar>
 						<div className="App bg-gray-1000 h-full">
 						{/* <Route exact path = "/signin" component={handleAccount}></Route> */}
 						<Switch>
@@ -31,7 +30,6 @@ function App() {
 							<Route exact path="/categories" component={Categories}></Route>
 							<Route exact path="/history" component={History}></Route>
 							<Route path="/comic/:id" component={Post}></Route>
-							<Route exact path="/user/profile/:id" component={UserProfile}></Route>
 						</Switch>
 					</div>
 				<Footer/>

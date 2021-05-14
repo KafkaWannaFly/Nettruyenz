@@ -13,7 +13,7 @@ route.get("/", passport_1.default.authenticate("jwt", {
 }), async (req, res) => {
     const user = req.user;
     let userDto = models_1.userDtoOf(user);
-    // userDto.bookmarks = await userController.getUserBookmarks(userDto.email);
+    userDto.bookmarks = await UserController_1.userController.getUserBookmarks(userDto.email);
     userDto.ratesMade = await UserController_1.userController.getUserRatesMade(userDto.email);
     userDto.history = await UserController_1.userController.getUserViewedChapters(userDto.email);
     res.json(userDto);

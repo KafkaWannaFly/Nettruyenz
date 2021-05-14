@@ -72,12 +72,9 @@ exports.MangaController = {
                 // );
                 mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
                 // Give manga lastest chapter
-                let chapter = (await models_1.chapterModel
-                    .find()
-                    .sort({ index: -1 })
-                    .limit(1)
-                    .exec());
-                mangaDtos[i].newestChapter = chapter[0];
+                let chapterData = (await models_1.chapterModel.find().sort({ index: -1 }).limit(1).exec())[0];
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
             }
             return mangaDtos.sort((a, b) => {
                 if (a.views === undefined || b.views === undefined) {
@@ -150,10 +147,12 @@ exports.MangaController = {
                     .exec();
                 let mangaRate = await getMangaRating(mangaDtos[i].id);
                 mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
-                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                const chapterData = (await models_1.chapterModel
                     .find({ manga: mangaDtos[i].id })
                     .sort({ index: -1 })
                     .limit(1))[0];
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
             }
             return mangaDtos.sort((a, b) => {
                 if (a.bookmarks === undefined || b.bookmarks === undefined) {
@@ -240,10 +239,12 @@ exports.MangaController = {
                 })
                     .countDocuments()
                     .exec();
-                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                const chapterData = (await models_1.chapterModel
                     .find({ manga: mangaDtos[i].id })
                     .sort({ index: -1 })
                     .limit(1))[0];
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
             }
             return mangaDtos.sort((a, b) => {
                 if (a.averageRate === undefined || b.averageRate === undefined) {
@@ -304,7 +305,9 @@ exports.MangaController = {
             // Fill the rest infomation
             for (let i = 0; i < mangaDtos.length; i++) {
                 let recentUploadChapter = recentUploadChapters.find((item) => item._id == mangaDtos[i].id);
-                mangaDtos[i].newestChapter = recentUploadChapter?.newestChapter;
+                const chapterData = recentUploadChapter?.newestChapter;
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
                 mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
                 mangaDtos[i].views = await models_1.mangaChapterViewModel
                     .find({ manga: mangaDtos[i].id })
@@ -318,12 +321,12 @@ exports.MangaController = {
                     .exec();
             }
             return mangaDtos.sort((a, b) => {
-                if (b.newestChapter?.createdAt === undefined ||
-                    a.newestChapter?.createdAt === undefined) {
+                if (b.briefChapterDto?.createdAt === undefined ||
+                    a.briefChapterDto?.createdAt === undefined) {
                     return -1;
                 }
-                return (b.newestChapter.createdAt.getSeconds() -
-                    a.newestChapter.createdAt?.getSeconds());
+                return (b.briefChapterDto.createdAt.getSeconds() -
+                    a.briefChapterDto.createdAt?.getSeconds());
             });
         }
         catch (error) {
@@ -350,10 +353,12 @@ exports.MangaController = {
                 .aggregate(aggregationStatements)
                 .exec();
             for (let i = 0; i < mangaDtos.length; i++) {
-                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                const chapterData = (await models_1.chapterModel
                     .find({ manga: mangaDtos[i].id })
                     .sort({ index: -1 })
                     .limit(1))[0];
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
                 mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
                 mangaDtos[i].views = await models_1.mangaChapterViewModel
                     .find({ manga: mangaDtos[i].id })
@@ -371,6 +376,74 @@ exports.MangaController = {
                     return -1;
                 }
                 return b.createdAt.getSeconds() - a.createdAt.getSeconds();
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
+    getAllRecentlyUploaded: async () => {
+        try {
+            let aggregationStatements = [
+                {
+                    $sort: {
+                        manga: 1,
+                        updatedAt: 1,
+                    },
+                },
+                {
+                    $group: {
+                        _id: "$manga",
+                        date: {
+                            $last: "$$ROOT.updatedAt",
+                        },
+                        newestChapter: {
+                            $last: "$$ROOT",
+                        },
+                    },
+                },
+                {
+                    $sort: {
+                        date: -1,
+                    },
+                },
+            ];
+            // Get newest chapters
+            let recentUploadChapters = await models_1.chapterModel
+                .aggregate(aggregationStatements)
+                .exec();
+            // Find its manga
+            let mangaDtos = (await models_1.mangaModel
+                .find()
+                .where("id")
+                .in(recentUploadChapters.map((v) => v._id))
+                .lean()
+                .exec()).map((item) => item);
+            // Fill the rest infomation
+            for (let i = 0; i < mangaDtos.length; i++) {
+                let recentUploadChapter = recentUploadChapters.find((item) => item._id == mangaDtos[i].id);
+                const chapterData = recentUploadChapter?.newestChapter;
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
+                mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
+                mangaDtos[i].views = await models_1.mangaChapterViewModel
+                    .find({ manga: mangaDtos[i].id })
+                    .countDocuments()
+                    .exec();
+                mangaDtos[i].bookmarks = await models_1.bookmarkModel
+                    .find({
+                    manga: mangaDtos[i].id,
+                })
+                    .countDocuments()
+                    .exec();
+            }
+            return mangaDtos.sort((a, b) => {
+                if (b.briefChapterDto?.createdAt === undefined ||
+                    a.briefChapterDto?.createdAt === undefined) {
+                    return -1;
+                }
+                return (b.briefChapterDto.createdAt.getSeconds() -
+                    a.briefChapterDto.createdAt?.getSeconds());
             });
         }
         catch (error) {
@@ -445,7 +518,35 @@ exports.MangaController = {
             console.error(e);
         }
     },
+    getAllAuthor: async (author) => {
+        try {
+            let mangaCreatorAgg = [
+                {
+                    $match: {
+                        creator: {
+                            $regex: `'.*${author}.*'`,
+                        },
+                    },
+                },
+            ];
+            let creators = await models_1.mangaCreatorModel
+                .aggregate(mangaCreatorAgg)
+                .exec()[0];
+            return creators;
+        }
+        catch (e) {
+            console.error(e);
+        }
+    },
     getMangasForCate: async (tags, title, undoneName, period = "all", sort, order) => {
+        if (tags === undefined) {
+            tags = [];
+            tags.push("");
+        }
+        if (title === undefined)
+            title = "";
+        if (undoneName === undefined)
+            title = "";
         try {
             let mangaCreatorAgg = [
                 {
@@ -532,7 +633,7 @@ exports.MangaController = {
                 i++;
             }
             for (let i = 0; i < mangaDtos.length; i++) {
-                mangaDtos[i].newestChapter = (await models_1.chapterModel
+                mangaDtos[i].briefChapterDto = (await models_1.chapterModel
                     .find({ manga: mangaDtos[i].id })
                     .sort({ index: -1 })
                     .limit(1))[0];
@@ -604,10 +705,10 @@ exports.MangaController = {
             }
             else if (sort === "Name") {
                 if (order === "Descending") {
-                    mangaDtos.sort((a, b) => (a.names < b.names) ? 1 : -1);
+                    mangaDtos.sort((a, b) => (a.names < b.names ? 1 : -1));
                 }
                 else if (order === "Ascending") {
-                    mangaDtos.sort((a, b) => (a.names > b.names) ? 1 : -1);
+                    mangaDtos.sort((a, b) => (a.names > b.names ? 1 : -1));
                 }
             }
             else if (sort === "Date") {
