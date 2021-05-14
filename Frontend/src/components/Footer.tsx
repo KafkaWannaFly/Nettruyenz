@@ -3,7 +3,7 @@ import React from 'react';
 const Footer: React.FC = () => {
     return (
         <>
-            <div id="footer">
+            <div id="footer" className="bg-black">
                 <div id="footer-container">
                     <div id="web-brand">
                         <div id="web-logo">
