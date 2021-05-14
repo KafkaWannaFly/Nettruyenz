@@ -1,3 +1,6 @@
+import { date } from "faker";
+import { briefChapterDtoOf } from "./ChapterModel";
+import { BriefMangaDto } from "./MangaModel";
 import mongoose from "./Preloader";
 
 const Schema = mongoose.Schema;
@@ -26,4 +29,34 @@ export interface Bookmark {
 	updatedAt?: Date;
 }
 
-export interface BookmarkDto extends Bookmark {}
+export interface BookmarkDto {
+	id?: string;
+	email: string;
+	briefMangaDto: BriefMangaDto;
+}
+
+export function bookmarkDtoOf(data: any): BookmarkDto {
+	const briefMangaDto = data.briefMangaDto;
+	const newestChapter = briefMangaDto.newestChapter;
+
+	return {
+		email: data.email,
+		briefMangaDto: {
+			id: briefMangaDto.id,
+			cover: briefMangaDto.cover,
+			creators: briefMangaDto.creators,
+			description: briefMangaDto.description,
+			names: briefMangaDto.names,
+			status: briefMangaDto.status,
+			tags: briefMangaDto.tags,
+
+			averageRate: briefMangaDto.averageRate,
+			bookmarks: briefMangaDto.bookmarks,
+			views: briefMangaDto.views,
+
+			updatedAt: briefMangaDto.updatedAt,
+
+			briefChapterDto: briefChapterDtoOf(newestChapter),
+		},
+	};
+}

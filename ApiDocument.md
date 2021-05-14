@@ -21,51 +21,36 @@ Dữ liệu trả về là 1 mảng `BriefMangaDto`. Trông như này:
 ```json
 [
 	{
-		"_id": "606736b7b0c6ff4b1cb254db",
+		"_id": "6085851907191c3f5c4336f1",
 		"names": [
-			"Mairimashita! Iruma-kun",
-			"魔入りました！入間くん"
+			"Boku No Hero Academia",
+			"My hero Academia",
+			"僕のヒーローアカデミア",
+			"Trường Học Siêu Anh Hùng"
 		],
-		"creators": [
-			"Osamu Nishi"
-		],
-		"tags": [
-			"Action",
-			"Comedy",
-			"Fantasy",
-			"School Life",
-			"Shounen",
-			"Supernatural"
-		],
-		"id": "6e5c9054-8ff6-47d1-8c5c-5905683125d3",
-		"cover": "https://i.imgur.com/c5JqYVW.jpg",
-		"description": "Mairimashita! Iruma-kun",
+		"id": "10",
+		"cover": "https://i.imgur.com/ptcZbuI.jpg",
+		"description": "Câu chuyện lấy bối cảnh thời hiện đại, có khác một điều là những người có năng lực đặc biệt lại trở nên quá đỗi bình thường. Một cậu bé tên Midoriya Izuku tuy không có năng lực gì nhưng cậu vẫn mơ ước",
 		"status": 0,
-		"createdAt": "2021-04-02T15:22:31.517Z",
-		"updatedAt": "2021-04-02T15:22:31.517Z",
+		"createdAt": "2021-04-25T15:04:57.550Z",
+		"updatedAt": "2021-04-25T15:04:57.550Z",
 		"__v": 0,
 		"views": 703,
-		"bookmarks": 47,
-		"averageRate": 3.111111111111111,
-		"newestChapter": {
-				"images": [
-					"https://3.bp.blogspot.com/-d4fXRQT2xXg/VMqNw1oZyJI/AAAAAAAAL58/oKXY2Frg4_k/s0/1%252520%2525281%252529.jpg",
-					"https://2.bp.blogspot.com/-HKz-Y77dlhs/VMqNxx5Ie4I/AAAAAAAAL6E/6ohkvvG7j_0/s0/1%252520%2525281%252529.png",
-					// A lot of URL
-				],
-				"_id": "6067369cb0c6ff4b1cb2544b",
-				"id": "9da93bd5-a9bb-441e-99d6-8e9fc120b00e",
-				"group": "0",
-				"index": 9.1,
-				"manga": "9ff07e48-0fd4-4f36-b42d-0e8f4e1c2bb1",
-				"tittle": "",
-				"uploader": "kafka",
-				"views": 85,
-				"__v": 0,
-				"createdAt": "2021-04-02T15:22:04.462Z",
-				"updatedAt": "2021-04-02T15:24:55.569Z"
-			}
-		
+		"bookmarks": 10,
+		"averageRate": 3.4166666666666665,
+		"briefChapterDto": {
+			"id": "16-155",
+			"manga": "16",
+			"index": 52,
+			"tittle": "",
+			"createdAt": "2021-04-25T15:05:08.618Z",
+			"mangaNames": [
+				"Boku No Hero Academia",
+				"My hero Academia",
+				"僕のヒーローアカデミア",
+				"Trường Học Siêu Anh Hùng"
+			]
+		}
 	},
     // And many more
 ]
@@ -453,25 +438,21 @@ Là đối tượng chứa thông tin sơ bộ về 1 bộ manga
 ```typescript
 interface BriefMangaDto {
     id: string;
-	names: string[];
-	cover: string;
-	tags: string[];
-	creators?: string[];
-	status?: MangaStatus;
-	description: string;
-    averageRate?: number;
-	bookmarks?: number;
-	views?: number;
-	newestChapter?: ChapterDto; // Chapter mới nhất
-    
-	createdAt?: Date;
-	updatedAt?: Date;
-}
+    names: string[];
+    cover: string;
+    tags?: string[];
+    creators: string[];
+    description: string;
+    status: MangaStatus;
 
-enum MangaStatus {
-	OnGoing,
-	Complete,
-	Dropped,
+    averageRate?: number;
+    bookmarks?: number;
+    views?: number;
+
+    briefChapterDto?: BriefChapterDto;
+
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 ```
 
@@ -517,28 +498,25 @@ interface UserDto {
 	avatar?: string;
 	level: UserLevel;
 	createdAt?: Date;
-	groups?: Group[];
-	bookmarks?: Bookmark[];
-	history?: MangaChapterView[];
-	notifications?: Notification[];
-	ratesMade?: MangaRate[];
+	// groups?: Group[]; // Add later
+	bookmarks?: BookmarkDto[];
+	history?: MangaChapterViewDto[];
+	// notifications?: Notification[]; // Add later
+	ratesMade?: MangaRateDto[];
 }
 ```
 
-### Bookmark
+### BookmarkDto
 
 ```typescript
 interface Bookmark {
 	id?: string;
 	email: string;
-	manga: string;
-	isDelete?: boolean;
-	createdAt?: Date;
-	updatedAt?: Date;
+	briefMangaDto: BriefMangaDto;
 }
 ```
 
-### MangaChapterView
+### MangaChapterViewDto
 
 ```typescript
 interface MangaChapterView {
@@ -548,10 +526,24 @@ interface MangaChapterView {
 	chapter: string;
 	createdAt?: Date;
 	updatedAt?: Date;
+    briefChapterDto: BriefChapterDto;
 }
 ```
 
-### MangaRate
+### BriefChapterDto
+
+```typescript
+interface BriefChapterDto {
+	manga?: string;
+	mangaNames?: string[];
+	index?: number;
+	tittle?: string;
+	views: number;
+	createdAt?: Date;
+}
+```
+
+### MangaRateDto
 
 ```typescript
 interface MangaRate {

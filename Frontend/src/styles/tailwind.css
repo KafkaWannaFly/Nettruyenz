@@ -209,7 +209,7 @@ body {
 
 
 #tag-list {
-	@apply flex flex-row;
+	@apply flex flex-row flex-wrap;
 }
 
 #tag-section {

@@ -1,4 +1,4 @@
-import { ChapterDto } from "./ChapterModel";
+import { BriefChapterDto, ChapterDto } from "./ChapterModel";
 import { CommentDto } from "./UserCommentModel";
 import mongoose from "./Preloader";
 const Schema = mongoose.Schema;
@@ -38,20 +38,23 @@ export interface Manga {
 	updatedAt?: Date;
 }
 
-export interface BriefMangaDto extends Manga {
-	// id: string;
-	// name: string[];
-	// cover: string;
+export interface BriefMangaDto {
+	id: string;
+	names: string[];
+	cover: string;
 	tags?: string[];
-	// creators: string[];
-	// description: string;
-	// status: MangaStatus;
+	creators: string[];
+	description: string;
+	status: MangaStatus;
 
 	averageRate?: number;
 	bookmarks?: number;
 	views?: number;
 
-	newestChapter?: ChapterDto;
+	briefChapterDto?: BriefChapterDto;
+
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 export interface CompletedMangaDto extends Manga {

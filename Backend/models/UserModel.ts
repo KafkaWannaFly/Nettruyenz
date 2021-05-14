@@ -2,7 +2,7 @@ import { Bookmark, BookmarkDto } from "./BookmarkModel";
 import { Group } from "./GroupModel";
 import mongoose from "./Preloader";
 import { MangaRate, MangaRateDto } from "./MangaRateModel";
-import { MangaChapterView } from "./MangaChapterViewModel";
+import { MangaChapterView, MangaChapterViewDto } from "./MangaChapterViewModel";
 
 const Schema = mongoose.Schema;
 const Id = Schema.Types.ObjectId;
@@ -42,11 +42,11 @@ export interface User {
 }
 
 export interface UserDto extends User {
-	groups?: Group[];
-	bookmarks?: Bookmark[];
-	history?: MangaChapterView[];
-	notifications?: Notification[];
-	ratesMade?: MangaRate[];
+	// groups?: Group[]; // Add later
+	bookmarks?: BookmarkDto[];
+	history?: MangaChapterViewDto[];
+	// notifications?: Notification[]; // Add later
+	ratesMade?: MangaRateDto[];
 }
 
 export function userDtoOf(user: User): UserDto {

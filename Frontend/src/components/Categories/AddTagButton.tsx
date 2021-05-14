@@ -1,30 +1,23 @@
-import React from 'react'
+import {useState} from 'react'
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
-import {PopUpTagWindow} from "./PopUpTagWindow"
+import PopUpTagWindow from "./PopUpTagWindow"
 
-export class AddTagButton extends React.Component<{}, {isOpened:boolean}> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isOpened: false
-        }
+function AddTagButton(props) {
+    const [isOpened, setIsOpened] = useState(false);
+    let tagList = props.tagList;
 
-        this.handleClick = this.handleClick.bind(this);
-    };
-
-    handleClick() {
-        this.setState(state => ({
-          isOpened: !state.isOpened
-        }));
-      }
-    render() {
-        return (
-            <div>
-                <div id="add-tag-button" onClick={this.handleClick}>
-                    <AddCircleOutlineRoundedIcon fontSize="large"/>
-                </div>
-                {this.state.isOpened && <PopUpTagWindow closePopUpTagWindowFunction={() => this.handleClick()}/>}
-            </div>
-        )
+    const handleClick= () => {
+        setIsOpened((prevState) => !prevState);
     }
+
+    return (
+        <div>
+            <div id="add-tag-button" onClick={handleClick}>
+                <AddCircleOutlineRoundedIcon fontSize="large"/>
+            </div>
+            {isOpened && <PopUpTagWindow closePopUpTagWindowFunction={handleClick} tagList={tagList} handleTagListFunction={props.handleTagListFunction}/>}
+        </div>
+    )
 }
+
+export default AddTagButton;
