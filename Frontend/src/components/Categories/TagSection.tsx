@@ -1,8 +1,8 @@
 import AddTagButton from "./AddTagButton"
 import React, { useState, useEffect } from 'react'
 import CloseIcon from '@material-ui/icons/Close';
-
-function TagSection() {
+import {NETTRUYENZ_HOST} from '../../configs'
+function TagSection(props) {
     function getData() {
         return fetch('http://localhost:3000/tags').then(res => res.json());
     }
@@ -26,17 +26,27 @@ function TagSection() {
 
 
     const [chosenTagList, setChosenTagList] = useState([] as string[]);
-    useEffect(() => {
-        console.log(chosenTagList);
-    })
+    // useEffect(() => {
+    //     console.log(chosenTagList);
+    // })
 
     function removeTag(tag) {
         setChosenTagList(chosenTagList.filter(each => (each !== tag)));
     }
 
-    function renderTag() {    
-        
-        const tags = chosenTagList.map((tag, index) => {
+    function handleChosenTagList(list: string[]) {
+        let newList = [...chosenTagList];
+        list.map((tag) => {
+            if (!newList.includes(tag)) {
+                newList.push(tag);
+            }
+        })
+        setChosenTagList(newList);
+        props.getTagListFromTagSection(newList);
+    }
+
+    function renderTag() {       
+        const tags = chosenTagList.map((tag) => {
             let randomColor = Math.floor(Math.random() * 16777215).toString(16);
             return (
                 <div>
@@ -50,17 +60,6 @@ function TagSection() {
             )
         });
         return tags;
-    }
-
-
-    function handleChosenTagList(list: string[]) {
-        let newList = [...chosenTagList];
-        list.map((tag) => {
-            if (!newList.includes(tag)) {
-                newList.push(tag);
-            }
-        })
-        setChosenTagList(newList);
     }
 
     return (

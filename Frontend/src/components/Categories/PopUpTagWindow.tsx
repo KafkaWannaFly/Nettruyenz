@@ -2,6 +2,7 @@ import { useState } from 'react'
 import CloseIcon from '@material-ui/icons/Close';
 
 function PopUpTagWindow(props) {
+    let tagList = props.tagList;
     const tagChosenList : string[] = [];
 
     const handleCloseClick = () => {
@@ -51,8 +52,20 @@ function PopUpTagWindow(props) {
         return render;
     }
 
+    const [searchTagResult, setSearchTagResult] = useState(tagList);
+    function handleTagListChange(event) {
+        let tempTagList = tagList;
+        if(event.key === "Enter") {
+            let value : string = event.target.value;
+            if(value.length !== 0) {
+                setSearchTagResult(tagList.filter((each) => each.name.includes(value) === true))
+            }
+            else {
+                setSearchTagResult(tagList);
+            }
+        }
+    }
 
-    let tagList = props.tagList;
 
     return (
         <div>
@@ -65,9 +78,10 @@ function PopUpTagWindow(props) {
                     <input
                         id="search-tag"
                         type="text"
-                        placeholder="Enter your tag name here" />
+                        placeholder="Enter your tag name here"
+                        onKeyPress={e => handleTagListChange(e)} />
                     <div id="tag-container">
-                        {renderTag(tagList)}
+                        {renderTag(searchTagResult)}
                     </div>
                     <div id="option-buttons-container">
                         <div id="apply-button" className="button-text" onClick={handleTagChosenApply}>

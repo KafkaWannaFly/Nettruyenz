@@ -193,16 +193,13 @@ body {
 	font-family:  "RedHatDisplay-Regular", sans-serif;
 	font-weight: 300;
 	font-style: italic;
-	border: solid 1px white !important;
-	@apply rounded-lg !important;
 	@apply text-black;
-	@apply w-72 h-8 !important;
+	@apply w-72 !important;
 	text-indent: 10px;
-	padding-right: 30px !important;
 }
 
 .each-selection {
-	@apply w-56 h-8;
+	@apply w-72	 h-8;
 	@apply mx-5 my-3 !important;
 	@apply flex flex-row;
 }
@@ -224,7 +221,7 @@ body {
 	color: white;
 	@apply text-lg;
 	padding: 5px 10px 5px 20px;
-	margin: 30px 12px 50px 12px;
+	margin: 30px 12px 15px 12px;
 	@apply cursor-pointer;
 }
 
@@ -247,6 +244,7 @@ body {
 	color: white;
 	@apply cursor-pointer;
 	margin: 30px 0px 12px;
+	@apply self-center;
 }
 
 .manga-list {
@@ -325,7 +323,7 @@ body {
 }
 
 .tag-button-initial {
-	@apply inline-flex flex-row justify-center content-center;
+	@apply inline-flex flex-row justify-center content-center self-center;
 	background-color: transparent;
 	@apply rounded-full;
 	border: 1px solid white;
