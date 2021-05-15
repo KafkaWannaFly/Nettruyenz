@@ -14,4 +14,10 @@ export interface Tag {
 
 export interface TagDto extends Tag {}
 
+export function tagDtoOf(data: any): TagDto {
+	return {
+		name: data.tag,
+	};
+}
+
 export const tagModel = mongoose.model("tag", tagSchema);

@@ -12,14 +12,20 @@ import {
 	chapterDtoOf,
 	chapterModel,
 } from "./ChapterModel";
-import { CommentDto, userCommentModel, UserComment } from "./UserCommentModel";
-import { Creator, CreatorDto, creatorModel } from "./CreatorModel";
+import {
+	UserCommentDto,
+	userCommentModel,
+	UserComment,
+	commentDtoOf,
+} from "./UserCommentModel";
+import { Creator, CreatorDto, creatorModel, creatorOf } from "./CreatorModel";
 import { GroupMember, GroupMemberDto, groupMemberModel } from "./GroupMember";
 import { Group, GroupDto, groupModel } from "./GroupModel";
 import { MangaCreator, mangaCreatorModel } from "./MangaCreator";
 import {
 	BriefMangaDto,
 	CompletedMangaDto,
+	completeMangaDtoOf,
 	Manga,
 	mangaModel,
 } from "./MangaModel";
@@ -35,7 +41,7 @@ import {
 	mangaRateDtoOf,
 	mangaRateModel,
 } from "./MangaRateModel";
-import { Tag, TagDto, tagModel } from "./TagModel";
+import { Tag, TagDto, tagDtoOf, tagModel } from "./TagModel";
 import { User, UserDto, userDtoOf, UserLevel, userModel } from "./UserModel";
 import {
 	MangaChapterView,
@@ -50,6 +56,7 @@ export {
 	Manga,
 	BriefMangaDto,
 	CompletedMangaDto,
+	completeMangaDtoOf,
 	//
 	mangaCreatorModel,
 	MangaCreator,
@@ -68,11 +75,13 @@ export {
 	//
 	userCommentModel,
 	UserComment,
-	CommentDto,
+	UserCommentDto as CommentDto,
+	commentDtoOf,
 	//
 	creatorModel,
 	Creator,
 	CreatorDto,
+	creatorOf,
 	//
 	groupModel,
 	Group,
@@ -97,6 +106,7 @@ export {
 	tagModel,
 	Tag,
 	TagDto,
+	tagDtoOf,
 	//
 	mangaTagModel,
 	MangaTag,

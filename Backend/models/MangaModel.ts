@@ -1,6 +1,11 @@
-import { BriefChapterDto, ChapterDto } from "./ChapterModel";
-import { CommentDto } from "./UserCommentModel";
+import { BriefChapterDto, briefChapterDtoOf, ChapterDto } from "./ChapterModel";
+import {
+	commentDtoOf as userCommentDtoOf,
+	UserCommentDto,
+} from "./UserCommentModel";
 import mongoose from "./Preloader";
+import { creatorOf } from "./CreatorModel";
+import { tagDtoOf } from "./TagModel";
 const Schema = mongoose.Schema;
 
 const mangaSchema = new Schema(
@@ -57,20 +62,57 @@ export interface BriefMangaDto {
 	updatedAt?: Date;
 }
 
-export interface CompletedMangaDto extends Manga {
-	// id: string;
-	// names: string[];
-	// cover: string;
+export interface CompletedMangaDto {
+	id: string;
+	names: string[];
+	cover: string;
 	tags?: string[];
-	// creators?: string[];
-	// status?: MangaStatus;
-	// description: string;
-	// createdAt?: Date;
-	// updatedAt?: Date;
+	creators?: string[];
+	status?: MangaStatus;
+	description: string;
+	createdAt?: Date;
+	updatedAt?: Date;
+
 	averageRate?: number;
 	bookmarks?: number;
 	views?: number;
 
-	chapters?: ChapterDto[];
-	comments?: CommentDto[];
+	briefChapterDtos?: BriefChapterDto[];
+	userCommentDtos?: UserCommentDto[];
+}
+
+export function completeMangaDtoOf(data: any): CompletedMangaDto {
+	const chapterDocs = data.chapterDocs as any[];
+	const tagDocs = data.tagDocs as any[];
+	const creatorDocs = data.creatorDocs as any[];
+	const commentDocs = data.commentDocs as any[];
+
+	return {
+		id: data.id,
+		names: data.names,
+		cover: data.cover,
+		description: data.description,
+		creators:
+			creatorDocs.length > 0
+				? creatorDocs.map((item) => creatorOf(item).name)
+				: [],
+		tags: tagDocs.length > 0 ? tagDocs.map((item) => tagDtoOf(item).name) : [],
+		status: data.status,
+
+		createdAt: data.createdAt,
+		updatedAt: data.updatedAt,
+
+		averageRate: data.averageRate,
+		bookmarks: data.bookmarks,
+		views: data.views,
+
+		briefChapterDtos:
+			chapterDocs.length > 0
+				? chapterDocs.map((item) => briefChapterDtoOf(item))
+				: [],
+		userCommentDtos:
+			commentDocs.length > 0
+				? commentDocs.map((item) => userCommentDtoOf(item))
+				: [],
+	};
 }

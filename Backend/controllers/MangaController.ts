@@ -16,6 +16,7 @@ import {
 	MangaTagDto,
 	chapterDtoOf,
 	briefChapterDtoOf,
+	completeMangaDtoOf,
 } from "../models";
 import { MangaCreatorDto } from "../models/MangaCreator";
 
@@ -78,7 +79,7 @@ export const MangaController = {
 					.lean()
 					.exec()
 			).map((manga, index) => {
-				let dto = (manga as unknown) as BriefMangaDto;
+				let dto = manga as unknown as BriefMangaDto;
 				return dto;
 			});
 
@@ -106,9 +107,9 @@ export const MangaController = {
 				mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
 
 				// Give manga lastest chapter
-				let chapterData = ((
+				let chapterData = (
 					await chapterModel.find().sort({ index: -1 }).limit(1).exec()
-				)[0] as unknown) as any;
+				)[0] as unknown as any;
 
 				chapterData.mangaNames = mangaDtos[i].names;
 
@@ -453,12 +454,12 @@ export const MangaController = {
 				.exec();
 
 			for (let i = 0; i < mangaDtos.length; i++) {
-				const chapterData = ((
+				const chapterData = (
 					await chapterModel
 						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as unknown) as any;
+				)[0] as unknown as any;
 
 				chapterData.mangaNames = mangaDtos[i].names;
 
@@ -589,73 +590,120 @@ export const MangaController = {
 	 * @param id Manga id
 	 * @returns CompletedangaDto or undefined if fount nothing
 	 */
-	getMangaAsync: async (id: string): Promise<CompletedMangaDto | undefined> => {
+	getMangaByIdAsync: async (
+		id: string
+	): Promise<CompletedMangaDto | undefined> => {
 		try {
-			let mangaAgg = [
+			const agg = [
 				{
 					$match: {
 						id: id,
 					},
 				},
 				{
-					$limit: 1,
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "chapterDocs.id",
+						foreignField: "chapter",
+						as: "viewChapterDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "rateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$rateDocs.rate",
+								},
+								{
+									$size: "$rateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "user-comments",
+						localField: "id",
+						foreignField: "manga",
+						as: "commentDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creatorDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tagDocs",
+					},
+				},
+				{
+					$unset: ["viewDocs", "rateDocs", "bookmarkDocs", "viewChapterDocs"],
 				},
 			];
 
-			let mangaDto: CompletedMangaDto = (
-				await mangaModel.aggregate(mangaAgg).exec()
-			)[0];
+			const data = await mangaModel.aggregate(agg).exec();
 
-			let mangaRate = await getMangaRating(id);
-			mangaDto.averageRate = mangaRate.average;
+			if (!data) {
+				return undefined;
+			}
 
-			mangaDto.bookmarks = await bookmarkModel
-				.find({ manga: id })
-				.countDocuments()
-				.exec();
-
-			mangaDto.views = await mangaChapterViewModel
-				.find({ manga: id })
-				.countDocuments()
-				.exec();
-
-			// Get chapters belong to this manga and sort them from newest to oldest
-			let chapterAggregation = [
-				{
-					$match: {
-						manga: id,
-					},
-				},
-				{
-					$sort: {
-						index: -1,
-					},
-				},
-			];
-			let chapters: ChapterDto[] = await chapterModel
-				.aggregate(chapterAggregation)
-				.exec();
-			mangaDto.chapters = chapters;
-
-			// Get comments belong to this manga
-			let commentAgg = [
-				{
-					$match: {
-						manga: id,
-					},
-				},
-				{
-					$sort: {
-						createdAt: -1,
-					},
-				},
-			];
-			let comments: CommentDto[] = await userCommentModel
-				.aggregate(commentAgg)
-				.exec();
-			mangaDto.comments = comments;
-
-			return mangaDto;
+			return completeMangaDtoOf(data[0]);
 		} catch (e) {
 			console.error(e);
 		}
@@ -798,12 +846,12 @@ export const MangaController = {
 			}
 
 			for (let i = 0; i < mangaDtos.length; i++) {
-				mangaDtos[i].briefChapterDto = ((
+				mangaDtos[i].briefChapterDto = (
 					await chapterModel
 						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as unknown) as ChapterDto;
+				)[0] as unknown as ChapterDto;
 
 				mangaDtos[i].averageRate = (
 					await getMangaRating(mangaDtos[i].id)

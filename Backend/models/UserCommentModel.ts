@@ -31,6 +31,18 @@ export interface UserComment {
 	updatedAt?: Date;
 }
 
-export interface CommentDto extends UserComment {}
+export interface UserCommentDto extends UserComment {}
+
+export function commentDtoOf(data: any): UserComment {
+	return {
+		id: data.id,
+		email: data.email,
+		manga: data.manga,
+		chapter: data.chapter,
+		content: data.content,
+		createdAt: data.createdAt,
+		replyTo: data.replyTo,
+	};
+}
 
 export const userCommentModel = mongoose.model("user-comment", commentSchema);

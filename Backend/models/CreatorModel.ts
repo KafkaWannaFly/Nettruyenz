@@ -16,4 +16,8 @@ export interface CreatorDto extends Creator {
 
 export const creatorModel = mongoose.model("creator", creatorSchema);
 
-// export default creatorModel;
+export function creatorOf(data: any): Creator {
+	return {
+		name: data.creator,
+	};
+}

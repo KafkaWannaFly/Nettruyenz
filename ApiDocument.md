@@ -199,6 +199,55 @@ Ví dụ:
 
 Trả về 1 object có kiểu `CompletedMangaDto`
 
+```json
+{
+	"id": "11",
+	"names": [
+		"Bokutachi wa benkyou ga dekinai",
+		"We can't Study",
+		"Học vầy sao mà được",
+		"Chúng ta không thể học"
+	],
+	"cover": "https://static.hocvientruyentranh.net/upload/thumb/1605101440099-1jpg.jpeg",
+	"description": "Yugia Nariyuki năm 3 cao trung, thuộc dạng con nhà nghèo vượt khó học giỏi. Được trường cử là \"gia sư\" cho 2 nhỏ thiên tài của trường. Nhỏ đầu tiên Ogata Rizu thiên tài toán học (và lý). nhỏ thứ hai Furuhashi Fumino thiên tài văn học. Rồi 2 nhỏ này blabla... cái trường này thì blabla... rồi blabla... Nói chung cứ vào đọc ắt biết :v",
+	"creators": [
+		"Tsutsui Taishi"
+	],
+	"tags": [
+		"Harem",
+		"Romance",
+		"School Life"
+	],
+	"status": 0,
+	"createdAt": "2021-04-25T15:04:59.187Z",
+	"updatedAt": "2021-04-25T15:04:59.187Z",
+	"averageRate": 2.8181818181818183,
+	"bookmarks": 13,
+	"views": 409,
+	"briefChapterDtos": [
+		{
+			"id": "11-101",
+			"manga": "11",
+			"index": 1,
+			"tittle": "",
+			"createdAt": "2021-04-25T15:04:59.181Z"
+		},
+        //...
+    ],
+    "userCommentDtos": [
+		{
+			"email": "Tyrel_Marks@hotmail.com",
+			"manga": "11",
+			"content": "et est nihil sint alias ducimus inventore cupiditate odit eum officiis quia odio doloremque dolorem voluptatibus dolorum deserunt dolorum assumenda",
+			"createdAt": "2021-04-26T15:23:31.547Z"
+		},
+        //...
+    ]
+}
+```
+
+
+
 ## Sign Up
 
 Nằm ở `hostname/sign-up`. 
@@ -235,6 +284,8 @@ Một tin nhắn thông báo nếu thất bại.
 	"error": "Sign up fail. 18127084@student.hcmus.edu.vn has already existed"
 }
 ```
+
+## Chapter
 
 
 
@@ -370,12 +421,29 @@ Trả về `UserDto` object chứa những thông tin liên quan đến người
 	"password": "$2b$10$Z3WdvKHVvb/LjJmvdi6kA.hlw4v9E1Cgdn5s.OjFkRbA9VF.v9xky",
 	"bookmarks": [
 		{
-			"_id": "6086d781ea2a040ef860a30e",
-			"manga": "33",
 			"email": "18127084@student.hcmus.edu.vn",
-			"__v": 0,
-			"createdAt": "2021-04-26T15:08:49.805Z",
-			"updatedAt": "2021-04-26T15:08:49.805Z"
+			"briefMangaDto": {
+				"id": "33",
+				"cover": "https://static.hocvientruyentranh.net/upload/thumb/1617867628232-001jpg.jpeg",
+				"description": "Takemichi, thanh niên thất nghiệp còn trinh, được biết rằng người con gái đầu tiên và cũng là duy nhất cho đến bây giờ mà anh hẹn hò là từ trung học đã chết. Sau một vụ tai nạn, anh ta thấy mình được quay về những ngày cấp hai. Anh ta thề sẽ thay đổi tương lai và giữ lấy người con gái ấy, để làm việc đó, anh ta quyết định sẽ vươn lên làm trùm băng đảng khét tiếng nhất ở vùng Kantou.",
+				"names": [
+					"Tokyo卍Revengers",
+					"Tokyo Manji Revengers Tokyo Revengers Tokyo卍Revengers Toukyou Revengers 東京卍リベンジャーズ"
+				],
+				"status": 0,
+				"averageRate": 3.3333333333333335,
+				"bookmarks": 12,
+				"views": 589,
+				"updatedAt": "2021-04-25T15:05:42.946Z",
+				"briefChapterDto": {
+					"id": "33-330",
+					"manga": "33",
+					"index": 10,
+					"tittle": "",
+					"views": 41,
+					"createdAt": "2021-04-25T15:05:42.938Z"
+				}
+			}
 		},
         // Many more
 	],
@@ -394,13 +462,22 @@ Trả về `UserDto` object chứa những thông tin liên quan đến người
 	],
     "history": [
 		{
-			"_id": "6086d5f949dc6007704984b5",
-			"chapter": "40-384",
-			"manga": "40",
 			"email": "18127084@student.hcmus.edu.vn",
-			"__v": 0,
-			"createdAt": "2021-04-26T15:02:17.407Z",
-			"updatedAt": "2021-04-26T15:02:17.407Z"
+			"manga": "3",
+			"chapter": "3-29",
+			"createdAt": "2021-04-26T15:01:39.326Z",
+			"briefChapterDto": {
+				"id": "3-29",
+				"manga": "3",
+				"index": 9,
+				"tittle": "",
+				"createdAt": "2021-04-25T15:04:40.238Z",
+				"mangaNames": [
+					"Yuuna-san của Lữ quán Yuragi",
+					"Yuragi-sou no Yuuna-san",
+					"ゆらぎ荘の幽奈さん"
+				]
+			}
 		},
         // Many more
 	]
@@ -463,20 +540,19 @@ interface CompletedMangaDto {
 	id: string;
 	names: string[];
 	cover: string;
-	tags: string[];
+	tags?: string[];
 	creators?: string[];
 	status?: MangaStatus;
 	description: string;
-
 	createdAt?: Date;
 	updatedAt?: Date;
-    
+
 	averageRate?: number;
 	bookmarks?: number;
 	views?: number;
 
-	chapters?: ChapterDto[];
-	comments?: CommentDto[];
+	briefChapterDtos?: BriefChapterDto[];
+	userCommentDtos?: UserCommentDto[];
 }
 ```
 
