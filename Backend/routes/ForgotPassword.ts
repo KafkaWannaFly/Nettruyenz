@@ -38,7 +38,7 @@ route.post("/", async (req, res) => {
 		const isSuccess = await OtpController.verifyOtp(email, code);
 
 		if (isSuccess) {
-			const user: UserDto = (await userController.resetUserPasswordAsync(
+			const user: UserDto = (await userController.changeUserPasswordAsync(
 				email,
 				newPassword
 			)) as UserDto;

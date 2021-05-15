@@ -58,7 +58,7 @@ export const userController = {
 		return false;
 	},
 
-	resetUserPasswordAsync: async (email: string, newPassword: string) => {
+	changeUserPasswordAsync: async (email: string, newPassword: string) => {
 		const user: User = (await userController.getUserAsync(email)) as User;
 		user.password = await bcrypt.hash(newPassword, SALT!);
 
@@ -324,12 +324,12 @@ export const userController = {
 			}
 
 			for (let i = 0; i < mangaDtos.length; i++) {
-				mangaDtos[i].briefChapterDto = ((
+				mangaDtos[i].briefChapterDto = (
 					await chapterModel
 						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as unknown) as ChapterDto;
+				)[0] as unknown as ChapterDto;
 			}
 
 			return mangaDtos.sort((a, b) => {

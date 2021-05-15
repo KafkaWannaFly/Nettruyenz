@@ -1,22 +1,17 @@
 import {
 	bookmarkModel,
+	briefChapterDtoOf,
 	BriefMangaDto,
 	ChapterDto,
 	chapterModel,
-	CommentDto,
-	userCommentModel,
 	CompletedMangaDto,
+	completeMangaDtoOf,
 	mangaChapterViewModel,
+	mangaCreatorModel,
 	mangaModel,
 	mangaRateModel,
-	mangaTagModel,
-	mangaCreatorModel,
-	creatorModel,
-	MangaCreator,
 	MangaTagDto,
-	chapterDtoOf,
-	briefChapterDtoOf,
-	completeMangaDtoOf,
+	mangaTagModel,
 } from "../models";
 import { MangaCreatorDto } from "../models/MangaCreator";
 
@@ -703,7 +698,17 @@ export const MangaController = {
 				return undefined;
 			}
 
-			return completeMangaDtoOf(data[0]);
+			const completedangaDto = completeMangaDtoOf(data[0]);
+
+			for (let i = 0; i < completedangaDto.briefChapterDtos.length; i++) {
+				const views = await mangaChapterViewModel
+					.find({ chapter: completedangaDto.briefChapterDtos[i].id })
+					.countDocuments()
+					.exec();
+				completedangaDto.briefChapterDtos[i].views = views;
+			}
+
+			return completedangaDto;
 		} catch (e) {
 			console.error(e);
 		}

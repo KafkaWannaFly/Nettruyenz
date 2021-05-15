@@ -77,7 +77,7 @@ export interface CompletedMangaDto {
 	bookmarks?: number;
 	views?: number;
 
-	briefChapterDtos?: BriefChapterDto[];
+	briefChapterDtos: BriefChapterDto[];
 	userCommentDtos?: UserCommentDto[];
 }
 
