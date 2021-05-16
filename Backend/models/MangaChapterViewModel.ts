@@ -19,7 +19,7 @@ export const mangaChapterViewModel = mongoose.model("view", viewSchema);
 
 export interface MangaChapterView {
 	id?: string;
-	email: string;
+	email?: string;
 	manga: string;
 	chapter: string;
 	createdAt?: Date;
