@@ -1,12 +1,10 @@
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
 import passportType from "passport";
 import passportJWT from "passport-jwt";
 import passportLocal from "passport-local";
 import { SALT, SECRET } from "../constants/EnvironmentConstants";
 import { userController } from "../controllers/UserController";
 import { User, UserLevel, userModel } from "../models";
-dotenv.config();
 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
@@ -126,11 +124,11 @@ export function initPassport(passport: typeof passportType) {
 			},
 			async (jwtPayload, done) => {
 				try {
-					let user = ((await userModel
+					let user = (await userModel
 						.findOne({
 							email: jwtPayload.email,
 						})
-						.exec()) as unknown) as User;
+						.exec()) as unknown as User;
 					done(null, user);
 				} catch (error) {
 					done(error, false);
