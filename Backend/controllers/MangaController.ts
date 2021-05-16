@@ -857,6 +857,8 @@ export const MangaController = {
 		order: string
 	) => {
 		if (title === undefined) title = "";
+		title = title.replaceAll("-", " ");
+		console.log(title);
 
 		if (undoneName === undefined) undoneName = "";
 
@@ -1069,6 +1071,8 @@ export const MangaController = {
 					});
 				}
 			}
+
+			console.log(sort)
 
 			mangaDtos.forEach(element => {
 				if (sort === "view") console.log(element.views)
