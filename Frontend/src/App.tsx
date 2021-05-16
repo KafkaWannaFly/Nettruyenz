@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import logo from "./logo.svg";
 import {useHistory, BrowserRouter, Route, Switch } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 import { Home } from "./components/Home/Home";
 import History from "./components/History";
@@ -12,8 +11,10 @@ import {Categories} from "./components/Categories/Categories";
 import { HistoryOutlined } from "@material-ui/icons";
 import handleAccount from "./components/Signin";
 
+
 function App() {
-	let [isLogin, setisLogin] = useState();
+	const [token, setToken] = useState();
+	console.log(token);
 	// if(!token){
 	// 	return <Signin setToken={setToken} />
 	// }
@@ -21,7 +22,7 @@ function App() {
 		<>
 		<BrowserRouter>
 			<>
-				<Navbar authentication = {false}></Navbar>
+				<Navbar authentication = {false} setToken={setToken}></Navbar>
 						<div className="App bg-gray-1000 h-full">
 						{/* <Route exact path = "/signin" component={handleAccount}></Route> */}
 						<Switch>

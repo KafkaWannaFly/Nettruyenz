@@ -42,7 +42,7 @@ exports.userController = {
         }
         return false;
     },
-    resetUserPasswordAsync: async (email, newPassword) => {
+    changeUserPasswordAsync: async (email, newPassword) => {
         const user = (await exports.userController.getUserAsync(email));
         user.password = await bcrypt_1.default.hash(newPassword, EnvironmentConstants_1.SALT);
         await models_1.userModel.updateOne({ email: email }, user).exec();

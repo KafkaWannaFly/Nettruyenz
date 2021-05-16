@@ -5,13 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initPassport = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const dotenv_1 = __importDefault(require("dotenv"));
 const passport_jwt_1 = __importDefault(require("passport-jwt"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const EnvironmentConstants_1 = require("../constants/EnvironmentConstants");
 const UserController_1 = require("../controllers/UserController");
 const models_1 = require("../models");
-dotenv_1.default.config();
 const JWTStrategy = passport_jwt_1.default.Strategy;
 const ExtractJWT = passport_jwt_1.default.ExtractJwt;
 function initPassport(passport) {

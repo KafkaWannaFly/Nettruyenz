@@ -455,98 +455,252 @@ exports.MangaController = {
      * @param id Manga id
      * @returns CompletedangaDto or undefined if fount nothing
      */
-    getMangaAsync: async (id) => {
+    getMangaByIdAsync: async (id) => {
         try {
-            let mangaAgg = [
+            const agg = [
                 {
                     $match: {
                         id: id,
                     },
                 },
                 {
-                    $limit: 1,
+                    $lookup: {
+                        from: "chapters",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "chapterDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "views",
+                        localField: "chapterDocs.id",
+                        foreignField: "chapter",
+                        as: "viewChapterDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "bookmarks",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "bookmarkDocs",
+                    },
+                },
+                {
+                    $set: {
+                        bookmarks: {
+                            $size: "$bookmarkDocs",
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "views",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "viewDocs",
+                    },
+                },
+                {
+                    $set: {
+                        views: {
+                            $size: "$viewDocs",
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "manga-rates",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "rateDocs",
+                    },
+                },
+                {
+                    $set: {
+                        averageRate: {
+                            $divide: [
+                                {
+                                    $sum: "$rateDocs.rate",
+                                },
+                                {
+                                    $size: "$rateDocs",
+                                },
+                            ],
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "user-comments",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "commentDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "manga-creators",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "creatorDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "manga-tags",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "tagDocs",
+                    },
+                },
+                {
+                    $unset: ["viewDocs", "rateDocs", "bookmarkDocs", "viewChapterDocs"],
                 },
             ];
-            let mangaDto = (await models_1.mangaModel.aggregate(mangaAgg).exec())[0];
-            let mangaRate = await getMangaRating(id);
-            mangaDto.averageRate = mangaRate.average;
-            mangaDto.bookmarks = await models_1.bookmarkModel
-                .find({ manga: id })
-                .countDocuments()
-                .exec();
-            mangaDto.views = await models_1.mangaChapterViewModel
-                .find({ manga: id })
-                .countDocuments()
-                .exec();
-            // Get chapters belong to this manga and sort them from newest to oldest
-            let chapterAggregation = [
-                {
-                    $match: {
-                        manga: id,
-                    },
-                },
-                {
-                    $sort: {
-                        index: -1,
-                    },
-                },
-            ];
-            let chapters = await models_1.chapterModel
-                .aggregate(chapterAggregation)
-                .exec();
-            mangaDto.chapters = chapters;
-            // Get comments belong to this manga
-            let commentAgg = [
-                {
-                    $match: {
-                        manga: id,
-                    },
-                },
-                {
-                    $sort: {
-                        createdAt: -1,
-                    },
-                },
-            ];
-            let comments = await models_1.userCommentModel
-                .aggregate(commentAgg)
-                .exec();
-            mangaDto.comments = comments;
-            return mangaDto;
+            const data = await models_1.mangaModel.aggregate(agg).exec();
+            if (!data) {
+                return undefined;
+            }
+            const completedangaDto = models_1.completeMangaDtoOf(data[0]);
+            for (let i = 0; i < completedangaDto.briefChapterDtos.length; i++) {
+                const views = await models_1.mangaChapterViewModel
+                    .find({ chapter: completedangaDto.briefChapterDtos[i].id })
+                    .countDocuments()
+                    .exec();
+                completedangaDto.briefChapterDtos[i].views = views;
+            }
+            return completedangaDto;
         }
         catch (e) {
             console.error(e);
         }
     },
+    //Test area
     getAllAuthor: async (author) => {
+        if (author === undefined)
+            author = "";
         try {
             let mangaCreatorAgg = [
                 {
                     $match: {
                         creator: {
-                            $regex: `'.*${author}.*'`,
+                            $regex: `.*${author}.*`,
                         },
                     },
                 },
             ];
             let creators = await models_1.mangaCreatorModel
                 .aggregate(mangaCreatorAgg)
-                .exec()[0];
+                .exec();
             return creators;
         }
         catch (e) {
             console.error(e);
         }
     },
-    getMangasForCate: async (tags, title, undoneName, period = "all", sort, order) => {
-        if (tags === undefined) {
-            tags = [];
-            tags.push("");
+    getMangaByName: async (name, id, period = "all") => {
+        if (name === undefined)
+            name = "";
+        if (id === undefined)
+            id = "";
+        try {
+            let aggregationStatements = [
+                {
+                    $sort: {
+                        updatedAt: -1,
+                    },
+                },
+                {
+                    $match: {
+                        names: {
+                            $regex: `.*${name}.*`,
+                        }
+                    },
+                },
+                {
+                    $match: {
+                        id: {
+                            $regex: `.*${id}.*`,
+                        }
+                    },
+                },
+            ];
+            if (period === "weekly") {
+                let weeklyFilter = getWeeklyFilter();
+                aggregationStatements = [weeklyFilter, ...aggregationStatements];
+            }
+            else if (period === "monthly") {
+                let monthlyFilter = getMonthlyFilter();
+                aggregationStatements = [monthlyFilter, ...aggregationStatements];
+            }
+            let mangaDtos = await models_1.mangaModel.aggregate(aggregationStatements).exec();
+            return mangaDtos;
         }
+        catch (e) {
+            console.error(e);
+        }
+    },
+    getMangaByTag: async (tags) => {
+        try {
+            let getTags = await models_1.mangaTagModel
+                .aggregate([
+                {
+                    $match: {},
+                },
+            ])
+                .exec();
+            if (tags !== undefined) {
+                for (let i = 0; i < tags.length; i++) {
+                    let mangaTagsAgg = [
+                        {
+                            $match: {
+                                tag: `${tags[i]}`,
+                            },
+                        },
+                    ];
+                    console.log(tags[i]);
+                    let tempTagsList = await models_1.mangaTagModel
+                        .aggregate(mangaTagsAgg)
+                        .exec();
+                    console.log(tempTagsList);
+                    let anotherTempList = [];
+                    for (let each1 of getTags) {
+                        for (let each2 of tempTagsList) {
+                            if (each1.manga === each2.manga) {
+                                anotherTempList.push(each1);
+                                break;
+                            }
+                        }
+                    }
+                    getTags = [];
+                    anotherTempList.forEach((element) => {
+                        getTags.push(element);
+                    });
+                }
+            }
+            let mangaTags = [];
+            getTags.forEach(element => {
+                mangaTags.push(element.manga);
+            });
+            let uniqueMangaTag = Array.from(new Set(mangaTags));
+            return uniqueMangaTag;
+        }
+        catch (e) {
+            console.error(e);
+        }
+    },
+    //End of test area
+    getMangasForCate: async (tags, title, undoneName, period = "all", sort, order) => {
         if (title === undefined)
             title = "";
         if (undoneName === undefined)
-            title = "";
+            undoneName = "";
+        if (sort === undefined)
+            sort = "Date";
+        if (order === undefined)
+            order = "Descending";
         try {
             let mangaCreatorAgg = [
                 {
@@ -559,7 +713,8 @@ exports.MangaController = {
             ];
             let creator = await models_1.mangaCreatorModel
                 .aggregate(mangaCreatorAgg)
-                .exec()[0];
+                .exec();
+            console.log(creator);
             let getTags = await models_1.mangaTagModel
                 .aggregate([
                 {
@@ -567,40 +722,50 @@ exports.MangaController = {
                 },
             ])
                 .exec();
-            for (let i = 0; i < tags.length; i++) {
-                let mangaTagsAgg = [
-                    {
-                        $match: {
-                            tag: `.*${tags[i]}.*`,
+            if (tags !== undefined) {
+                for (let i = 0; i < tags.length; i++) {
+                    let mangaTagsAgg = [
+                        {
+                            $match: {
+                                tag: `${tags[i]}`,
+                            },
                         },
-                    },
-                ];
-                let tempTagsList = await models_1.mangaTagModel
-                    .aggregate(mangaTagsAgg)
-                    .exec();
-                let anotherTempList = [];
-                for (let each1 of getTags) {
-                    for (let each2 of tempTagsList) {
-                        if (each1.manga === each2.manga) {
-                            anotherTempList.push(each1);
-                            break;
+                    ];
+                    let tempTagsList = await models_1.mangaTagModel
+                        .aggregate(mangaTagsAgg)
+                        .exec();
+                    let anotherTempList = [];
+                    for (let each1 of getTags) {
+                        for (let each2 of tempTagsList) {
+                            if (each1.manga === each2.manga) {
+                                anotherTempList.push(each1);
+                                break;
+                            }
                         }
                     }
+                    getTags = [];
+                    anotherTempList.forEach((element) => {
+                        getTags.push(element);
+                    });
                 }
-                getTags = [];
-                anotherTempList.forEach((element) => {
-                    getTags.push(element);
-                });
             }
+            let mangaTags = [];
+            getTags.forEach(element => {
+                mangaTags.push(element.manga);
+            });
+            let uniqueMangaTag = Array.from(new Set(mangaTags));
+            console.log(uniqueMangaTag);
             let listMangaNeed = [];
             for (let each1 of creator) {
-                for (let each2 of getTags) {
-                    if (each1.manga === each2.manga) {
+                for (let each2 of uniqueMangaTag) {
+                    if (each1.manga === each2) {
                         listMangaNeed.push(each1.manga);
                         break;
                     }
                 }
             }
+            listMangaNeed = Array.from(new Set(listMangaNeed));
+            console.log(listMangaNeed);
             let mangaDtos = [];
             let i = 0;
             for (let each of listMangaNeed) {
@@ -612,12 +777,14 @@ exports.MangaController = {
                     },
                     {
                         $match: {
-                            id: each,
+                            id: `${each}`,
                         },
                     },
                     {
                         $match: {
-                            $regex: `.*${title}.*`,
+                            names: {
+                                $regex: `.*${title}.*`,
+                            }
                         },
                     },
                 ];
@@ -629,14 +796,16 @@ exports.MangaController = {
                     let monthlyFilter = getMonthlyFilter();
                     aggregationStatements = [monthlyFilter, ...aggregationStatements];
                 }
-                mangaDtos[i] = await models_1.mangaModel.aggregate(aggregationStatements).exec();
-                i++;
+                let tempMangaDto = await models_1.mangaModel.aggregate(aggregationStatements).exec();
+                mangaDtos = tempMangaDto.concat(mangaDtos);
             }
             for (let i = 0; i < mangaDtos.length; i++) {
-                mangaDtos[i].briefChapterDto = (await models_1.chapterModel
+                const chapterData = (await models_1.chapterModel
                     .find({ manga: mangaDtos[i].id })
                     .sort({ index: -1 })
                     .limit(1))[0];
+                chapterData.mangaNames = mangaDtos[i].names;
+                mangaDtos[i].briefChapterDto = models_1.briefChapterDtoOf(chapterData);
                 mangaDtos[i].averageRate = (await getMangaRating(mangaDtos[i].id)).average;
                 mangaDtos[i].views = await models_1.mangaChapterViewModel
                     .find({ manga: mangaDtos[i].id })
@@ -649,8 +818,8 @@ exports.MangaController = {
                     .countDocuments()
                     .exec();
             }
-            if (sort === "View") {
-                if (order === "Descending") {
+            if (sort === "view") {
+                if (order === "desc") {
                     mangaDtos.sort((a, b) => {
                         if (b.views === undefined || a.views === undefined) {
                             return -1;
@@ -658,7 +827,7 @@ exports.MangaController = {
                         return b.views - a.views;
                     });
                 }
-                else if (order === "Ascending") {
+                else if (order === "asc") {
                     mangaDtos.sort((a, b) => {
                         if (b.views === undefined || a.views === undefined) {
                             return -1;
@@ -667,8 +836,8 @@ exports.MangaController = {
                     });
                 }
             }
-            else if (sort === "Followed") {
-                if (order === "Descending") {
+            else if (sort === "follow") {
+                if (order === "desc") {
                     mangaDtos.sort((a, b) => {
                         if (b.bookmarks === undefined || a.bookmarks === undefined) {
                             return -1;
@@ -676,7 +845,7 @@ exports.MangaController = {
                         return b.bookmarks - a.bookmarks;
                     });
                 }
-                else if (order === "Ascending") {
+                else if (order === "asc") {
                     mangaDtos.sort((a, b) => {
                         if (b.bookmarks === undefined || a.bookmarks === undefined) {
                             return -1;
@@ -685,8 +854,8 @@ exports.MangaController = {
                     });
                 }
             }
-            else if (sort === "Rate") {
-                if (order === "Descending") {
+            else if (sort === "rate") {
+                if (order === "desc") {
                     mangaDtos.sort((a, b) => {
                         if (b.averageRate === undefined || a.averageRate === undefined) {
                             return -1;
@@ -694,7 +863,7 @@ exports.MangaController = {
                         return b.averageRate - a.averageRate;
                     });
                 }
-                else if (order === "Ascending") {
+                else if (order === "asc") {
                     mangaDtos.sort((a, b) => {
                         if (b.averageRate === undefined || a.averageRate === undefined) {
                             return -1;
@@ -703,16 +872,16 @@ exports.MangaController = {
                     });
                 }
             }
-            else if (sort === "Name") {
-                if (order === "Descending") {
+            else if (sort === "name") {
+                if (order === "desc") {
                     mangaDtos.sort((a, b) => (a.names < b.names ? 1 : -1));
                 }
-                else if (order === "Ascending") {
+                else if (order === "asc") {
                     mangaDtos.sort((a, b) => (a.names > b.names ? 1 : -1));
                 }
             }
-            else if (sort === "Date") {
-                if (order === "Descending") {
+            else if (sort === "date") {
+                if (order === "desc") {
                     mangaDtos.sort((a, b) => {
                         if (b.updatedAt === undefined || a.updatedAt === undefined) {
                             return -1;
@@ -720,7 +889,7 @@ exports.MangaController = {
                         return b.updatedAt.getSeconds() - a.updatedAt.getSeconds();
                     });
                 }
-                else if (order === "Ascending") {
+                else if (order === "asc") {
                     mangaDtos.sort((a, b) => {
                         if (b.createdAt === undefined || a.createdAt === undefined) {
                             return -1;
@@ -729,6 +898,7 @@ exports.MangaController = {
                     });
                 }
             }
+            console.log(mangaDtos);
             return mangaDtos;
         }
         catch (error) {
@@ -736,17 +906,6 @@ exports.MangaController = {
         }
     },
 };
-// async function getAuthor(words:string) {
-// 	const nameAgg = [{
-// 		$match:{
-// 			name: {
-// 				$regex: `.*${words}.*`
-// 			}
-// 		}
-// 	}];
-// 	let authors = (await CreatorModel.aggregate(nameAgg).exec())[0];
-// 	return authors[0];
-// }
 async function getMangaRating(id) {
     const rateAgg = [
         {

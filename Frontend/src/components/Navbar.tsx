@@ -17,7 +17,7 @@ function onSignIn() {
 const setStyleProps = { // make sure all required component's inputs/Props keys&types match
     class: "overlay"
 }
-export default function Navbar(props: any) {
+export default function Navbar(props: any, {setToken}) {
 	return (
 		<div className="w-full py-1 bg-black text-white ">
 
