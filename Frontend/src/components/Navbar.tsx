@@ -14,14 +14,16 @@ function onSignIn() {
 	console.log(myElement);
 	myElement.style.display = "block";
 }
-const setStyleProps = { // make sure all required component's inputs/Props keys&types match
-    class: "overlay"
-}
-export default function Navbar(props: any, {setToken}) {
+
+export default function Navbar(props: any) {
+	const setStyleProps = { // make sure all required component's inputs/Props keys&types match
+		class: "overlay",
+		setToken: props.setToken
+	}
 	return (
 		<div className="w-full py-1 bg-black text-white ">
 
-			<HandleAccount {...setStyleProps}></HandleAccount>
+			<HandleAccount setStyleProps = {setStyleProps}></HandleAccount>
 			<div className="table w-full py-4 px-44">
 				<div className="table-row">
 					<div className="table-cell text-sm w-1/3 align-middle">

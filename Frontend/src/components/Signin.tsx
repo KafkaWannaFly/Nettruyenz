@@ -17,7 +17,7 @@ function validateEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
-function postDataSignIn({setToken}) {
+function postDataSignIn(setToken: any) {
   const inputUsername = (document.getElementById("emailSignIn") as HTMLInputElement).value;
   const inputPassword = (document.getElementById("passwordSignIn") as HTMLInputElement).value;
   const output = document.getElementById("notiSignIn");
@@ -37,6 +37,7 @@ function postDataSignIn({setToken}) {
       axios
         .post("http://localhost:3000/sign-in", dataSignIn)
         .then(function (response) {
+          console.log(response);
           if(response.data.error){
             if(output)
               output.innerHTML = "Tài khoản hoặc mật khẩu không đúng";
@@ -44,7 +45,8 @@ function postDataSignIn({setToken}) {
           else{
             if(output)
               output.innerHTML = "Đăng nhập thành công";
-            
+              setToken(response.data.token);
+              offLogin();
           }
           console.log(response);
         })
@@ -61,7 +63,9 @@ function postDataSignIn({setToken}) {
   }
 
 }
-
+postDataSignIn.propTypes = {
+  setToken: true,
+}
 var dataSignUp = {
   email: "testUserName@gmail.com",
   password: "123"
@@ -81,7 +85,8 @@ function offLogin() {
   const myElement = document.getElementById("overlay")!;
   myElement.style.display = "none";
 }
-const Tabs = ({ color }) => {
+const Tabs = (props: any) => {
+  console.log(props);
   const [openTab, setOpenTab] = React.useState(1);
   return (
     <>
@@ -114,8 +119,8 @@ const Tabs = ({ color }) => {
                   className={
                     "text-xs font-bold uppercase px-5 py-3 shadow-lg rounded-full block leading-normal " +
                     (openTab === 1
-                      ? "text-white bg-" + color
-                      : "text-" + color + "-600 bg-red-600")
+                      ? "text-white bg-" + props.color
+                      : "text-" + props.color + "-600 bg-red-600")
                   }
                   onClick={(e) => {
                     e.preventDefault();
@@ -136,8 +141,8 @@ const Tabs = ({ color }) => {
                   className={
                     "text-xs font-bold uppercase px-5 py-3 shadow-lg rounded-full block leading-normal " +
                     (openTab === 2
-                      ? "text-white bg-" + color
-                      : "text-" + color + "-600 bg-red-600")
+                      ? "text-white bg-" + props.color
+                      : "text-" + props.color + "-600 bg-red-600")
                   }
                   onClick={(e) => {
                     e.preventDefault();
@@ -188,7 +193,7 @@ const Tabs = ({ color }) => {
                   <button
                     className="focus:bg-black bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
                     type="submit"
-                    onClick={() => postDataSignIn}
+                    onClick={() => postDataSignIn(props.setToken)}
                   >
                     SIGN IN
                   </button>
@@ -361,27 +366,7 @@ const Tabs = ({ color }) => {
     </>
   );
 };
-interface Props {
-  error: any;
-  isLoaded: boolean;
-  homes: any[];
-  filter: boolean;
-  class: string;
-  setToken: any;
-}
-class HandleAccount extends React.Component<{}, Props> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      homes: new Array(),
-      filter: true,
-      class: props.class,
-      setToken: props.setToken
-    };
-  }
-
+function HandleAccount(props: any){
   // loginUser(credentials) {
   //   return fetch("http://localhost:3001/signin", {
   //     method: "POST",
@@ -391,23 +376,20 @@ class HandleAccount extends React.Component<{}, Props> {
   //     body: JSON.stringify(credentials),
   //   }).then((data) => data.json());
   // }
-  render() {
-    //console.log(this.state.class);
-    this.state.setToken(true);
-    console.log(this.state.setToken);
-    return (
-      <div id={this.state.class}>
+  return (
+    <>
+      <div id={props.setStyleProps.class}>
         <main className="max-w-70rem bg-gray-600 max-h-full mx-auto my-10 rounded-lg shadow-2xl flex">
           <div className="w-1/2">
             <img src={imgLogin}></img>
           </div>
           <div className="w-1/2 justify-center pt-6 pr-10 items-center text-white ">
-            <Tabs color="black"></Tabs>
+            <Tabs color="black" setToken = {props.setStyleProps.setToken}></Tabs>
           </div>
         </main>
       </div>
-    );
-  }
+    </>
+  )
 }
 
 export default HandleAccount;

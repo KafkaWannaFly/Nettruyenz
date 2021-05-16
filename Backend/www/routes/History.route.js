@@ -11,8 +11,8 @@ const router = express_1.default.Router();
 router.get("/", passport_1.default.authenticate("jwt", { session: false }), async (req, res) => {
     const user = req.user;
     let userDto = models_1.userDtoOf(user);
-    let historyList = UserController_1.userController.getUserReadingHistory(userDto.email);
-    res.json(historyList);
+    let response = await UserController_1.userController.getUserViewedChapters(userDto.email);
+    res.json(response);
 });
-const historyRouter = router;
-exports.default = historyRouter;
+const historyRoute = router;
+exports.default = historyRoute;

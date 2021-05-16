@@ -14,15 +14,16 @@ import handleAccount from "./components/Signin";
 
 function App() {
 	const [token, setToken] = useState();
-	console.log(token);
-	// if(!token){
-	// 	return <Signin setToken={setToken} />
-	// }
+	var authen = false;
+	if(token != null){
+		authen = true;
+	}
+	console.log(authen);
 	return (
 		<>
 		<BrowserRouter>
 			<>
-				<Navbar authentication = {false} setToken={setToken}></Navbar>
+				<Navbar authentication = {authen} setToken={setToken}></Navbar>
 						<div className="App bg-gray-1000 h-full">
 						{/* <Route exact path = "/signin" component={handleAccount}></Route> */}
 						<Switch>
