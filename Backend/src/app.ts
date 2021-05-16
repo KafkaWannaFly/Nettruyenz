@@ -14,6 +14,9 @@ import signUpRoute from "../routes/SignUp.route";
 import tagRoute from "../routes/Tag.route";
 import userRoute from "../routes/User.route";
 import cors from "cors";
+import bookmarkRoute from "../routes/Bookmarks.route";
+import historyRoute from "../routes/History.route";
+import chapterRoute from "../routes/Chapters.route";
 dotenv.config();
 
 const app = express();
@@ -48,7 +51,13 @@ app.use("/forgot-password", forgotPasswordRoute);
 
 app.use("/mangas", mangaRoute);
 
+app.use("/chapters", chapterRoute);
+
 app.use("/categories", cateRoute);
+
+app.use("/bookmarks", bookmarkRoute);
+
+app.use("/history", historyRoute);
 
 app.use("/tags", tagRoute);
 

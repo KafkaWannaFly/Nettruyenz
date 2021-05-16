@@ -4,6 +4,10 @@ Tài liệu này nói về giao tiếp giữa Front-end và Back-end. Cấu trú
 
 <div style="text-align:center" ><img src="ApiDocument.assets/image-20210404210907517.png" alt="image-20210404210907517" style="zoom:80%;" /></div>
 
+[TOC]
+
+
+
 ## Home
 
 `Home` là trang mặc định của web, nằm tại `https://hostname/`. Nó có các route con:
@@ -259,7 +263,8 @@ Phương thức `post` dùng để đăng ký 1 tài khoản mới. Chấp nhậ
 ```json
 {
     "email": "18127084@student.hcmus.edu.vn",
-    "password": "123"
+    "password": "123",
+    "nickname": "Kafka Wanna Fly" // Optional
 }
 ```
 
@@ -287,7 +292,80 @@ Một tin nhắn thông báo nếu thất bại.
 
 ## Chapter
 
+### Route mặc định
 
+Nằm ở GET `host/chapters/:id` với `id` là id của chapter đó.
+
+Nếu là người dùng đã đăng nhập thì đưa chapter này vào lịch sử của người ấy.
+
+Dữ liệu trả về là 1 object `ChapterDto`
+
+```json
+{
+	"id": "10-91",
+	"manga": "10",
+	"index": 0.1,
+	"images": [
+		"https://3.bp.blogspot.com/-OlzPEEqQI90/VP6HBTRGleI/AAAAAAABeI4/ovwpfRaWxVM/s0/01ACredit.jpg",
+		"https://4.bp.blogspot.com/-aybOU9LCiTA/VP6HDB55-jI/AAAAAAABeJA/4JZ2jk9Zo3w/s0/01R.jpg",
+		"https://2.bp.blogspot.com/-zKO0y4mTkGE/VP6HEa0uuxI/AAAAAAABeJI/6hMGdgU_yV0/s0/02R.jpg",
+		"https://4.bp.blogspot.com/-EXfPE5_eGtE/VP6HF497lrI/AAAAAAABeJQ/BR-DMErV4JA/s0/03-04.jpg",
+		"https://4.bp.blogspot.com/-OQPyt2NH2JU/VP6HG-HUekI/AAAAAAABeJY/k7NPjDQk1Uw/s0/05.png",
+		"https://3.bp.blogspot.com/-sIaN76mhVzE/VP6HHmU-tFI/AAAAAAABeJg/4iqZNqruAUE/s0/06.png",
+		"https://4.bp.blogspot.com/-pSf7pGpafAs/VP6HIlXU4_I/AAAAAAABeJo/C8za9L3i6W8/s0/07.png",
+		"https://2.bp.blogspot.com/-qw92ri0_ljE/VP6HJeBKy3I/AAAAAAABeJw/zuxvzsivG1k/s0/08.png",
+		"https://1.bp.blogspot.com/-xoF2coHD2Sk/VP6HKdd2_jI/AAAAAAABeJ4/qOus-NAlxEA/s0/09R.png",
+		"https://2.bp.blogspot.com/-OtftmAjUYgY/VP6HLE4PnFI/AAAAAAABeJ8/0yZ9rxQeltk/s0/10.png",
+		"https://3.bp.blogspot.com/-_KaGMh3UoIw/VP6HL7CtN8I/AAAAAAABeKI/btT_jFEimG4/s0/11.png",
+		"https://2.bp.blogspot.com/-xVf9uZgT2x0/VP6HMtnh2MI/AAAAAAABeKM/I-GsB-TMTrU/s0/12.png",
+		"https://4.bp.blogspot.com/-bWRBhf_EuyA/VP6HNExxCzI/AAAAAAABeKY/ki8vN5SYRMo/s0/13.png",
+		"https://3.bp.blogspot.com/-H-21eR0Gc8o/VP6HN5mN81I/AAAAAAABeKg/J6Y1tyAcxrE/s0/14.png",
+		"https://4.bp.blogspot.com/-D8QQLqGb34o/VP6HOpG8hwI/AAAAAAABeKo/NgTxfwr-MpA/s0/15.png",
+		"https://4.bp.blogspot.com/-mFpunePNOuc/VP6HPeC04RI/AAAAAAABeKw/VCQw2qT5nhc/s0/16.png",
+		"https://3.bp.blogspot.com/-uio_YNvxkwc/VP6HQH1gtLI/AAAAAAABeK4/m5jwkQhN2mc/s0/17.png",
+		"https://4.bp.blogspot.com/-vx4Q8HnctSw/VP6HSVQcS1I/AAAAAAABeLA/HEfAqEqyOEE/s0/18.png",
+		"https://4.bp.blogspot.com/-NW-mvqIB2t4/VP6HTZZh4_I/AAAAAAABeLI/xyNGJQyepQ8/s0/19.png",
+		"https://2.bp.blogspot.com/-iiZpJHC7--Y/VP6HUtbIVLI/AAAAAAABeLQ/bKPaYmrz3Rk/s0/20.png",
+		"https://3.bp.blogspot.com/-D3KTkpt7-Rc/VP6HVAuo2ZI/AAAAAAABeLY/d6E1JXEw82w/s0/21.png",
+		"https://4.bp.blogspot.com/-IAewiu8SCwE/VP6HWaNG_2I/AAAAAAABeLg/ufNcdqUTyyY/s0/22.png",
+		"https://3.bp.blogspot.com/-_UikeGXMV5I/VP6HXAF0YBI/AAAAAAABeLo/EH0sRxJ6xBI/s0/23.png",
+		"https://3.bp.blogspot.com/-ofsE3bA5dfQ/VP6HYJikNnI/AAAAAAABeLw/VSdWlvLn608/s0/24.png",
+		"https://2.bp.blogspot.com/-a7Tnm4TiKzA/VP6HZL3rV9I/AAAAAAABeL4/puviw35sFNE/s0/25.png",
+		"https://3.bp.blogspot.com/-Lb6a4cHPHQ4/VP6HZytBhaI/AAAAAAABeMA/SjPAL7TLP0M/s0/26.png",
+		"https://2.bp.blogspot.com/-llSIeUimXso/VP6HapD4StI/AAAAAAABeMI/T73VZX4Zi1A/s0/27.png",
+		"https://3.bp.blogspot.com/-FZAHaG-eNFo/VP6HbSPPkKI/AAAAAAABeMQ/i2_404ocmDo/s0/28.png",
+		"https://3.bp.blogspot.com/-axzE5ALkPHM/VP6HcFbkYFI/AAAAAAABeMY/T9Jsu-BWm7k/s0/29.png",
+		"https://3.bp.blogspot.com/-xDds7QzV4Qk/VP6HdLYbJYI/AAAAAAABeMg/2pP36z-ZeV4/s0/30.png",
+		"https://4.bp.blogspot.com/-iJWgkLqijK8/VP6Hd1UWvBI/AAAAAAABeMo/ZZM3oXyzPd4/s0/31.png",
+		"https://4.bp.blogspot.com/-W5RcgAFhpsc/VP6HefVMy1I/AAAAAAABeMw/3_xGDSiW86U/s0/32.png",
+		"https://1.bp.blogspot.com/-lDkmrTBg_wc/VP6HfPK20sI/AAAAAAABeM4/kE8XJPwyf0c/s0/33.png",
+		"https://3.bp.blogspot.com/-2ncZSYePBa4/VP6Hf7fDY6I/AAAAAAABeNA/VSA0iQxPKXg/s0/34R.png",
+		"https://3.bp.blogspot.com/-iIOyrcFovSg/VP6HgvNYitI/AAAAAAABeNI/BQwcoT_bEgM/s0/35.png",
+		"https://3.bp.blogspot.com/-_QkMr53nU_I/VP6HiEocq4I/AAAAAAABeNQ/_gBKC0hf5GQ/s0/36_37.png",
+		"https://3.bp.blogspot.com/-S1Q_Xpi01B4/VP6HjBcHqTI/AAAAAAABeNU/s82i8SN0dUs/s0/38R.png",
+		"https://3.bp.blogspot.com/-VMPPjx7mcnY/VP6Hj5-E1AI/AAAAAAABeNg/myEgYNI6wQE/s0/39R.png",
+		"https://3.bp.blogspot.com/-SQDvM3nZ0Ro/VP6Hkph2J9I/AAAAAAABeNo/Ma6n5ZwAbuU/s0/40R.png",
+		"https://3.bp.blogspot.com/-yOUX_-z_7c0/VP6HlcxfA_I/AAAAAAABeNw/m56vF4OE8IY/s0/41R.png",
+		"https://3.bp.blogspot.com/-73Kc39caIE8/VP6Hmy3hsvI/AAAAAAABeN4/e6bN66xDglM/s0/42_43.png",
+		"https://3.bp.blogspot.com/-qDb2LsaOojA/VP6HnvZeUAI/AAAAAAABeOA/pZmwOwp_tho/s0/44.png",
+		"https://3.bp.blogspot.com/-Kg945-HfeWM/VP6HojpyhqI/AAAAAAABeOI/_kt1BPzSOw8/s0/45.png",
+		"https://3.bp.blogspot.com/-wOKfWEAKD5E/VP6HpdqzE2I/AAAAAAABeOQ/4LqiA0Xnk7A/s0/46.png",
+		"https://3.bp.blogspot.com/-gxJWGY2Xr88/VP6HqMe0M1I/AAAAAAABeOY/gErlwKmYL_o/s0/47.png",
+		"https://4.bp.blogspot.com/-zLAfQydEFJA/VP6HrBx9koI/AAAAAAABeOg/4vhbgEfDjWw/s0/48.png",
+		"https://1.bp.blogspot.com/-YuFBIcO2r-w/VP6Hr0xLGJI/AAAAAAABeOo/jVEhtb1K0Cw/s0/49.png",
+		"https://3.bp.blogspot.com/-iDUj92Hvno8/VP6Hs8ltIYI/AAAAAAABeOw/IOYW8_l1SXc/s0/50.png",
+		"https://4.bp.blogspot.com/-I1bBx3Q718c/VP6Htk0ZsjI/AAAAAAABeO4/dknR13mBpnI/s0/51.png",
+		"https://4.bp.blogspot.com/--7bLBmjx3dA/VP6HupNkohI/AAAAAAABePA/Ir03O1sVU8Y/s0/52.png",
+		"https://4.bp.blogspot.com/-VuxrZ3Umktw/VP6HveVgtLI/AAAAAAABePI/G4pt0maWk80/s0/53.png",
+		"https://4.bp.blogspot.com/-l9QP-vyieb8/VP6HwI0L2kI/AAAAAAABePQ/8Xu9JWg-Cy8/s0/54.png",
+		"https://3.bp.blogspot.com/-lGcRsQsqqys/VP6HwzaRCII/AAAAAAABePY/JICPdOJCnYA/s0/55.png"
+	],
+	"tittle": "",
+	"uploader": "18127101@student.hcmus.edu.vn",
+	"createdAt": "2021-04-25T15:04:57.544Z",
+	"updatedAt": "2021-04-26T15:01:45.987Z"
+}
+```
 
 ## Sign In
 
@@ -482,6 +560,85 @@ Trả về `UserDto` object chứa những thông tin liên quan đến người
         // Many more
 	]
 }
+```
+
+## Bookmarks
+
+Nằm ở GET `host/bookmarks` 
+
+### Route mặc định
+
+Yêu cầu phải đăng là người dùng đã đăng nhập.
+
+Tại header của request cần trường `Authorization` với giá trị là `Bearer <token>`
+
+Giá trị trả về là 1 mảng `BookmarkDto`
+
+```json
+[
+	{
+		"email": "18127084@student.hcmus.edu.vn",
+		"briefMangaDto": {
+			"id": "33",
+			"cover": "https://static.hocvientruyentranh.net/upload/thumb/1617867628232-001jpg.jpeg",
+			"description": "Takemichi, thanh niên thất nghiệp còn trinh, được biết rằng người con gái đầu tiên và cũng là duy nhất cho đến bây giờ mà anh hẹn hò là từ trung học đã chết. Sau một vụ tai nạn, anh ta thấy mình được quay về những ngày cấp hai. Anh ta thề sẽ thay đổi tương lai và giữ lấy người con gái ấy, để làm việc đó, anh ta quyết định sẽ vươn lên làm trùm băng đảng khét tiếng nhất ở vùng Kantou.",
+			"names": [
+				"Tokyo卍Revengers",
+				"Tokyo Manji Revengers Tokyo Revengers Tokyo卍Revengers Toukyou Revengers 東京卍リベンジャーズ"
+			],
+			"status": 0,
+			"averageRate": 3.3333333333333335,
+			"bookmarks": 12,
+			"views": 589,
+			"updatedAt": "2021-04-25T15:05:42.946Z",
+			"briefChapterDto": {
+				"id": "33-330",
+				"manga": "33",
+				"index": 10,
+				"tittle": "",
+				"views": 41,
+				"createdAt": "2021-04-25T15:05:42.938Z"
+			}
+		}
+	},
+    //...
+]
+```
+
+## History
+
+Yêu cầu phải đăng là người dùng đã đăng nhập.
+
+Tại header của request cần trường `Authorization` với giá trị là `Bearer <token>`
+
+### Route mặc định
+
+Nằm ở GET `host/history` 
+
+Giá trị trả về là 1 mảng `MangaChapterViewDto`
+
+```json
+[
+	{
+		"email": "18127084@student.hcmus.edu.vn",
+		"manga": "3",
+		"chapter": "3-29",
+		"createdAt": "2021-04-26T15:01:39.326Z",
+		"briefChapterDto": {
+			"id": "3-29",
+			"manga": "3",
+			"index": 9,
+			"tittle": "",
+			"createdAt": "2021-04-25T15:04:40.238Z",
+			"mangaNames": [
+				"Yuuna-san của Lữ quán Yuragi",
+				"Yuragi-sou no Yuuna-san",
+				"ゆらぎ荘の幽奈さん"
+			]
+		}
+	},
+    //...
+]
 ```
 
 

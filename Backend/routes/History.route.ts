@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import { userController } from "../controllers/UserController";
 import { User, UserDto, userDtoOf } from "../models";
+
 const router = express.Router();
 
 router.get(
@@ -12,11 +13,10 @@ router.get(
 
 		let userDto: UserDto = userDtoOf(user);
 
-		let historyList = userController.getUserReadingHistory(userDto.email);
-		res.json(historyList);
+		let response = await userController.getUserViewedChapters(userDto.email);
+		res.json(response);
 	}
 );
 
-const historyRouter = router;
-
-export default historyRouter;
+const historyRoute = router;
+export default historyRoute;
