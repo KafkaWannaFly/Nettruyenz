@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const passport_1 = __importDefault(require("passport"));
+const RequestValidators_1 = require("../middlewares/RequestValidators");
 const route = express_1.default.Router();
-route.post("/", async (req, res, next) => {
+route.post("/", RequestValidators_1.emailPasswordValidators(), async (req, res, next) => {
     passport_1.default.authenticate("local-signup", {
         session: false,
         passReqToCallback: true,

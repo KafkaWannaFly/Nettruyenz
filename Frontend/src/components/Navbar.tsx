@@ -4,24 +4,27 @@ import avatar from "../logos/img_avatar.png";
 import { NavLink, Link, withRouter, Route } from "react-router-dom";
 import { FiSearch } from 'react-icons/fi';
 import HandleAccount from "./Signin";
-
-function off() {
-	const myElement = document.getElementById("overlay")!;
-	myElement.style.display = "none";
-}
+// const setStyleProps = { // make sure all required component's inputs/Props keys&types match
+// 	class: "overlay",
+// 	setToken: props.setToken,
+	
+// }
 function onSignIn() {
+	const myElement = document.getElementById("overlay")!;
+	myElement.style.display = "block";
+}
+function onSignUp() {
 	const myElement = document.getElementById("overlay")!;
 	console.log(myElement);
 	myElement.style.display = "block";
 }
-const setStyleProps = { // make sure all required component's inputs/Props keys&types match
-    class: "overlay"
-}
-export default function Navbar(props: any, {setToken}) {
+export default function Navbar(props: any) {
+	const setStyleProps = {
+		class: "overlay",
+		setToken: props.setToken,
+	}
 	return (
 		<div className="w-full py-1 bg-black text-white ">
-
-			<HandleAccount {...setStyleProps}></HandleAccount>
 			<div className="table w-full py-4 px-44">
 				<div className="table-row">
 					<div className="table-cell text-sm w-1/3 align-middle">
@@ -45,7 +48,7 @@ export default function Navbar(props: any, {setToken}) {
 							?
 							(<div className="table-cell w-20 text-sm align-middle">
 								<div className="right">
-									<Link to="/">
+									<Link to="/profile/email">
 										<div className="">
 											<img src={avatar} alt="" id="avatar" className="rounded-full h-14 w-14 flex items-center justify-center" />
 										</div>
@@ -61,11 +64,12 @@ export default function Navbar(props: any, {setToken}) {
 												<p>ĐĂNG NHẬP</p>
 
 											</button>
-											<button className="bg-transparent focus:bg-red-500 bg-red-600 font-semibold text-white py-2 border-2 w-28 border-red-600 rounded">
+											<button onClick={onSignUp} className="bg-transparent focus:bg-red-500 bg-red-600 font-semibold text-white py-2 border-2 w-28 border-red-600 rounded">
 												<p>ĐĂNG KÍ</p>
 											</button>
 										</div>
 									</div>
+									<HandleAccount setStyleProps = {setStyleProps}></HandleAccount>
 								</div>
 							)
 					}

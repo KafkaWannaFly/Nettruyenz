@@ -48,3 +48,12 @@ input[type=search]:focus {
   border-bottom: none !important;
   box-shadow: none!important;
 }
+input[type=email] {
+    border-bottom: 0px !important; 
+	margin: 0 0 0 0 !important;
+	width: 250px !important;
+}
+input[type=email]:focus {
+  border-bottom: none !important;
+  box-shadow: none!important;
+}

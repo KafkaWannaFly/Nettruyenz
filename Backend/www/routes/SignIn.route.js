@@ -7,8 +7,9 @@ const express_1 = __importDefault(require("express"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const passport_1 = __importDefault(require("passport"));
 const EnvironmentConstants_1 = require("../constants/EnvironmentConstants");
+const RequestValidators_1 = require("../middlewares/RequestValidators");
 const route = express_1.default.Router();
-route.post("/", async (req, res, next) => {
+route.post("/", RequestValidators_1.emailPasswordValidators(), async (req, res, next) => {
     passport_1.default.authenticate("local-signin", {
         session: false,
     }, (err, user, info) => {
