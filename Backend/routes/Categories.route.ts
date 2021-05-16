@@ -3,7 +3,7 @@ import { MangaController } from "../controllers/MangaController";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    let subPeriod = req.query.period === undefined ? req.query.period: "all";
+    let subPeriod = req.query.period as string;
 
     let tags = req.query.tags as string[];
     let authName = req.query.creator as string;
@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
         res.json(mangas);
     } else {
         let mangas = await MangaController.getMangasForCate(tags, mangaTitle, authName, subPeriod, sort, order);
-        console.log(mangas);
+        // console.log(mangas);
         res.json(mangas);
     }
 });
