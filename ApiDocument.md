@@ -4,6 +4,10 @@ Tài liệu này nói về giao tiếp giữa Front-end và Back-end. Cấu trú
 
 <div style="text-align:center" ><img src="ApiDocument.assets/image-20210404210907517.png" alt="image-20210404210907517" style="zoom:80%;" /></div>
 
+[TOC]
+
+
+
 ## Home
 
 `Home` là trang mặc định của web, nằm tại `https://hostname/`. Nó có các route con:
@@ -259,7 +263,8 @@ Phương thức `post` dùng để đăng ký 1 tài khoản mới. Chấp nhậ
 ```json
 {
     "email": "18127084@student.hcmus.edu.vn",
-    "password": "123"
+    "password": "123",
+    "nickname": "Kafka Wanna Fly" // Optional
 }
 ```
 
@@ -482,6 +487,49 @@ Trả về `UserDto` object chứa những thông tin liên quan đến người
         // Many more
 	]
 }
+```
+
+## Bookmarks
+
+Nằm ở GET `host/bookmarks` 
+
+### Route mặc định
+
+Yêu cầu phải đăng là người dùng đã đăng nhập.
+
+Tại header của request cần trường `Authorization` với giá trị là `Bearer <token>`
+
+Giá trị trả về là 1 mảng `BookmarkDto`
+
+```json
+[
+	{
+		"email": "18127084@student.hcmus.edu.vn",
+		"briefMangaDto": {
+			"id": "33",
+			"cover": "https://static.hocvientruyentranh.net/upload/thumb/1617867628232-001jpg.jpeg",
+			"description": "Takemichi, thanh niên thất nghiệp còn trinh, được biết rằng người con gái đầu tiên và cũng là duy nhất cho đến bây giờ mà anh hẹn hò là từ trung học đã chết. Sau một vụ tai nạn, anh ta thấy mình được quay về những ngày cấp hai. Anh ta thề sẽ thay đổi tương lai và giữ lấy người con gái ấy, để làm việc đó, anh ta quyết định sẽ vươn lên làm trùm băng đảng khét tiếng nhất ở vùng Kantou.",
+			"names": [
+				"Tokyo卍Revengers",
+				"Tokyo Manji Revengers Tokyo Revengers Tokyo卍Revengers Toukyou Revengers 東京卍リベンジャーズ"
+			],
+			"status": 0,
+			"averageRate": 3.3333333333333335,
+			"bookmarks": 12,
+			"views": 589,
+			"updatedAt": "2021-04-25T15:05:42.946Z",
+			"briefChapterDto": {
+				"id": "33-330",
+				"manga": "33",
+				"index": 10,
+				"tittle": "",
+				"views": 41,
+				"createdAt": "2021-04-25T15:05:42.938Z"
+			}
+		}
+	},
+    //...
+]
 ```
 
 
