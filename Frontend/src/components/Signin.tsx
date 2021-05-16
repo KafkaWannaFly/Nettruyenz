@@ -376,6 +376,7 @@ function HandleAccount(props: any){
   //     body: JSON.stringify(credentials),
   //   }).then((data) => data.json());
   // }
+  console.log(props);
   return (
     <>
       <div id={props.setStyleProps.class}>
