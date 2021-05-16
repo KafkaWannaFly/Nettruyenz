@@ -15,6 +15,7 @@ import tagRoute from "../routes/Tag.route";
 import userRoute from "../routes/User.route";
 import cors from "cors";
 import bookmarkRoute from "../routes/Bookmarks.route";
+import historyRoute from "../routes/History.route";
 dotenv.config();
 
 const app = express();
@@ -52,6 +53,8 @@ app.use("/mangas", mangaRoute);
 app.use("/categories", cateRoute);
 
 app.use("/bookmarks", bookmarkRoute);
+
+app.use("/history", historyRoute);
 
 app.use("/tags", tagRoute);
 

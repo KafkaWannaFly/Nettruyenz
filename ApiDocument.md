@@ -532,6 +532,42 @@ Giá trị trả về là 1 mảng `BookmarkDto`
 ]
 ```
 
+## History
+
+Yêu cầu phải đăng là người dùng đã đăng nhập.
+
+Tại header của request cần trường `Authorization` với giá trị là `Bearer <token>`
+
+### Route mặc định
+
+Nằm ở GET `host/history` 
+
+Giá trị trả về là 1 mảng `MangaChapterViewDto`
+
+```json
+[
+	{
+		"email": "18127084@student.hcmus.edu.vn",
+		"manga": "3",
+		"chapter": "3-29",
+		"createdAt": "2021-04-26T15:01:39.326Z",
+		"briefChapterDto": {
+			"id": "3-29",
+			"manga": "3",
+			"index": 9,
+			"tittle": "",
+			"createdAt": "2021-04-25T15:04:40.238Z",
+			"mangaNames": [
+				"Yuuna-san của Lữ quán Yuragi",
+				"Yuragi-sou no Yuuna-san",
+				"ゆらぎ荘の幽奈さん"
+			]
+		}
+	},
+    //...
+]
+```
+
 
 
 ## Data Transfer Objects (DTOs)
