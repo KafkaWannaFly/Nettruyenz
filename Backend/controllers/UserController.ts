@@ -189,12 +189,26 @@ export const userController = {
 				},
 			},
 			{
+				$lookup: {
+					from: "manga-creators",
+					localField: "manga",
+					foreignField: "manga",
+					as: "mangaCreatorDocs",
+				},
+			},
+			{
+				$set: {
+					"briefMangaDto.creators": "$mangaCreatorDocs.creator",
+				},
+			},
+			{
 				$unset: [
 					"chapterDocs",
 					"viewDocs",
 					"mangaRateDocs",
 					"bookmarkDocs",
 					"chapterViewDocs",
+					"mangaCreatorDocs",
 				],
 			},
 		];
@@ -215,6 +229,7 @@ export const userController = {
 			{
 				$match: {
 					email: email,
+					isDeleted: false,
 				},
 			},
 		];

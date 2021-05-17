@@ -25,36 +25,38 @@ Dữ liệu trả về là 1 mảng `BriefMangaDto`. Trông như này:
 ```json
 [
 	{
-		"_id": "6085851907191c3f5c4336f1",
+		"id": "10",
+		"cover": "https://i.imgur.com/ptcZbuI.jpg",
+		"creators": [
+			"Horikoshi Kouhei"
+		],
+		"description": "Câu chuyện lấy bối cảnh thời hiện đại, có khác một điều là những người có năng lực đặc biệt lại trở nên quá đỗi bình thường. Một cậu bé tên Midoriya Izuku tuy không có năng lực gì nhưng cậu vẫn mơ ước",
 		"names": [
 			"Boku No Hero Academia",
 			"My hero Academia",
 			"僕のヒーローアカデミア",
 			"Trường Học Siêu Anh Hùng"
 		],
-		"id": "10",
-		"cover": "https://i.imgur.com/ptcZbuI.jpg",
-		"description": "Câu chuyện lấy bối cảnh thời hiện đại, có khác một điều là những người có năng lực đặc biệt lại trở nên quá đỗi bình thường. Một cậu bé tên Midoriya Izuku tuy không có năng lực gì nhưng cậu vẫn mơ ước",
 		"status": 0,
-		"createdAt": "2021-04-25T15:04:57.550Z",
-		"updatedAt": "2021-04-25T15:04:57.550Z",
-		"__v": 0,
-		"views": 703,
-		"bookmarks": 10,
+		"tags": [
+			"Action",
+			"Adventure",
+			"Comedy",
+			"Shounen",
+			"Supernatural"
+		],
 		"averageRate": 3.4166666666666665,
+		"bookmarks": 10,
+		"views": 707,
 		"briefChapterDto": {
-			"id": "16-155",
-			"manga": "16",
-			"index": 52,
+			"id": "10-100",
+			"manga": "10",
+			"index": 9.1,
 			"tittle": "",
-			"createdAt": "2021-04-25T15:05:08.618Z",
-			"mangaNames": [
-				"Boku No Hero Academia",
-				"My hero Academia",
-				"僕のヒーローアカデミア",
-				"Trường Học Siêu Anh Hùng"
-			]
-		}
+			"createdAt": "2021-04-25T15:04:57.545Z"
+		},
+		"createdAt": "2021-04-25T15:04:57.550Z",
+		"updatedAt": "2021-04-25T15:04:57.550Z"
 	},
     // And many more
 ]
