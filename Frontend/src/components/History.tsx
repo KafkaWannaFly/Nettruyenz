@@ -1,29 +1,35 @@
+import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
 interface AbcState {
     error: any,
     isLoaded: boolean,
-    history: any[]
+    history: any[],
+    token: any,
 }
 class History extends React.Component<{}, AbcState> {
-
     constructor(props) {
         super(props);
         this.state = {
             error: null,
             isLoaded: false,
-            history: new Array()
+            history: new Array(),
+            token: props.data.token
         };
     }
-
     componentDidMount() {
-        fetch('http://localhost:3000/most-view?period=weekly')
-            .then(res => res.json())
-            .then(
-                (result) => {
+        let axiosConfig = {
+            headers: {
+                'Authorization': `Bearer ${this.state.token}`,
+            }
+        };
+        console.log(axiosConfig);
+        axios.get('http://localhost:3000/history', axiosConfig)
+            .then((result) => {
+                console.log(result);
                     this.setState({
                         isLoaded: true,
-                        history: result
+                        history: result.data
                     });
                 },
                 // error handler
@@ -42,12 +48,14 @@ class History extends React.Component<{}, AbcState> {
 			console.log(item);
 			return (
 				<tr className="border-none hover:bg-gray-600">
-					<Link to={"/comic/" + item.id}>
-						<td>{item.names[0]}</td>
+					<Link to={"/comic/" + item.briefChapterDto.id}>
+						<td>{item.briefChapterDto.mangaNames[0]}</td>
 					</Link>
-					<td>{item.creators}</td>
-					<td>Chapter 123</td>
-					<td>Update sau</td>
+					<td>{item.briefChapterDto.mangaNames[2]}</td>
+					<td>{item.briefChapterDto.manga}</td>
+					<td>{item.briefChapterDto.index}</td>
+                    <td>{item.briefChapterDto.createdAt}</td>
+					<td>{item.briefChapterDto.tittle}</td>
 				</tr>
 			);
 		})
@@ -77,13 +85,14 @@ class History extends React.Component<{}, AbcState> {
                             <thead>
                                 <tr>
                                     <th className="w-1/4">Tên truyện</th>
-                                    <th className="w-1/4">Người đăng</th>
-                                    <th className="w-1/4">Lượt xem</th>
-                                    <th className="w-1/4">Trường gì đó</th>
+                                    <th className="w-1/4">Tên khác</th>
+                                    <th className="w-1/12">Manga</th>
+                                    <th className="w-1/12">Index</th>
+                                    <th className="w-1/4">Ngày xem</th>
+                                    <th className="w-1/12">Title</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.componentDiv(history)}
                                 {this.componentDiv(history)}
                             </tbody>
                         </table>

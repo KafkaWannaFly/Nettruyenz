@@ -45,7 +45,7 @@ function postDataSignIn(setToken: any) {
           else{
             if(output)
               output.innerHTML = "Đăng nhập thành công";
-              setToken(response.data.token);
+              setToken(response.data);
               offLogin();
           }
           console.log(response);

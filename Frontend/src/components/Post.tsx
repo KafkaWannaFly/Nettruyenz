@@ -21,6 +21,7 @@ interface AbcState {
 	pageCount: number,
 	indexComment: number,
 	commentsPag: any,
+	comments: any
 }
 
 
@@ -36,6 +37,7 @@ class Post extends React.Component<{}, AbcState> {
 				chapters: [],
 				comments: []
 			},
+			comments: [],
 			filter: true,
 			match: props.match.params.id,
 			pageCount: 0,
@@ -49,13 +51,15 @@ class Post extends React.Component<{}, AbcState> {
 			.then(res => res.json())
 			.then(
 				(result) => {
-					console.log(result.names[0]);
+					console.log(result.briefChapterDtos);
 					this.setState({
 						isLoaded: true,
 						posts: result,
-						pageCount: Math.ceil(result.comments.length / 5),
-						commentsPag: result.comments.slice(0, result.comments.length < 5 ? result.comments.length - 1 : 5)
+						comments: result.userCommentDtos,
+						pageCount: Math.ceil(result.userCommentDtos.length / 5),
+						commentsPag: result.userCommentDtos.slice(0, result.userCommentDtos.length < 5 ? result.userCommentDtos.length - 1 : 5)
 					});
+					console.log(this.state.posts);
 				},
 				// error handler
 				(error) => {
@@ -80,23 +84,26 @@ class Post extends React.Component<{}, AbcState> {
 		return tagDiv;
 	}
 	componentChap(posts) {
-		let i = posts.chapters.length;
-		const chapDiv = posts.chapters.map((item) => {
-			console.log(item);
-			return (
-				<tr>
-					<Link to={"/"}>
-						<td>Chapter {i--}</td>
-					</Link>
-					<td>{item.uploader}</td>
-					<td>{item.views}</td>
-					<td>{item.updatedAt}</td>
-				</tr>
-			);
-		})
-		return chapDiv;
+		console.log(posts.briefChapterDtos);
+		if(posts.briefChapterDtos != undefined){
+			const chapDiv = posts.briefChapterDtos.map((item, index) => {
+				console.log(item);
+				return (
+					<tr>
+						<Link to={"/"}>
+							<td>{item.index}</td>
+						</Link>
+						<td>{item.views}</td>
+						<td>{item.createdAt}</td>
+						<td>{item.tittle}</td>
+					</tr>
+				);
+			})
+			return chapDiv;
+		}
 	}
 	coponentComment(comments) {
+		console.log(comments);
 		const commentDiv = comments.map((item, index) => {
 			console.log(item);
 			return (
@@ -121,9 +128,10 @@ class Post extends React.Component<{}, AbcState> {
 		return commentDiv;
 	}
 	handlePageClick = (data) => {
+		console.log(this.state.comments);
 		let selected = data.selected;
-		let len = this.state.posts.comments?.length;
-		const commentData = this.state.posts.comments;
+		let len = this.state.comments?.length;
+		const commentData = this.state.comments;
 		console.log(commentData);
 		this.setState({
 			commentsPag: commentData?.slice(selected * 5, Number(len) - (Number(len) - ((selected + 1) * 5)))
