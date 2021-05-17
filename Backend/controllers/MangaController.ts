@@ -534,6 +534,11 @@ export const MangaController = {
 				.aggregate(aggregationStatements)
 				.exec();
 
+			recentUploadChapters.forEach(element => {
+				console.log(element._id)
+				console.log(element.newestChapter.createdAt)
+			});
+
 			// Find its manga
 			let mangaDtos: BriefMangaDto[] = (
 				await mangaModel
@@ -543,6 +548,11 @@ export const MangaController = {
 					.lean()
 					.exec()
 			).map((item) => item as BriefMangaDto);
+
+			console.log("---------------")
+			mangaDtos.forEach(element => {
+				console.log(element.id)
+			});
 
 			// Fill the rest infomation
 			for (let i = 0; i < mangaDtos.length; i++) {
@@ -572,7 +582,7 @@ export const MangaController = {
 					.exec();
 			}
 
-			return mangaDtos.sort((a, b) => {
+			mangaDtos.sort((a, b) => {
 				if (
 					b.briefChapterDto?.createdAt === undefined ||
 					a.briefChapterDto?.createdAt === undefined
@@ -580,10 +590,17 @@ export const MangaController = {
 					return -1;
 				}
 				return (
-					b.briefChapterDto.createdAt.getSeconds() -
-					a.briefChapterDto.createdAt?.getSeconds()
+					b.briefChapterDto.createdAt.getTime() -
+					a.briefChapterDto.createdAt?.getTime()
 				);
 			});
+			console.log("---------------")
+			mangaDtos.forEach(element => {
+				console.log(element.briefChapterDto?.createdAt?.getTime())
+				console.log(element.id)
+			});
+
+			return mangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
@@ -887,7 +904,6 @@ export const MangaController = {
 		order: string
 	) => {
 		if (title === undefined) title = "";
-		title = title.replaceAll("-", " ");
 		console.log(title);
 
 		if (undoneName === undefined) undoneName = "";
@@ -1098,14 +1114,14 @@ export const MangaController = {
 						if (b.updatedAt === undefined || a.updatedAt === undefined) {
 							return -1;
 						}
-						return b.updatedAt.getSeconds() - a.updatedAt.getSeconds();
+						return b.updatedAt.getTime() - a.updatedAt.getTime();
 					});
 				} else if (order === "asc") {
 					mangaDtos.sort((a, b) => {
 						if (b.updatedAt === undefined || a.updatedAt === undefined) {
 							return -1;
 						}
-						return -b.updatedAt.getSeconds() + a.updatedAt.getSeconds();
+						return -b.updatedAt.getTime() + a.updatedAt.getTime();
 					});
 				}
 			}
