@@ -1,10 +1,12 @@
 
+import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
 interface AbcState {
     error: any,
     isLoaded: boolean,
-    history: any[]
+    history: any[],
+    token: any
 }
 class Follow extends React.Component<{}, AbcState> {
 
@@ -13,18 +15,23 @@ class Follow extends React.Component<{}, AbcState> {
         this.state = {
             error: null,
             isLoaded: false,
-            history: new Array()
+            history: new Array(),
+            token: props.data.token
         };
     }
-
     componentDidMount() {
-        fetch('http://localhost:3000/most-view?period=weekly')
-            .then(res => res.json())
+        let axiosConfig = {
+            headers: {
+                'Authorization': `Bearer ${this.state.token}`,
+            }
+        };
+        axios.get('http://localhost:3000/bookmarks', axiosConfig)
             .then(
                 (result) => {
+                    console.log(result);
                     this.setState({
                         isLoaded: true,
-                        history: result
+                        history: result.data
                     });
                 },
                 // error handler
@@ -40,21 +47,21 @@ class Follow extends React.Component<{}, AbcState> {
         const historyDiv = history.map((item) => {
             return (
                 <>
-                    <div className="w-full md:w-6/12 lg:w-full lg:mb-0 mb-12 px-2 text-left  pb-4" key={item.id}>
+                    <div className="w-full md:w-6/12 lg:w-full lg:mb-0 mb-12 px-2 text-left  pb-4" key={item.briefMangaDto.id}>
                         <div className="max-w-sm px-1 rounded overflow-hidden shadow-lg bg-gray-1200">
-                            <img className="w-full h-64" src={item.cover} alt="Sunset in the mountains"></img>
+                            <img className="w-full h-64" src={item.briefMangaDto.cover} alt="Sunset in the mountains"></img>
                             <div className=" px-2">
                                 <div className="text-white">
-                                    <Link to={"/comic/" + item.id}>
-                                        <div className="font-bold text-xl pt-2 truncate">{item.names[0]}</div>
+                                    <Link to={"/comic/" + item.briefMangaDto.id}>
+                                        <div className="font-bold text-xl pt-2 truncate">{item.briefMangaDto.names[0]}</div>
                                     </Link>
                                     <p className="text-gray-300 text-base truncate">
-                                        {item.creators}
+                                        Tác giả
                                     </p>
                                 </div>
                                 <div className="pb-2 text-white">
                                     <span className="inline-block text-sm font-semibold  mr-2 mb-2">Chap ...</span>
-                                    <span className="inline-block text-sm font-semibold mr-2 mb-2 right">{new Date(item.updatedAt).toLocaleDateString()}</span>
+                                    <span className="inline-block text-sm font-semibold mr-2 mb-2 right">{new Date(item.briefMangaDto.updatedAt).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>

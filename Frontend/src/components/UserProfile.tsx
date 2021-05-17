@@ -22,6 +22,7 @@ function editInfor(props: any){
 
 function ComponentDiv(props: any) {
     // const historyDiv = information.map((item) => {
+    console.log(props);
     return (
         <>
             <div className="bg-white pt-10 pb-24">
@@ -36,10 +37,10 @@ function ComponentDiv(props: any) {
                                 </div>
                                 <div className="mb-4">
                                     <div className="text-3xl font-medium text-grey-darkest">
-                                        {props.nickname}
+                                        Nickname
                                     </div>
                                     <div className="text-xl text-grey-dark font-light">
-                                        {props.nickname}
+                                        Nickname
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +130,7 @@ function ComponentDiv(props: any) {
                                         </div>
                                         <div className="flex text-sm mt-3">
                                             <div className="mr-4 font-thin pl-2 text-base">
-                                                <input type="email" value="daoleviethoang@gmail.com" id="information" readOnly></input>
+                                                <input type="email" value={props.email} id="information" readOnly></input>
                                             </div>
                                         </div>
                                     </div>
@@ -146,7 +147,7 @@ function ComponentDiv(props: any) {
                                         </div>
                                         <div className="flex text-sm mt-3">
                                             <div className="mr-4 font-thin pl-2 text-base">
-                                                <input type="text" value="10" id="information" readOnly></input>
+                                                <input type="text" value={props.level} id="information" readOnly></input>
                                             </div>
 
                                         </div>
@@ -157,12 +158,12 @@ function ComponentDiv(props: any) {
                                                 <GoCalendar className="w-5 h-5"></GoCalendar>
                                             </div>
                                             <div>
-                                                Ngày sinh
+                                                Ngày tạo tài khoản
                                             </div>
                                         </div>
                                         <div className="flex text-sm mt-3">
                                             <div className="mr-4 font-thin text-base pl-2">
-                                                <input type="date" id="date" value="2000-12-31"></input>
+                                                <input type="text" id="date" value={props.updatedAt}></input>
                                             </div>
 
                                         </div>
@@ -200,13 +201,14 @@ function ComponentDiv(props: any) {
     // return historyDiv;
 }
 function UserProfile(props: any){
+    console.log(props.data.user);
     return (
         <div className="px-20 border rounded-lg mx-20 pt-5 mt-10 bg-white">
             <h1 className="pt-10 pb-2 text-3xl text-center">
                 HỒ SƠ CÁ NHÂN
             </h1>
             <hr></hr>
-            {ComponentDiv(props)}
+            {ComponentDiv(props.data.user)}
         </div>
     );
 }
