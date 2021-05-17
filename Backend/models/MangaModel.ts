@@ -116,3 +116,26 @@ export function completeMangaDtoOf(data: any): CompletedMangaDto {
 				: [],
 	};
 }
+
+export function briefMangaDtoOf(data: any): BriefMangaDto {
+	const chapterData = data.briefChapterDto;
+
+	return {
+		id: data.id,
+		cover: data.cover,
+		creators: data.creators,
+		description: data.description,
+		names: data.names,
+		status: data.status,
+		tags: data.tags,
+
+		averageRate: data.averageRate,
+		bookmarks: data.bookmarks,
+		views: data.views,
+
+		briefChapterDto: briefChapterDtoOf(chapterData),
+
+		createdAt: data.createdAt,
+		updatedAt: data.updatedAt,
+	};
+}
