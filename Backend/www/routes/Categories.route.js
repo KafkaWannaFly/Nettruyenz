@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const MangaController_1 = require("../controllers/MangaController");
 const router = express_1.default.Router();
 router.get("/", async (req, res) => {
-    let subPeriod = req.query.period === undefined ? req.query.period : "all";
+    let subPeriod = req.query.period;
     let tags = req.query.tags;
     let authName = req.query.creator;
     let mangaTitle = req.query.title;
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     }
     else {
         let mangas = await MangaController_1.MangaController.getMangasForCate(tags, mangaTitle, authName, subPeriod, sort, order);
-        console.log(mangas);
+        // console.log(mangas);
         res.json(mangas);
     }
 });
