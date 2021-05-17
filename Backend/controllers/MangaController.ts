@@ -1,4 +1,6 @@
+import e from "cors";
 import {
+	BookmarkDto,
 	bookmarkModel,
 	briefChapterDtoOf,
 	BriefMangaDto,
@@ -6,9 +8,14 @@ import {
 	chapterModel,
 	CompletedMangaDto,
 	completeMangaDtoOf,
+	Manga,
+	MangaChapterViewDto,
 	mangaChapterViewModel,
 	mangaCreatorModel,
 	mangaModel,
+	Bookmark,
+	MangaRate,
+	MangaRateDto,
 	mangaRateModel,
 	MangaTagDto,
 	mangaTagModel,
@@ -273,6 +280,8 @@ export const MangaController = {
 			} else {
 				// Have nothing to do here :))
 			}
+
+			console.log(aggregationStatements)
 
 			mangaRates = await mangaRateModel.aggregate(aggregationStatements).exec();
 
@@ -846,6 +855,27 @@ export const MangaController = {
 		}
 	},
 
+	getMangaBeforeWeekend: async() => {
+		let today = new Date();
+		today.setHours(0, 0, 1);
+
+		let firstDateOfWeek =
+			today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
+		let lastDateOfWeek = firstDateOfWeek + 6;
+
+		let agg = [
+			{
+				$match:{
+					id: "1"
+				}
+			}
+		]
+
+		let mangas: Manga[] = await mangaModel.aggregate(agg).exec();
+
+		return mangas[0].updatedAt;
+	},
+
 	//End of test area
 
 	getMangasForCate: async (
@@ -984,26 +1014,34 @@ export const MangaController = {
 						.sort({ index: -1 })
 						.limit(1)
 				)[0] as unknown) as any;
+				
+				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
 
 				chapterData.mangaNames = mangaDtos[i].names;
 
-				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
+				if (period != "all"){
+					mangaDtos[i].averageRate = await getPeriodAVGRate(mangaDtos[i].id, period);
 
-				mangaDtos[i].averageRate = (
-					await getMangaRating(mangaDtos[i].id)
-				).average;
+					mangaDtos[i].views = await getPeriodViews(mangaDtos[i].id, period);
 
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
+					mangaDtos[i].bookmarks = await getPeriodFollows(mangaDtos[i].id, period);
+				} else {
+					mangaDtos[i].averageRate = (
+						await getMangaRating(mangaDtos[i].id)
+					).average;
 
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
+					mangaDtos[i].views = await mangaChapterViewModel
+						.find({ manga: mangaDtos[i].id })
+						.countDocuments()
+						.exec();
+
+					mangaDtos[i].bookmarks = await bookmarkModel
+						.find({
+							manga: mangaDtos[i].id,
+						})
+						.countDocuments()
+						.exec();
+				}
 			}
 
 			if (sort === "view") {
@@ -1085,7 +1123,7 @@ export const MangaController = {
 			console.log(mangaDtos.length)
 			console.log(period)
 
-			if (period === "all")
+			if (period === "all" || sort != "date")
 				return mangaDtos;
 
 			let periodMangaDtos: BriefMangaDto[] = [];
@@ -1155,9 +1193,46 @@ function inCurrentWeek(thisDate: Date){
 	let lastDateOfWeek = firstDateOfWeek + 6;
 
 	let firstDay = new Date(today.getFullYear(), today.getMonth(), firstDateOfWeek);
+	console.log(firstDay)
 	let lastDay = new Date(today.getFullYear(), today.getMonth(), lastDateOfWeek);
+	console.log(lastDay)
 
 	return thisDate >= firstDay && thisDate <= lastDay;
+}
+
+function firstDateOfWeek(){
+	let today = new Date();
+	today.setHours(0, 0, 1);
+
+	let firstDateOfWeek =
+		today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
+	
+	return new Date(today.getFullYear(), today.getMonth(), firstDateOfWeek);
+}
+
+function lastDateOfWeek(){
+	let today = new Date();
+	today.setHours(0, 0, 1);
+
+	let firstDateOfWeek =
+		today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1); 
+	let lastDateOfWeek = firstDateOfWeek + 6;
+
+	return new Date(today.getFullYear(), today.getMonth(), lastDateOfWeek);
+}
+
+function firstDateOfMonth(){
+	let thisMonth = new Date();
+	thisMonth.setHours(0, 0, 1);
+
+	return new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+}
+
+function lastDateOfMonth(){
+	let thisMonth = new Date();
+	thisMonth.setHours(0, 0, 1);
+
+	return new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
 }
 
 function inCurrentMonth(thisDate?: Date){
@@ -1170,6 +1245,103 @@ function inCurrentMonth(thisDate?: Date){
 	if (thisDate === undefined)
 		return false;
 	return thisDate >= firstDay && thisDate <= lastDay;
+}
+
+async function getPeriodAVGRate(id: string, period: string){
+	let aggregationStatements: any[] = [
+		{
+			$match: {
+				_id: id,
+			},
+		},
+	];
+
+	let mangaRates: MangaRateDto[] = [];
+	mangaRates = await mangaRateModel.aggregate(aggregationStatements).exec();
+
+	let sum = 0;
+	let numRate = 0;
+	mangaRates.forEach(element => {
+		let tempDate: Date = element.updatedAt || new Date(0);
+		if (period === "weekly") {
+			if (tempDate >= firstDateOfWeek() && tempDate <= lastDateOfWeek()){
+				numRate += 1;
+				sum += element.rate;
+			}
+		} else if (period === "monthly") {
+			if (tempDate >= firstDateOfMonth() && tempDate <= lastDateOfMonth()){
+				numRate += 1;
+				sum += element.rate;
+			}
+		}
+	});
+
+	let avg = sum / numRate;
+
+	return avg;
+}
+
+async function getPeriodViews(id: string, period: string) {
+	let aggregationStatements: any[] = [
+		{
+			$match: {
+				_id: id,
+			}
+		},
+	];
+
+	let mangaViewDocs: MangaChapterViewDto[] = [];
+	mangaViewDocs = await mangaChapterViewModel
+		.aggregate(aggregationStatements)
+		.exec();
+
+	let sum = 0
+	mangaViewDocs.forEach(element => {
+		let tempDate: Date = element.updatedAt || new Date(0);
+		if (period === "weekly") {
+			if (tempDate >= firstDateOfWeek() && tempDate <= lastDateOfWeek()){
+				sum += 1;
+			}
+		} else if (period === "monthly") {
+			if (tempDate >= firstDateOfMonth() && tempDate <= lastDateOfMonth()){
+				sum += 1;
+			}
+		}
+	});
+
+	return sum;
+}
+
+async function getPeriodFollows(id:string, period: string) {
+	let aggregationStatements: any[] = [
+		{
+			$match:{
+				_id: id,
+			},
+		}
+	];
+
+	let mangaBookmarks: Bookmark[] = [];
+
+	mangaBookmarks = await bookmarkModel
+		.aggregate(aggregationStatements)
+		.exec();
+
+	let sum = 0
+	mangaBookmarks.forEach(element => {
+		let tempDate: Date = element.updatedAt || new Date(0);
+		if (period === "weekly") {
+			if (tempDate >= firstDateOfWeek() && tempDate <= lastDateOfWeek()){
+				sum += 1;
+			}
+		} else if (period === "monthly") {
+			if (tempDate >= firstDateOfMonth() && tempDate <= lastDateOfMonth()){
+				sum += 1;
+			}
+		}
+	});
+
+	return sum;
 }
 
 function getWeeklyFilter() {
