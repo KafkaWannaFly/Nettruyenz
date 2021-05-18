@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.completeMangaDtoOf = exports.MangaStatus = exports.mangaModel = void 0;
+exports.briefMangaDtoOf = exports.completeMangaDtoOf = exports.MangaStatus = exports.mangaModel = void 0;
 const ChapterModel_1 = require("./ChapterModel");
 const UserCommentModel_1 = require("./UserCommentModel");
 const Preloader_1 = __importDefault(require("./Preloader"));
@@ -57,3 +57,22 @@ function completeMangaDtoOf(data) {
     };
 }
 exports.completeMangaDtoOf = completeMangaDtoOf;
+function briefMangaDtoOf(data) {
+    const chapterData = data.briefChapterDto;
+    return {
+        id: data.id,
+        cover: data.cover,
+        creators: data.creators,
+        description: data.description,
+        names: data.names,
+        status: data.status,
+        tags: data.tags,
+        averageRate: data.averageRate,
+        bookmarks: data.bookmarks,
+        views: data.views,
+        briefChapterDto: ChapterModel_1.briefChapterDtoOf(chapterData),
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+    };
+}
+exports.briefMangaDtoOf = briefMangaDtoOf;

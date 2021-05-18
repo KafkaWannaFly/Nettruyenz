@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userDtoOf = exports.UserLevel = exports.userModel = exports.mangaChapterViewDtoOf = exports.mangaChapterViewModel = exports.mangaTagModel = exports.tagDtoOf = exports.tagModel = exports.mangaRateDtoOf = exports.mangaRateModel = exports.otpModel = exports.notificationModel = exports.groupMemberModel = exports.groupModel = exports.creatorOf = exports.creatorModel = exports.commentDtoOf = exports.userCommentModel = exports.chapterDtoOf = exports.briefChapterDtoOf = exports.chapterModel = exports.bookmarkDtoOf = exports.bookmarkModel = exports.mangaCreatorModel = exports.completeMangaDtoOf = exports.mangaModel = void 0;
+exports.userDtoOf = exports.UserLevel = exports.userModel = exports.mangaChapterViewDtoOf = exports.mangaChapterViewModel = exports.mangaTagModel = exports.tagDtoOf = exports.tagModel = exports.mangaRateDtoOf = exports.mangaRateModel = exports.otpModel = exports.notificationModel = exports.groupMemberModel = exports.groupModel = exports.creatorOf = exports.creatorModel = exports.commentDtoOf = exports.userCommentModel = exports.chapterDtoOf = exports.briefChapterDtoOf = exports.chapterModel = exports.bookmarkDtoOf = exports.bookmarkModel = exports.mangaCreatorModel = exports.briefMangaDtoOf = exports.completeMangaDtoOf = exports.mangaModel = void 0;
 const BookmarkModel_1 = require("./BookmarkModel");
 Object.defineProperty(exports, "bookmarkDtoOf", { enumerable: true, get: function () { return BookmarkModel_1.bookmarkDtoOf; } });
 Object.defineProperty(exports, "bookmarkModel", { enumerable: true, get: function () { return BookmarkModel_1.bookmarkModel; } });
@@ -21,6 +21,7 @@ Object.defineProperty(exports, "groupModel", { enumerable: true, get: function (
 const MangaCreator_1 = require("./MangaCreator");
 Object.defineProperty(exports, "mangaCreatorModel", { enumerable: true, get: function () { return MangaCreator_1.mangaCreatorModel; } });
 const MangaModel_1 = require("./MangaModel");
+Object.defineProperty(exports, "briefMangaDtoOf", { enumerable: true, get: function () { return MangaModel_1.briefMangaDtoOf; } });
 Object.defineProperty(exports, "completeMangaDtoOf", { enumerable: true, get: function () { return MangaModel_1.completeMangaDtoOf; } });
 Object.defineProperty(exports, "mangaModel", { enumerable: true, get: function () { return MangaModel_1.mangaModel; } });
 const UserNotificationModel_1 = require("./UserNotificationModel");

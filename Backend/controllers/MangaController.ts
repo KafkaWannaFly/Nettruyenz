@@ -1,14 +1,22 @@
+import e from "cors";
 import {
+	BookmarkDto,
 	bookmarkModel,
 	briefChapterDtoOf,
 	BriefMangaDto,
+	briefMangaDtoOf,
 	ChapterDto,
 	chapterModel,
 	CompletedMangaDto,
 	completeMangaDtoOf,
+	Manga,
+	MangaChapterViewDto,
 	mangaChapterViewModel,
 	mangaCreatorModel,
 	mangaModel,
+	Bookmark,
+	MangaRate,
+	MangaRateDto,
 	mangaRateModel,
 	MangaTagDto,
 	mangaTagModel,
@@ -21,19 +29,87 @@ export const MangaController = {
 	 * @param top Top first mangas
 	 * @param period Accept "weekly" "monthly" or "all". Other values will be considered as "all"
 	 */
-	getTopMostViewAsync: async (top: number, period: string = "all") => {
-		interface IMangeView {
-			_id?: string;
-			views?: number;
-		}
-
+	getTopMostViewAsync: async (
+		top: number,
+		period: string = "all"
+	): Promise<BriefMangaDto[]> => {
 		try {
 			let aggregationStatements: any[] = [
 				{
-					$group: {
-						_id: "$manga",
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tags",
+					},
+				},
+				{
+					$set: {
+						tags: "$tags.tag",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creators",
+					},
+				},
+				{
+					$set: {
+						creators: "$creators.creator",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
 						views: {
-							$sum: 1,
+							$size: "$viewDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "mangaRateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$mangaRateDocs.rate",
+								},
+								{
+									$size: "$mangaRateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
 						},
 					},
 				},
@@ -43,84 +119,60 @@ export const MangaController = {
 					},
 				},
 				{
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$set: {
+						briefChapterDto: {
+							$last: "$chapterDocs",
+						},
+					},
+				},
+				{
 					$limit: top,
+				},
+				{
+					$unset: [
+						"viewDocs",
+						"mangaRateDocs",
+						"chapterDocs",
+						"bookmarkDocs",
+						"briefChapterDto.images",
+					],
 				},
 			];
 
-			let mangaViewDocs: IMangeView[] = [];
-			let mangaDtos: BriefMangaDto[] = [];
-
 			if (period === "weekly") {
 				let weeklyFilter = getWeeklyFilter();
-				aggregationStatements = [weeklyFilter, ...aggregationStatements];
+				aggregationStatements.push(weeklyFilter);
 			} else if (period === "monthly") {
 				let monthlyFilter = getMonthlyFilter();
-				aggregationStatements = [monthlyFilter, ...aggregationStatements];
+				aggregationStatements.push(monthlyFilter);
 			} else {
 				// Have nothing to do here :))
 			}
 
-			// Most view mangas
-			mangaViewDocs = await mangaChapterViewModel
+			let data = (await mangaModel
 				.aggregate(aggregationStatements)
-				.exec();
+				.exec()) as any[];
 
-			// Find them in Manga table
-			mangaDtos = (
-				await mangaModel
-					.find()
-					.where("id")
-					.in(mangaViewDocs.map((v) => v._id))
-					.lean()
-					.exec()
-			).map((manga, index) => {
-				let dto = manga as unknown as BriefMangaDto;
-				return dto;
-			});
-
-			// Set properties: views, bookmakrs and rate
-			for (let i = 0; i < mangaDtos.length; i++) {
-				let mangaView = mangaViewDocs.find(
-					(item) => item._id === mangaDtos[i].id
-				);
-				// console.log(mangaView);
-
-				mangaDtos[i].views = mangaView?.views;
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
-
-				let mangaRate = await getMangaRating(mangaDtos[i].id);
-
-				// console.log(
-				// 	`${mangaDtos[i].names[0]} - ${JSON.stringify(mangaRate, null, 4)}`
-				// );
-
-				mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
-
-				// Give manga lastest chapter
-				let chapterData = (
-					await chapterModel.find().sort({ index: -1 }).limit(1).exec()
-				)[0] as unknown as any;
-
-				chapterData.mangaNames = mangaDtos[i].names;
-
-				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
+			if (!data) {
+				return [];
 			}
 
-			return mangaDtos.sort((a, b) => {
-				if (a.views === undefined || b.views === undefined) {
-					return -1;
-				}
+			const briefMangaDtos = data.map((item) => briefMangaDtoOf(item));
 
-				return b.views - a.views;
-			});
+			return briefMangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
+
+		return [];
 	},
 
 	/**
@@ -128,18 +180,102 @@ export const MangaController = {
 	 * @param top Top first mangas
 	 * @param period Accept "weekly" "monthly" or "all". Other values will be considered as "all"
 	 */
-	getTopMostFollowAsync: async (top: number, period: string = "all") => {
-		interface IMangaBookmark {
-			_id?: string;
-			bookmarks?: number;
-		}
+	getTopMostFollowAsync: async (
+		top: number,
+		period: string = "all"
+	): Promise<BriefMangaDto[]> => {
 		try {
 			let aggregationStatements: any[] = [
 				{
-					$group: {
-						_id: "$manga",
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tags",
+					},
+				},
+				{
+					$set: {
+						tags: "$tags.tag",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creators",
+					},
+				},
+				{
+					$set: {
+						creators: "$creators.creator",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "mangaRateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$mangaRateDocs.rate",
+								},
+								{
+									$size: "$mangaRateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
 						bookmarks: {
-							$sum: 1,
+							$size: "$bookmarkDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$set: {
+						briefChapterDto: {
+							$last: "$chapterDocs",
 						},
 					},
 				},
@@ -151,74 +287,43 @@ export const MangaController = {
 				{
 					$limit: top,
 				},
+				{
+					$unset: [
+						"viewDocs",
+						"mangaRateDocs",
+						"chapterDocs",
+						"bookmarkDocs",
+						"briefChapterDto.images",
+					],
+				},
 			];
-
-			let mangaBookmarks: IMangaBookmark[] = [];
-			let mangaDtos: BriefMangaDto[] = [];
 
 			if (period === "weekly") {
 				let weeklyFilter = getWeeklyFilter();
-				aggregationStatements = [weeklyFilter, ...aggregationStatements];
+				aggregationStatements.push(weeklyFilter);
 			} else if (period === "monthly") {
 				let monthlyFilter = getMonthlyFilter();
-				aggregationStatements = [monthlyFilter, ...aggregationStatements];
+				aggregationStatements.push(monthlyFilter);
 			} else {
 				// Have nothing to do here :))
 			}
 
-			// Find them in Manga table
-			mangaBookmarks = await bookmarkModel
+			const data = (await mangaModel
 				.aggregate(aggregationStatements)
-				.exec();
+				.exec()) as any[];
 
-			mangaDtos = (
-				await mangaModel
-					.find()
-					.where("id")
-					.in(mangaBookmarks.map((v) => v._id))
-					.lean()
-					.exec()
-			).map((manga) => {
-				return manga as BriefMangaDto;
-			});
-
-			// Set numer for bookmark, views, rating
-			for (let i = 0; i < mangaDtos.length; i++) {
-				let mangaBookmark = mangaBookmarks.find(
-					(bookmark) => bookmark._id === mangaDtos[i].id
-				);
-				mangaDtos[i].bookmarks = mangaBookmark?.bookmarks;
-
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
-
-				let mangaRate = await getMangaRating(mangaDtos[i].id);
-				mangaDtos[i].averageRate = mangaRate.sum / mangaRate.numRate;
-
-				const chapterData = (
-					await chapterModel
-						.find({ manga: mangaDtos[i].id })
-						.sort({ index: -1 })
-						.limit(1)
-				)[0] as any;
-
-				chapterData.mangaNames = mangaDtos[i].names;
-
-				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
+			if (!data) {
+				return [];
 			}
 
-			return mangaDtos.sort((a, b) => {
-				if (a.bookmarks === undefined || b.bookmarks === undefined) {
-					return -1;
-				}
+			const briefMangaDtos = data.map((item) => briefMangaDtoOf(item));
 
-				return b.bookmarks - a.bookmarks;
-			});
+			return briefMangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
+
+		return [];
 	},
 
 	/**
@@ -228,104 +333,145 @@ export const MangaController = {
 	 */
 	getTopMostRatingAsync: async (top: number, period: string = "all") => {
 		try {
-			// Filtering out the most rate mangas
 			let aggregationStatements: any[] = [
 				{
-					$group: {
-						_id: "$manga",
-						numRate: {
-							$sum: 1,
-						},
-						sum: {
-							$sum: "$rate",
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tags",
+					},
+				},
+				{
+					$set: {
+						tags: "$tags.tag",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creators",
+					},
+				},
+				{
+					$set: {
+						creators: "$creators.creator",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
 						},
 					},
 				},
 				{
-					$project: {
-						_id: "$_id",
-						numRate: "$numRate",
-						sum: "$sum",
-						average: {
-							$divide: ["$sum", "$numRate"],
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "mangaRateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$mangaRateDocs.rate",
+								},
+								{
+									$size: "$mangaRateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$set: {
+						briefChapterDto: {
+							$last: "$chapterDocs",
 						},
 					},
 				},
 				{
 					$sort: {
-						average: -1,
+						averageRate: -1,
 					},
 				},
 				{
 					$limit: top,
 				},
+				{
+					$unset: [
+						"viewDocs",
+						"mangaRateDocs",
+						"chapterDocs",
+						"bookmarkDocs",
+						"briefChapterDto.images",
+					],
+				},
 			];
-
-			let mangaRates: IMangaRate[] = [];
-			let mangaDtos: BriefMangaDto[] = [];
 
 			if (period === "weekly") {
 				let weeklyFilter = getWeeklyFilter();
-				aggregationStatements = [weeklyFilter, ...aggregationStatements];
+				aggregationStatements.push(weeklyFilter);
 			} else if (period === "monthly") {
 				let monthlyFilter = getMonthlyFilter();
-				aggregationStatements = [monthlyFilter, ...aggregationStatements];
+				aggregationStatements.push(monthlyFilter);
 			} else {
 				// Have nothing to do here :))
 			}
 
-			mangaRates = await mangaRateModel.aggregate(aggregationStatements).exec();
+			let data = (await mangaModel
+				.aggregate(aggregationStatements)
+				.exec()) as any[];
 
-			mangaDtos = (
-				await mangaModel
-					.find()
-					.where("id")
-					.in(mangaRates.map((v) => v._id))
-					.lean()
-					.exec()
-			).map((manga) => {
-				return manga as BriefMangaDto;
-			});
-
-			for (let i = 0; i < mangaDtos.length; i++) {
-				let mangaRate = mangaRates.find((item) => item._id === mangaDtos[i].id);
-				mangaDtos[i].averageRate = mangaRate?.average;
-
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
-
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
-
-				const chapterData = (
-					await chapterModel
-						.find({ manga: mangaDtos[i].id })
-						.sort({ index: -1 })
-						.limit(1)
-				)[0] as any;
-
-				chapterData.mangaNames = mangaDtos[i].names;
-
-				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
+			if (!data) {
+				return [];
 			}
 
-			return mangaDtos.sort((a, b) => {
-				if (a.averageRate === undefined || b.averageRate === undefined) {
-					// console.log(undefined);
-					return -1;
-				}
+			const briefMangaDtos = data.map((item) => briefMangaDtoOf(item));
 
-				return b.averageRate - a.averageRate;
-			});
+			return briefMangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
+
+		return [];
 	},
 
 	/**
@@ -333,98 +479,136 @@ export const MangaController = {
 	 * @param top Top first mangas
 	 */
 	getRecentlyUploadedAsync: async (top: number) => {
-		interface IRecentUploaded {
-			_id: string; //manga id
-			newestChapter: ChapterDto;
-		}
-
 		try {
 			let aggregationStatements: any[] = [
 				{
-					$sort: {
-						manga: 1,
-						updatedAt: 1,
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tags",
 					},
 				},
 				{
-					$group: {
-						_id: "$manga",
-						date: {
-							$last: "$$ROOT.updatedAt",
+					$set: {
+						tags: "$tags.tag",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creators",
+					},
+				},
+				{
+					$set: {
+						creators: "$creators.creator",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
 						},
-						newestChapter: {
-							$last: "$$ROOT",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "mangaRateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$mangaRateDocs.rate",
+								},
+								{
+									$size: "$mangaRateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$set: {
+						briefChapterDto: {
+							$last: "$chapterDocs",
 						},
 					},
 				},
 				{
 					$sort: {
-						date: -1,
+						updatedAt: -1,
 					},
 				},
 				{
 					$limit: top,
 				},
+				{
+					$unset: [
+						"viewDocs",
+						"mangaRateDocs",
+						"chapterDocs",
+						"bookmarkDocs",
+						"briefChapterDto.images",
+					],
+				},
 			];
 
-			// Get newest chapters
-			let recentUploadChapters: IRecentUploaded[] = await chapterModel
+			let data = (await mangaModel
 				.aggregate(aggregationStatements)
-				.exec();
+				.exec()) as any[];
 
-			// Find its manga
-			let mangaDtos: BriefMangaDto[] = (
-				await mangaModel
-					.find()
-					.where("id")
-					.in(recentUploadChapters.map((v) => v._id))
-					.lean()
-					.exec()
-			).map((item) => item as BriefMangaDto);
-
-			// Fill the rest infomation
-			for (let i = 0; i < mangaDtos.length; i++) {
-				let recentUploadChapter = recentUploadChapters.find(
-					(item) => item._id == mangaDtos[i].id
-				);
-
-				const chapterData: any = recentUploadChapter?.newestChapter;
-				chapterData.mangaNames = mangaDtos[i].names;
-
-				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
-
-				mangaDtos[i].averageRate = (
-					await getMangaRating(mangaDtos[i].id)
-				).average;
-
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
-
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
+			if (!data) {
+				return [];
 			}
 
-			return mangaDtos.sort((a, b) => {
-				if (
-					b.briefChapterDto?.createdAt === undefined ||
-					a.briefChapterDto?.createdAt === undefined
-				) {
-					return -1;
-				}
-				return (
-					b.briefChapterDto.createdAt.getSeconds() -
-					a.briefChapterDto.createdAt?.getSeconds()
-				);
-			});
+			const briefMangaDtos = data.map((item) => briefMangaDtoOf(item));
+
+			return briefMangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
+
+		return [];
 	},
 
 	/**
@@ -435,6 +619,99 @@ export const MangaController = {
 		try {
 			let aggregationStatements: any[] = [
 				{
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tags",
+					},
+				},
+				{
+					$set: {
+						tags: "$tags.tag",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creators",
+					},
+				},
+				{
+					$set: {
+						creators: "$creators.creator",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "mangaRateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$mangaRateDocs.rate",
+								},
+								{
+									$size: "$mangaRateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$set: {
+						briefChapterDto: {
+							$last: "$chapterDocs",
+						},
+					},
+				},
+				{
 					$sort: {
 						createdAt: -1,
 					},
@@ -442,50 +719,33 @@ export const MangaController = {
 				{
 					$limit: top,
 				},
+				{
+					$unset: [
+						"viewDocs",
+						"mangaRateDocs",
+						"chapterDocs",
+						"bookmarkDocs",
+						"briefChapterDto.images",
+					],
+				},
 			];
 
-			let mangaDtos: BriefMangaDto[] = await mangaModel
+			let data = (await mangaModel
 				.aggregate(aggregationStatements)
-				.exec();
+				.exec()) as any[];
 
-			for (let i = 0; i < mangaDtos.length; i++) {
-				const chapterData = (
-					await chapterModel
-						.find({ manga: mangaDtos[i].id })
-						.sort({ index: -1 })
-						.limit(1)
-				)[0] as unknown as any;
-
-				chapterData.mangaNames = mangaDtos[i].names;
-
-				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
-
-				mangaDtos[i].averageRate = (
-					await getMangaRating(mangaDtos[i].id)
-				).average;
-
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
-
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
+			if (!data) {
+				return [];
 			}
 
-			return mangaDtos.sort((a, b) => {
-				if (b.createdAt === undefined || a.createdAt === undefined) {
-					return -1;
-				}
-				return b.createdAt.getSeconds() - a.createdAt.getSeconds();
-			});
+			const briefMangaDtos = data.map((item) => briefMangaDtoOf(item));
+
+			return briefMangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
+
+		return [];
 	},
 
 	getAllRecentlyUploaded: async () => {
@@ -525,6 +785,11 @@ export const MangaController = {
 				.aggregate(aggregationStatements)
 				.exec();
 
+			recentUploadChapters.forEach(element => {
+				console.log(element._id)
+				console.log(element.newestChapter.createdAt)
+			});
+
 			// Find its manga
 			let mangaDtos: BriefMangaDto[] = (
 				await mangaModel
@@ -534,6 +799,11 @@ export const MangaController = {
 					.lean()
 					.exec()
 			).map((item) => item as BriefMangaDto);
+
+			console.log("---------------")
+			mangaDtos.forEach(element => {
+				console.log(element.id)
+			});
 
 			// Fill the rest infomation
 			for (let i = 0; i < mangaDtos.length; i++) {
@@ -563,7 +833,7 @@ export const MangaController = {
 					.exec();
 			}
 
-			return mangaDtos.sort((a, b) => {
+			mangaDtos.sort((a, b) => {
 				if (
 					b.briefChapterDto?.createdAt === undefined ||
 					a.briefChapterDto?.createdAt === undefined
@@ -571,10 +841,17 @@ export const MangaController = {
 					return -1;
 				}
 				return (
-					b.briefChapterDto.createdAt.getSeconds() -
-					a.briefChapterDto.createdAt?.getSeconds()
+					b.briefChapterDto.createdAt.getTime() -
+					a.briefChapterDto.createdAt?.getTime()
 				);
 			});
+			console.log("---------------")
+			mangaDtos.forEach(element => {
+				console.log(element.briefChapterDto?.createdAt?.getTime())
+				console.log(element.id)
+			});
+
+			return mangaDtos;
 		} catch (error) {
 			console.error(error);
 		}
@@ -716,8 +993,7 @@ export const MangaController = {
 
 	//Test area
 	getAllAuthor: async (author: string) => {
-		if (author === undefined)
-			author = "";
+		if (author === undefined) author = "";
 
 		try {
 			let mangaCreatorAgg = [
@@ -741,13 +1017,11 @@ export const MangaController = {
 	},
 
 	getMangaByName: async (name: string, id: string, period: string = "all") => {
-		if (name === undefined)
-			name = "";
-		
-		if (id === undefined)
-			id = "";
+		if (name === undefined) name = "";
 
-		try{
+		if (id === undefined) id = "";
+
+		try {
 			let aggregationStatements: any[] = [
 				{
 					$sort: {
@@ -756,16 +1030,16 @@ export const MangaController = {
 				},
 				{
 					$match: {
-						names:{
+						names: {
 							$regex: new RegExp("^" + name, "i"),
-						}
+						},
 					},
 				},
 				{
 					$match: {
 						id: {
 							$regex: `.*${id}.*`,
-						}
+						},
 					},
 				},
 			];
@@ -778,7 +1052,9 @@ export const MangaController = {
 				aggregationStatements = [monthlyFilter, ...aggregationStatements];
 			}
 
-			let mangaDtos: BriefMangaDto[] = await mangaModel.aggregate(aggregationStatements).exec();
+			let mangaDtos: BriefMangaDto[] = await mangaModel
+				.aggregate(aggregationStatements)
+				.exec();
 			return mangaDtos;
 		} catch (e) {
 			console.error(e);
@@ -786,23 +1062,21 @@ export const MangaController = {
 	},
 
 	getMangaByTag: async (tags: string[]) => {
-		try{
+		try {
 			let getTags: MangaTagDto[] = await mangaTagModel
-					.aggregate([
-						{
-							$match: {},
-						},
-					])
-					.exec();
+				.aggregate([
+					{
+						$match: {},
+					},
+				])
+				.exec();
 
-			if (tags !== undefined){
-
+			if (tags !== undefined) {
 				for (let i = 0; i < tags.length; i++) {
 					let mangaTagsAgg = [
 						{
 							$match: {
-								tag: 
-									new RegExp("^" + tags[i], "i"),
+								tag: new RegExp("^" + tags[i], "i"),
 							},
 						},
 					];
@@ -834,16 +1108,37 @@ export const MangaController = {
 
 			let mangaTags: string[] = [];
 
-			getTags.forEach(element => {
+			getTags.forEach((element) => {
 				mangaTags.push(element.manga);
 			});
 
 			let uniqueMangaTag: string[] = Array.from(new Set(mangaTags));
 
 			return uniqueMangaTag;
-		}catch (e) {
+		} catch (e) {
 			console.error(e);
 		}
+	},
+
+	getMangaBeforeWeekend: async () => {
+		let today = new Date();
+		today.setHours(0, 0, 1);
+
+		let firstDateOfWeek =
+			today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
+		let lastDateOfWeek = firstDateOfWeek + 6;
+
+		let agg = [
+			{
+				$match: {
+					id: "1",
+				},
+			},
+		];
+
+		let mangas: Manga[] = await mangaModel.aggregate(agg).exec();
+
+		return mangas[0].updatedAt;
 	},
 
 	//End of test area
@@ -857,7 +1152,6 @@ export const MangaController = {
 		order: string
 	) => {
 		if (title === undefined) title = "";
-		title = title.replaceAll("-", " ");
 		console.log(title);
 
 		if (undoneName === undefined) undoneName = "";
@@ -866,7 +1160,7 @@ export const MangaController = {
 
 		if (order === undefined) order = "desc";
 
-		if (period === undefined) period = "all"
+		if (period === undefined) period = "all";
 
 		try {
 			let mangaCreatorAgg = [
@@ -893,7 +1187,7 @@ export const MangaController = {
 				])
 				.exec();
 
-			if (tags !== undefined){
+			if (tags !== undefined) {
 				for (let i = 0; i < tags.length; i++) {
 					let mangaTagsAgg = [
 						{
@@ -926,7 +1220,7 @@ export const MangaController = {
 
 			let mangaTags: string[] = [];
 
-			getTags.forEach(element => {
+			getTags.forEach((element) => {
 				mangaTags.push(element.manga);
 			});
 
@@ -961,49 +1255,65 @@ export const MangaController = {
 					},
 					{
 						$match: {
-							id:`${each}`,
+							id: `${each}`,
 						},
 					},
 					{
 						$match: {
-							names:{
+							names: {
 								$regex: new RegExp("^" + title, "i"),
-							}
+							},
 						},
 					},
 				];
 
-				let tempMangaDto: BriefMangaDto[] = await mangaModel.aggregate(aggregationStatements).exec();
+				let tempMangaDto: BriefMangaDto[] = await mangaModel
+					.aggregate(aggregationStatements)
+					.exec();
 				mangaDtos = tempMangaDto.concat(mangaDtos);
 			}
 
 			for (let i = 0; i < mangaDtos.length; i++) {
-				const chapterData = ((
+				const chapterData = (
 					await chapterModel
 						.find({ manga: mangaDtos[i].id })
 						.sort({ index: -1 })
 						.limit(1)
-				)[0] as unknown) as any;
-
-				chapterData.mangaNames = mangaDtos[i].names;
+				)[0] as any;
 
 				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
 
-				mangaDtos[i].averageRate = (
-					await getMangaRating(mangaDtos[i].id)
-				).average;
+				chapterData.mangaNames = mangaDtos[i].names;
 
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
+				if (period != "all") {
+					mangaDtos[i].averageRate = await getPeriodAVGRate(
+						mangaDtos[i].id,
+						period
+					);
 
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
+					mangaDtos[i].views = await getPeriodViews(mangaDtos[i].id, period);
+
+					mangaDtos[i].bookmarks = await getPeriodFollows(
+						mangaDtos[i].id,
+						period
+					);
+				} else {
+					mangaDtos[i].averageRate = (
+						await getMangaRating(mangaDtos[i].id)
+					).average;
+
+					mangaDtos[i].views = await mangaChapterViewModel
+						.find({ manga: mangaDtos[i].id })
+						.countDocuments()
+						.exec();
+
+					mangaDtos[i].bookmarks = await bookmarkModel
+						.find({
+							manga: mangaDtos[i].id,
+						})
+						.countDocuments()
+						.exec();
+				}
 			}
 
 			if (sort === "view") {
@@ -1060,47 +1370,44 @@ export const MangaController = {
 						if (b.updatedAt === undefined || a.updatedAt === undefined) {
 							return -1;
 						}
-						return b.updatedAt.getSeconds() - a.updatedAt.getSeconds();
+						return b.updatedAt.getTime() - a.updatedAt.getTime();
 					});
 				} else if (order === "asc") {
 					mangaDtos.sort((a, b) => {
 						if (b.updatedAt === undefined || a.updatedAt === undefined) {
 							return -1;
 						}
-						return -b.updatedAt.getSeconds() + a.updatedAt.getSeconds();
+						return -b.updatedAt.getTime() + a.updatedAt.getTime();
 					});
 				}
 			}
 
-			console.log(sort)
+			console.log(sort);
 
-			mangaDtos.forEach(element => {
-				if (sort === "view") console.log(element.views)
-				if (sort === "date") console.log(element.updatedAt?.getSeconds())
-				if (sort === "follow") console.log(element.bookmarks)
-				if (sort === "rate") console.log(element.averageRate)
-				console.log("-------------")
+			mangaDtos.forEach((element) => {
+				if (sort === "view") console.log(element.views);
+				if (sort === "date") console.log(element.updatedAt?.getSeconds());
+				if (sort === "follow") console.log(element.bookmarks);
+				if (sort === "rate") console.log(element.averageRate);
+				console.log("-------------");
 			});
 
-			console.log(mangaDtos.length)
-			console.log(period)
+			console.log(mangaDtos.length);
+			console.log(period);
 
-			if (period === "all")
-				return mangaDtos;
+			if (period === "all" || sort != "date") return mangaDtos;
 
 			let periodMangaDtos: BriefMangaDto[] = [];
-			mangaDtos.forEach(element => {
+			mangaDtos.forEach((element) => {
 				let tempDate: Date = element.updatedAt || new Date(0);
-				console.log(tempDate)
-				console.log("-------------")
-				if (period === "weekly"){
-					console.log(inCurrentWeek(tempDate))
-					if (inCurrentWeek(tempDate) === true)
-						periodMangaDtos.push(element);
-				} else if (period === "monthly"){
-					console.log(inCurrentMonth(tempDate))
-					if (inCurrentMonth(tempDate) === true)
-						periodMangaDtos.push(element);
+				console.log(tempDate);
+				console.log("-------------");
+				if (period === "weekly") {
+					console.log(inCurrentWeek(tempDate));
+					if (inCurrentWeek(tempDate) === true) periodMangaDtos.push(element);
+				} else if (period === "monthly") {
+					console.log(inCurrentMonth(tempDate));
+					if (inCurrentMonth(tempDate) === true) periodMangaDtos.push(element);
 				}
 			});
 
@@ -1146,7 +1453,7 @@ async function getMangaRating(id: string) {
 	return mangaRate;
 }
 
-function inCurrentWeek(thisDate: Date){
+function inCurrentWeek(thisDate: Date) {
 	let today = new Date();
 	today.setHours(0, 0, 1);
 
@@ -1154,22 +1461,157 @@ function inCurrentWeek(thisDate: Date){
 		today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
 	let lastDateOfWeek = firstDateOfWeek + 6;
 
-	let firstDay = new Date(today.getFullYear(), today.getMonth(), firstDateOfWeek);
+	let firstDay = new Date(
+		today.getFullYear(),
+		today.getMonth(),
+		firstDateOfWeek
+	);
+	console.log(firstDay);
 	let lastDay = new Date(today.getFullYear(), today.getMonth(), lastDateOfWeek);
+	console.log(lastDay);
 
 	return thisDate >= firstDay && thisDate <= lastDay;
 }
 
-function inCurrentMonth(thisDate?: Date){
+function firstDateOfWeek() {
+	let today = new Date();
+	today.setHours(0, 0, 1);
+
+	let firstDateOfWeek =
+		today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
+
+	return new Date(today.getFullYear(), today.getMonth(), firstDateOfWeek);
+}
+
+function lastDateOfWeek() {
+	let today = new Date();
+	today.setHours(0, 0, 1);
+
+	let firstDateOfWeek =
+		today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
+	let lastDateOfWeek = firstDateOfWeek + 6;
+
+	return new Date(today.getFullYear(), today.getMonth(), lastDateOfWeek);
+}
+
+function firstDateOfMonth() {
+	let thisMonth = new Date();
+	thisMonth.setHours(0, 0, 1);
+
+	return new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+}
+
+function lastDateOfMonth() {
+	let thisMonth = new Date();
+	thisMonth.setHours(0, 0, 1);
+
+	return new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
+}
+
+function inCurrentMonth(thisDate?: Date) {
 	let thisMonth = new Date();
 	thisMonth.setHours(0, 0, 1);
 
 	let firstDay = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
 	let lastDay = new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
 
-	if (thisDate === undefined)
-		return false;
+	if (thisDate === undefined) return false;
 	return thisDate >= firstDay && thisDate <= lastDay;
+}
+
+async function getPeriodAVGRate(id: string, period: string) {
+	let aggregationStatements: any[] = [
+		{
+			$match: {
+				_id: id,
+			},
+		},
+	];
+
+	let mangaRates: MangaRateDto[] = [];
+	mangaRates = await mangaRateModel.aggregate(aggregationStatements).exec();
+
+	let sum = 0;
+	let numRate = 0;
+	mangaRates.forEach((element) => {
+		let tempDate: Date = element.updatedAt || new Date(0);
+		if (period === "weekly") {
+			if (tempDate >= firstDateOfWeek() && tempDate <= lastDateOfWeek()) {
+				numRate += 1;
+				sum += element.rate;
+			}
+		} else if (period === "monthly") {
+			if (tempDate >= firstDateOfMonth() && tempDate <= lastDateOfMonth()) {
+				numRate += 1;
+				sum += element.rate;
+			}
+		}
+	});
+
+	let avg = sum / numRate;
+
+	return avg;
+}
+
+async function getPeriodViews(id: string, period: string) {
+	let aggregationStatements: any[] = [
+		{
+			$match: {
+				_id: id,
+			},
+		},
+	];
+
+	let mangaViewDocs: MangaChapterViewDto[] = [];
+	mangaViewDocs = await mangaChapterViewModel
+		.aggregate(aggregationStatements)
+		.exec();
+
+	let sum = 0;
+	mangaViewDocs.forEach((element) => {
+		let tempDate: Date = element.updatedAt || new Date(0);
+		if (period === "weekly") {
+			if (tempDate >= firstDateOfWeek() && tempDate <= lastDateOfWeek()) {
+				sum += 1;
+			}
+		} else if (period === "monthly") {
+			if (tempDate >= firstDateOfMonth() && tempDate <= lastDateOfMonth()) {
+				sum += 1;
+			}
+		}
+	});
+
+	return sum;
+}
+
+async function getPeriodFollows(id: string, period: string) {
+	let aggregationStatements: any[] = [
+		{
+			$match: {
+				_id: id,
+			},
+		},
+	];
+
+	let mangaBookmarks: Bookmark[] = [];
+
+	mangaBookmarks = await bookmarkModel.aggregate(aggregationStatements).exec();
+
+	let sum = 0;
+	mangaBookmarks.forEach((element) => {
+		let tempDate: Date = element.updatedAt || new Date(0);
+		if (period === "weekly") {
+			if (tempDate >= firstDateOfWeek() && tempDate <= lastDateOfWeek()) {
+				sum += 1;
+			}
+		} else if (period === "monthly") {
+			if (tempDate >= firstDateOfMonth() && tempDate <= lastDateOfMonth()) {
+				sum += 1;
+			}
+		}
+	});
+
+	return sum;
 }
 
 function getWeeklyFilter() {

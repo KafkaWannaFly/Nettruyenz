@@ -24,6 +24,7 @@ import { Group, GroupDto, groupModel } from "./GroupModel";
 import { MangaCreator, mangaCreatorModel } from "./MangaCreator";
 import {
 	BriefMangaDto,
+	briefMangaDtoOf,
 	CompletedMangaDto,
 	completeMangaDtoOf,
 	Manga,
@@ -57,6 +58,7 @@ export {
 	BriefMangaDto,
 	CompletedMangaDto,
 	completeMangaDtoOf,
+	briefMangaDtoOf,
 	//
 	mangaCreatorModel,
 	MangaCreator,
