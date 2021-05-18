@@ -63,23 +63,73 @@ function postDataSignIn(setToken: any) {
   }
 
 }
-postDataSignIn.propTypes = {
-  setToken: true,
-}
-var dataSignUp = {
-  email: "testUserName@gmail.com",
-  password: "123"
-};
+// postDataSignIn.propTypes = {
+//   setToken: true,
+// }
+// var dataSignUp = {
+//   email: "testUserName@gmail.com",
+//   password: "123"
+// };
 
 function postDataSignUp() {
-  axios
+  const inputUsernameSU = (document.getElementById("emailSignUp") as HTMLInputElement).value;
+  const inputPasswordSU = (document.getElementById("passwordSignUp") as HTMLInputElement).value;
+  const inputCPasswordSU = (document.getElementById("passwordSignUp") as HTMLInputElement).value;
+  const inputNickname = (document.getElementById("nickname") as HTMLInputElement).value;
+  const output = document.getElementById("notiSignUp");
+  if(inputUsernameSU === "" || inputPasswordSU === "" || inputCPasswordSU === "" || inputNickname === ""){
+    if(output)
+      output.innerHTML = "Vui lòng điền đầy đủ thông tin."
+  }
+  else if(validateEmail(inputUsernameSU) === false){
+    if(output){
+      output.innerHTML = "Tài khoản không đúng định dạng."
+    }
+  }
+  else if(String(inputPasswordSU) != String(inputCPasswordSU)){
+    console.log(3);
+    if(output)
+      output.innerHTML = "Mật khẩu xác thực không đúng."
+  }
+  else{
+    console.log(4);
+    if(output)
+      output.innerHTML = ""
+    var dataSignUp = {
+      email: inputUsernameSU,
+      password: inputPasswordSU,
+      nickname: inputNickname
+    };
+    console.log(dataSignUp);
+    axios
     .post("http://localhost:3000/sign-up", dataSignUp)
     .then(function (response) {
       console.log(response.data.error);
+        if(response.data.error === undefined){
+          if(output)
+            output.innerHTML = "Đăng kí thành công."
+        }
+        else{
+          if(output)
+            output.innerHTML = "Tài khoản đã được đăng kí."
+        }
     })
     .catch(function (error) {
+      if(output)
+          output.innerHTML = "Không thể kết nối tới máy chủ."
       console.log(error);
     });
+  }
+}
+function checkMailForgot(){
+  const inputUsernameSU = (document.getElementById("emailForgotPassword") as HTMLInputElement).value;
+  const output = document.getElementById("notiForgotPass");
+  if(validateEmail(inputUsernameSU) === false){
+    if(output)
+    output.innerHTML = "Email không đúng định dạng."
+    return false;
+  }
+  return true;
 }
 function offLogin() {
   const myElement = document.getElementById("overlay")!;
@@ -248,7 +298,7 @@ const Tabs = (props: any) => {
                       className="rounded w-full text-white focus:outline-none transition duration-500 pb-3"
                     ></input>
                   </div>
-                  <div className="mb-10 h-14 px-5 rounded-lg  border-2 flex items-center">
+                  <div className="mb-3 h-14 px-5 rounded-lg  border-2 flex items-center">
                     <RiLockPasswordFill className="pr-2 h-8 w-8"></RiLockPasswordFill>
                     <input
                       type="password"
@@ -257,8 +307,10 @@ const Tabs = (props: any) => {
                       className="rounded w-full text-white focus:outline-none transition duration-500 pb-3"
                     ></input>
                   </div>
+                  <div id="notiSignUp" className="pl-3 text-red-500">
+                    </div>
                   <button
-                    className="focus:bg-black bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
+                    className="focus:bg-black mt-5 bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
                     onClick={postDataSignUp}
                   >
                     SIGN UP
@@ -282,7 +334,8 @@ const Tabs = (props: any) => {
                       className="rounded w-full text-white focus:outline-none transition duration-500 pb-3"
                     ></input>
                   </div>
-
+                  <div id="notiForgotPass" className="pl-3 text-red-500">
+                    </div>
                   <a
                     href="#link4"
                     role="tablist"
@@ -290,7 +343,8 @@ const Tabs = (props: any) => {
                     className="bg-red-600 mt-16 text-center text-xs font-bold uppercase px-5 py-4 shadow-lg rounded-xl block leading-normal "
                     onClick={(e) => {
                       e.preventDefault();
-                      setOpenTab(4);
+                      if(checkMailForgot() === true)
+                        setOpenTab(4);
                     }}
                   >
                     RECLAIM PASSWORD

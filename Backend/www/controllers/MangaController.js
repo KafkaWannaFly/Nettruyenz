@@ -615,7 +615,7 @@ exports.MangaController = {
                 {
                     $match: {
                         names: {
-                            $regex: `.*${name}.*`,
+                            $regex: new RegExp("^" + name, "i"),
                         }
                     },
                 },
@@ -656,7 +656,7 @@ exports.MangaController = {
                     let mangaTagsAgg = [
                         {
                             $match: {
-                                tag: `${tags[i]}`,
+                                tag: new RegExp("^" + tags[i], "i"),
                             },
                         },
                     ];
@@ -692,21 +692,25 @@ exports.MangaController = {
         }
     },
     //End of test area
-    getMangasForCate: async (tags, title, undoneName, period = "all", sort, order) => {
+    getMangasForCate: async (tags, title, undoneName, period, sort, order) => {
         if (title === undefined)
             title = "";
+        title = title.replaceAll("-", " ");
+        console.log(title);
         if (undoneName === undefined)
             undoneName = "";
         if (sort === undefined)
-            sort = "Date";
+            sort = "date";
         if (order === undefined)
-            order = "Descending";
+            order = "desc";
+        if (period === undefined)
+            period = "all";
         try {
             let mangaCreatorAgg = [
                 {
                     $match: {
                         creator: {
-                            $regex: `.*${undoneName}.*`,
+                            $regex: new RegExp("^" + undoneName, "i"),
                         },
                     },
                 },
@@ -714,7 +718,7 @@ exports.MangaController = {
             let creator = await models_1.mangaCreatorModel
                 .aggregate(mangaCreatorAgg)
                 .exec();
-            console.log(creator);
+            // console.log(creator);
             let getTags = await models_1.mangaTagModel
                 .aggregate([
                 {
@@ -727,7 +731,7 @@ exports.MangaController = {
                     let mangaTagsAgg = [
                         {
                             $match: {
-                                tag: `${tags[i]}`,
+                                tag: new RegExp("^" + tags[i], "i"),
                             },
                         },
                     ];
@@ -783,19 +787,11 @@ exports.MangaController = {
                     {
                         $match: {
                             names: {
-                                $regex: `.*${title}.*`,
+                                $regex: new RegExp("^" + title, "i"),
                             }
                         },
                     },
                 ];
-                if (period === "weekly") {
-                    let weeklyFilter = getWeeklyFilter();
-                    aggregationStatements = [weeklyFilter, ...aggregationStatements];
-                }
-                else if (period === "monthly") {
-                    let monthlyFilter = getMonthlyFilter();
-                    aggregationStatements = [monthlyFilter, ...aggregationStatements];
-                }
                 let tempMangaDto = await models_1.mangaModel.aggregate(aggregationStatements).exec();
                 mangaDtos = tempMangaDto.concat(mangaDtos);
             }
@@ -872,14 +868,6 @@ exports.MangaController = {
                     });
                 }
             }
-            else if (sort === "name") {
-                if (order === "desc") {
-                    mangaDtos.sort((a, b) => (a.names < b.names ? 1 : -1));
-                }
-                else if (order === "asc") {
-                    mangaDtos.sort((a, b) => (a.names > b.names ? 1 : -1));
-                }
-            }
             else if (sort === "date") {
                 if (order === "desc") {
                     mangaDtos.sort((a, b) => {
@@ -891,15 +879,47 @@ exports.MangaController = {
                 }
                 else if (order === "asc") {
                     mangaDtos.sort((a, b) => {
-                        if (b.createdAt === undefined || a.createdAt === undefined) {
+                        if (b.updatedAt === undefined || a.updatedAt === undefined) {
                             return -1;
                         }
-                        return -b.createdAt.getSeconds() + a.createdAt.getSeconds();
+                        return -b.updatedAt.getSeconds() + a.updatedAt.getSeconds();
                     });
                 }
             }
-            console.log(mangaDtos);
-            return mangaDtos;
+            console.log(sort);
+            mangaDtos.forEach(element => {
+                if (sort === "view")
+                    console.log(element.views);
+                if (sort === "date")
+                    console.log(element.updatedAt?.getSeconds());
+                if (sort === "follow")
+                    console.log(element.bookmarks);
+                if (sort === "rate")
+                    console.log(element.averageRate);
+                console.log("-------------");
+            });
+            console.log(mangaDtos.length);
+            console.log(period);
+            if (period === "all")
+                return mangaDtos;
+            let periodMangaDtos = [];
+            mangaDtos.forEach(element => {
+                let tempDate = element.updatedAt || new Date(0);
+                console.log(tempDate);
+                console.log("-------------");
+                if (period === "weekly") {
+                    console.log(inCurrentWeek(tempDate));
+                    if (inCurrentWeek(tempDate) === true)
+                        periodMangaDtos.push(element);
+                }
+                else if (period === "monthly") {
+                    console.log(inCurrentMonth(tempDate));
+                    if (inCurrentMonth(tempDate) === true)
+                        periodMangaDtos.push(element);
+                }
+            });
+            // console.log(mangaDtos);
+            return periodMangaDtos;
         }
         catch (error) {
             console.error(error);
@@ -928,6 +948,24 @@ async function getMangaRating(id) {
     let mangaRate = (await models_1.mangaRateModel.aggregate(rateAgg).exec())[0];
     mangaRate.average = mangaRate.sum / mangaRate.numRate;
     return mangaRate;
+}
+function inCurrentWeek(thisDate) {
+    let today = new Date();
+    today.setHours(0, 0, 1);
+    let firstDateOfWeek = today.getDate() - today.getDay() + (today.getDate() == 0 ? -6 : 1);
+    let lastDateOfWeek = firstDateOfWeek + 6;
+    let firstDay = new Date(today.getFullYear(), today.getMonth(), firstDateOfWeek);
+    let lastDay = new Date(today.getFullYear(), today.getMonth(), lastDateOfWeek);
+    return thisDate >= firstDay && thisDate <= lastDay;
+}
+function inCurrentMonth(thisDate) {
+    let thisMonth = new Date();
+    thisMonth.setHours(0, 0, 1);
+    let firstDay = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+    let lastDay = new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
+    if (thisDate === undefined)
+        return false;
+    return thisDate >= firstDay && thisDate <= lastDay;
 }
 function getWeeklyFilter() {
     let today = new Date();
