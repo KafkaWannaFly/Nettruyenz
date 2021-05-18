@@ -60,12 +60,11 @@ body {
 }
 
 #footer {
-	@apply grid-rows-6;
+	@apply grid grid-rows-6;
 	left: 0;
 	bottom: 0;
-	right: 0;
 	width: 100%;
-	background-color: black;
+	background-color: var(--indigo);
 	color: white;
 	@apply text-center;
 	margin-top: 40px;
@@ -147,16 +146,12 @@ body {
 }
 
 #search-bars-container {
-	@apply flex;
-	@apply xl:flex-row xl:justify-center;
-	@apply lg:flex-row lg:justify-center;
-
+	@apply flex flex-row justify-center;
 	@apply mx-5;
 }
 
 .each-search-bar {
 	@apply text-white;
-	@apply md:justify-self-center;
 }
 
 .form {
@@ -178,7 +173,6 @@ body {
 	@apply absolute;
 	line-height: 30px;
 	margin-left: 275px;
-	@apply md:ml-72;
 	@apply cursor-pointer;
 }
 
@@ -254,44 +248,27 @@ body {
 }
 
 .manga-list {
-	@apply flex flex-wrap justify-center px-20;
+	@apply flex flex-row flex-wrap;
 }
-
 .manga-preview-container {
-	@apply md:w-6/12 lg:w-1/5 lg:mb-0 mb-12 px-2 py-2;
-	@apply w-full;
-	@apply relative z-10;
-}
-
-.manga-preview-info {
-	@apply max-w-sm px-1 rounded overflow-hidden;
-	background-color: var(--darkgrey);
-	filter: drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.25));
-	transition: transform 250ms;
-}
-
-.manga-preview-info:hover, .manga-preview-info:active{
-	transform: translateY(5px);
+	margin-left: 125px;
+	width: 300px;
+	height: 356px;
+	color: white;
 }
 
 .manga-preview-image {
-	@apply w-80 h-64;
+	background-color: aqua;
+	width: inherit;
+	padding-top: 100%;
 }
 
 .manga-preview-title {
-	@apply font-bold text-xl text-white pt-2 px-2 truncate;
+	@apply overflow-ellipsis text-2xl whitespace-nowrap overflow-hidden;
 }
 
 .flex-container {
-	@apply pb-2 text-white;
-}
-
-.manga-preview-latest-update, .manga-preview-latest-chapter {
-	@apply inline-block px-2 text-sm font-semibold mr-2 mb-2;
-}
-
-.manga-preview-latest-update {
-	@apply relative -right-40;
+	@apply flex flex-row justify-between;
 }
 
 #tag-window {
@@ -300,7 +277,6 @@ body {
 	top: 50%;
 	transform: translate(-50%, -75%);
 	background-color: var(--darkgrey);
-	@apply z-50;
 }
 
 #tag-window:target {
@@ -312,6 +288,8 @@ body {
 	background-color: var(--darkgrey);
 	margin: 0 auto;
 	width: 75vw;
+	@apply relative;
+	z-index: 1px;
 	top: 25%;
 	padding: 30px;
 	box-shadow:0 0 10px rgba(0,0,0,0.25);

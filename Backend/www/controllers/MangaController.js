@@ -729,10 +729,6 @@ exports.MangaController = {
             let recentUploadChapters = await models_1.chapterModel
                 .aggregate(aggregationStatements)
                 .exec();
-            recentUploadChapters.forEach(element => {
-                console.log(element._id);
-                console.log(element.newestChapter.createdAt);
-            });
             // Find its manga
             let mangaDtos = (await models_1.mangaModel
                 .find()
@@ -740,10 +736,6 @@ exports.MangaController = {
                 .in(recentUploadChapters.map((v) => v._id))
                 .lean()
                 .exec()).map((item) => item);
-            console.log("---------------");
-            mangaDtos.forEach(element => {
-                console.log(element.id);
-            });
             // Fill the rest infomation
             for (let i = 0; i < mangaDtos.length; i++) {
                 let recentUploadChapter = recentUploadChapters.find((item) => item._id == mangaDtos[i].id);
@@ -762,20 +754,14 @@ exports.MangaController = {
                     .countDocuments()
                     .exec();
             }
-            mangaDtos.sort((a, b) => {
+            return mangaDtos.sort((a, b) => {
                 if (b.briefChapterDto?.createdAt === undefined ||
                     a.briefChapterDto?.createdAt === undefined) {
                     return -1;
                 }
-                return (b.briefChapterDto.createdAt.getTime() -
-                    a.briefChapterDto.createdAt?.getTime());
+                return (b.briefChapterDto.createdAt.getSeconds() -
+                    a.briefChapterDto.createdAt?.getSeconds());
             });
-            console.log("---------------");
-            mangaDtos.forEach(element => {
-                console.log(element.briefChapterDto?.createdAt?.getTime());
-                console.log(element.id);
-            });
-            return mangaDtos;
         }
         catch (error) {
             console.error(error);
@@ -1043,6 +1029,7 @@ exports.MangaController = {
     getMangasForCate: async (tags, title, undoneName, period, sort, order) => {
         if (title === undefined)
             title = "";
+        title = title.replaceAll("-", " ");
         console.log(title);
         if (undoneName === undefined)
             undoneName = "";
@@ -1230,7 +1217,7 @@ exports.MangaController = {
                         if (b.updatedAt === undefined || a.updatedAt === undefined) {
                             return -1;
                         }
-                        return b.updatedAt.getTime() - a.updatedAt.getTime();
+                        return b.updatedAt.getSeconds() - a.updatedAt.getSeconds();
                     });
                 }
                 else if (order === "asc") {
@@ -1238,7 +1225,7 @@ exports.MangaController = {
                         if (b.updatedAt === undefined || a.updatedAt === undefined) {
                             return -1;
                         }
-                        return -b.updatedAt.getTime() + a.updatedAt.getTime();
+                        return -b.updatedAt.getSeconds() + a.updatedAt.getSeconds();
                     });
                 }
             }
