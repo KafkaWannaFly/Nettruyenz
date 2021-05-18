@@ -17,6 +17,7 @@ import cors from "cors";
 import bookmarkRoute from "../routes/Bookmarks.route";
 import historyRoute from "../routes/History.route";
 import chapterRoute from "../routes/Chapters.route";
+import uploadRoute from "../routes/Upload.route";
 dotenv.config();
 
 const app = express();
@@ -63,7 +64,9 @@ app.use("/tags", tagRoute);
 
 app.use("/user", userRoute);
 
-app.get("/test", (req, res) => {
+app.use("/upload", uploadRoute);
+
+app.get("/test-header", (req, res) => {
 	res.json(req.headers);
 });
 
