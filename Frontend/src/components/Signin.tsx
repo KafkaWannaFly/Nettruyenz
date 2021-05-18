@@ -12,6 +12,7 @@ import { RouteProps } from "react-router-dom";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import axios from "axios";
+import { O_NOCTTY } from "constants";
 
 function validateEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -21,14 +22,14 @@ function postDataSignIn(setToken: any) {
   const inputUsername = (document.getElementById("emailSignIn") as HTMLInputElement).value;
   const inputPassword = (document.getElementById("passwordSignIn") as HTMLInputElement).value;
   const output = document.getElementById("notiSignIn");
-  if(validateEmail(inputUsername)){
-    if(inputPassword === ""){
+  if (validateEmail(inputUsername)) {
+    if (inputPassword === "") {
       console.log(output)
-      if(output)
+      if (output)
         output.innerHTML = "Mật khẩu không được để trống";
     }
-    else{
-      if(output)
+    else {
+      if (output)
         output.innerHTML = "";
       var dataSignIn = {
         email: inputUsername,
@@ -38,15 +39,15 @@ function postDataSignIn(setToken: any) {
         .post("http://localhost:3000/sign-in", dataSignIn)
         .then(function (response) {
           console.log(response);
-          if(response.data.error){
-            if(output)
+          if (response.data.error) {
+            if (output)
               output.innerHTML = "Tài khoản hoặc mật khẩu không đúng";
           }
-          else{
-            if(output)
+          else {
+            if (output)
               output.innerHTML = "Đăng nhập thành công";
-              setToken(response.data);
-              offLogin();
+            setToken(response.data);
+            offLogin();
           }
           console.log(response);
         })
@@ -55,10 +56,10 @@ function postDataSignIn(setToken: any) {
         });
     }
   }
-  else{
+  else {
     const output = document.getElementById("notiSignIn");
     console.log(output)
-    if(output)
+    if (output)
       output.innerHTML = "Email không đúng định dạng";
   }
 
@@ -77,23 +78,21 @@ function postDataSignUp() {
   const inputCPasswordSU = (document.getElementById("passwordSignUp") as HTMLInputElement).value;
   const inputNickname = (document.getElementById("nickname") as HTMLInputElement).value;
   const output = document.getElementById("notiSignUp");
-  if(inputUsernameSU === "" || inputPasswordSU === "" || inputCPasswordSU === "" || inputNickname === ""){
-    if(output)
+  if (inputUsernameSU === "" || inputPasswordSU === "" || inputCPasswordSU === "" || inputNickname === "") {
+    if (output)
       output.innerHTML = "Vui lòng điền đầy đủ thông tin."
   }
-  else if(validateEmail(inputUsernameSU) === false){
-    if(output){
+  else if (validateEmail(inputUsernameSU) === false) {
+    if (output) {
       output.innerHTML = "Tài khoản không đúng định dạng."
     }
   }
-  else if(String(inputPasswordSU) != String(inputCPasswordSU)){
-    console.log(3);
-    if(output)
+  else if (String(inputPasswordSU) != String(inputCPasswordSU)) {
+    if (output)
       output.innerHTML = "Mật khẩu xác thực không đúng."
   }
-  else{
-    console.log(4);
-    if(output)
+  else {
+    if (output)
       output.innerHTML = ""
     var dataSignUp = {
       email: inputUsernameSU,
@@ -102,34 +101,90 @@ function postDataSignUp() {
     };
     console.log(dataSignUp);
     axios
-    .post("http://localhost:3000/sign-up", dataSignUp)
-    .then(function (response) {
-      console.log(response.data.error);
-        if(response.data.error === undefined){
-          if(output)
+      .post("http://localhost:3000/sign-up", dataSignUp)
+      .then(function (response) {
+        console.log(response.data.error);
+        if (response.data.error === undefined) {
+          if (output)
             output.innerHTML = "Đăng kí thành công."
+        }
+        else {
+          if (output)
+            output.innerHTML = "Tài khoản đã được đăng kí."
+        }
+      })
+      .catch(function (error) {
+        if (output)
+          output.innerHTML = "Không thể kết nối tới máy chủ."
+        console.log(error);
+      });
+  }
+}
+function checkMailForgot() {
+  const inputUsernameSU = (document.getElementById("emailForgotPassword") as HTMLInputElement).value;
+  const output = document.getElementById("notiForgotPass");
+  if (validateEmail(inputUsernameSU) === false) {
+    if (output)
+      output.innerHTML = "Email không đúng định dạng."
+    return false;
+  }
+  else {
+    const inputUsernameSU = (document.getElementById("emailForgotPassword") as HTMLInputElement).value;
+    (document.getElementById("emailConfirmPass") as HTMLInputElement).value = inputUsernameSU;
+    axios
+      .get("http://localhost:3000/forgot-password?email=" + inputUsernameSU)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+  return true;
+}
+function confirmForgotPass(){
+  const inputUsernameSU = (document.getElementById("emailForgotPassword") as HTMLInputElement).value;
+  const inputOTP = (document.getElementById("OTPConfirmPass") as HTMLInputElement).value;
+  const inputPass = (document.getElementById("passwordConfirmPass") as HTMLInputElement).value;
+  const inputConfirmPass = (document.getElementById("passwordConfirmPassNew") as HTMLInputElement).value;
+  const output = document.getElementById("notiConfirmForgot");
+  const noti = document.getElementById("notiConfirm");
+  if (inputOTP === "" || inputPass === "" || inputConfirmPass === "") {
+    if (output)
+      output.innerHTML = "Vui lòng nhập đủ thông tin."
+  }
+  else if(String(inputPass) != String(inputConfirmPass)){
+    if (output)
+      output.innerHTML = "Mật khẩu xác thực không đúng."
+  }
+  else {
+    if(output)
+      output.innerHTML = ""
+    if(noti)
+    noti.innerHTML = ""
+    const data = {
+      email: inputUsernameSU,
+      code: inputOTP,
+      newPassword: inputPass,
+    }
+    console.log(data);
+    axios
+      .post("http://localhost:3000/forgot-password?email=" + inputUsernameSU, data)
+      .then(function (response) {
+        console.log(response);
+        if(response.data.error){
+          if(noti)
+            noti.innerHTML = "Mã xác thực OTP không đúng."
         }
         else{
           if(output)
-            output.innerHTML = "Tài khoản đã được đăng kí."
+            output.innerHTML = "Đổi mật khẩu thành công."
         }
-    })
-    .catch(function (error) {
-      if(output)
-          output.innerHTML = "Không thể kết nối tới máy chủ."
-      console.log(error);
-    });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
-}
-function checkMailForgot(){
-  const inputUsernameSU = (document.getElementById("emailForgotPassword") as HTMLInputElement).value;
-  const output = document.getElementById("notiForgotPass");
-  if(validateEmail(inputUsernameSU) === false){
-    if(output)
-    output.innerHTML = "Email không đúng định dạng."
-    return false;
-  }
-  return true;
 }
 function offLogin() {
   const myElement = document.getElementById("overlay")!;
@@ -238,7 +293,7 @@ const Tabs = (props: any) => {
                     ></input>
                   </div>
                   <div id="notiSignIn" className="mb-7 pl-3 text-red-500">
-                    
+
                   </div>
                   <button
                     className="focus:bg-black bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
@@ -308,7 +363,7 @@ const Tabs = (props: any) => {
                     ></input>
                   </div>
                   <div id="notiSignUp" className="pl-3 text-red-500">
-                    </div>
+                  </div>
                   <button
                     className="focus:bg-black mt-5 bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
                     onClick={postDataSignUp}
@@ -335,7 +390,7 @@ const Tabs = (props: any) => {
                     ></input>
                   </div>
                   <div id="notiForgotPass" className="pl-3 text-red-500">
-                    </div>
+                  </div>
                   <a
                     href="#link4"
                     role="tablist"
@@ -343,7 +398,7 @@ const Tabs = (props: any) => {
                     className="bg-red-600 mt-16 text-center text-xs font-bold uppercase px-5 py-4 shadow-lg rounded-xl block leading-normal "
                     onClick={(e) => {
                       e.preventDefault();
-                      if(checkMailForgot() === true)
+                      if (checkMailForgot() === true)
                         setOpenTab(4);
                     }}
                   >
@@ -362,52 +417,65 @@ const Tabs = (props: any) => {
                     <BsEnvelope className="pr-2 h-8 w-8"></BsEnvelope>
                     <input
                       type="text"
-                      id="email"
+                      id="emailConfirmPass"
                       placeholder="Email..."
                       className="w-full text-white focus:outline-none transition duration-500 border-b-0"
+                      readOnly={true}
                     ></input>
                   </div>
                   <div className="mb-2 h-12 px-5 rounded-lg  border-2 flex items-center">
                     <GoMailRead className="pr-2 h-8 w-8"></GoMailRead>
                     <input
-                      type="password"
-                      id="password"
+                      type="text"
+                      id="OTPConfirmPass"
                       placeholder="OTP Code"
                       className="rounded w-full text-white focus:outline-none transition duration-500"
                     ></input>
                   </div>
-                  <div className="flex justify-end">
-                    <a
-                      className="text-sm cursor-pointer hover:text-red-600 hover:underline mb-4"
-                      onClick={(e) => {
-                        e.preventDefault();
-                      }}
-                    >
-                      Resend the Code
-                    </a>
+                  <div className="flex pb-3">
+                    <div id="notiConfirm" className="pl-3 text-red-500 w-3/4">
+
+                    </div>
+                    <div className="w-1/4">
+                      <a
+                        className="text-sm cursor-pointer hover:text-red-600 hover:underline mb-4"
+                        onClick={(e) => {
+                          e.preventDefault();
+                        }}
+                      >
+                        Resend the Code
+                      </a>
+                    </div>
                   </div>
                   <div className="mb-3 h-12 px-5 rounded-lg  border-2 flex items-center">
                     <RiLockPasswordFill className="pr-2 h-8 w-8"></RiLockPasswordFill>
                     <input
                       type="password"
-                      id="password"
+                      id="passwordConfirmPass"
                       placeholder="New password..."
                       className="rounded w-full text-white focus:outline-none transition duration-500"
                     ></input>
                     {/* value={(document.getElementById("email") as HTMLInputElement).value} */}
                   </div>
-                  <div className="mb-8 h-12 px-5 rounded-lg  border-2 flex items-center">
+                  <div className="mb-2 h-12 px-5 rounded-lg  border-2 flex items-center">
                     <RiLockPasswordFill className="pr-2 h-8 w-8"></RiLockPasswordFill>
                     <input
                       type="password"
-                      id="password"
+                      id="passwordConfirmPassNew"
                       placeholder="Confirm new password..."
                       className="rounded w-full text-white focus:outline-none transition duration-500"
                     ></input>
                   </div>
+                  <div id="notiConfirmForgot" className="pl-3 text-red-500">
+                  
+                  </div>
                   <button
-                    className="focus:bg-black bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
+                    className="focus:bg-black mt-5 bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
                     type="submit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      confirmForgotPass();
+                    }}
                   >
                     CONFIRM
                   </button>
@@ -420,7 +488,7 @@ const Tabs = (props: any) => {
     </>
   );
 };
-function HandleAccount(props: any){
+function HandleAccount(props: any) {
   // loginUser(credentials) {
   //   return fetch("http://localhost:3001/signin", {
   //     method: "POST",
@@ -439,7 +507,7 @@ function HandleAccount(props: any){
             <img src={imgLogin}></img>
           </div>
           <div className="w-1/2 justify-center pt-6 pr-10 items-center text-white ">
-            <Tabs color="black" setToken = {props.setStyleProps.setToken}></Tabs>
+            <Tabs color="black" setToken={props.setStyleProps.setToken}></Tabs>
           </div>
         </main>
       </div>
