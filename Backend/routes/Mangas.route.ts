@@ -8,7 +8,7 @@ router.get("/:mangaId", async (req, res) => {
 		res.status(404).send("Can't see mangaId!");
 	}
 
-	let mangaDtos = await MangaController.getMangaByIdAsync(id);
+	let mangaDtos = await MangaController.getCompletedMangaDtoByIdAsync(id);
 	res.json(mangaDtos);
 });
 
