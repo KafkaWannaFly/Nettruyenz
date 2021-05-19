@@ -67,7 +67,12 @@ body {
 	width: 100%;
 	background-color: black;
 	@apply text-center text-white;
+	height: 400px;
 	margin-top: 40px;
+	background-image: url("../logos/footer-banner.jpg"); 
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
 }
 
 #footer-container {
@@ -77,6 +82,17 @@ body {
 	margin-right: 75px;
 	margin-top: 75px;
 	margin-bottom: 25px;
+}
+
+.icon {
+	margin-right: 5px;
+	margin-top: 2.5px;
+}
+
+#phone-number, #email, #address {
+	@apply w-full;
+	@apply flex flex-row;
+	@apply text-2xl;
 }
 
 #web-brand {

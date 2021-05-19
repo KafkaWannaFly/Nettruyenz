@@ -1,4 +1,6 @@
+import { url } from 'node:inspector';
 import React from 'react';
+import { BiPhoneCall, BiMapPin, BiMailSend } from 'react-icons/bi'
 
 const Footer: React.FC = () => {
     return (
@@ -14,9 +16,24 @@ const Footer: React.FC = () => {
                     </div>
                     <div id="web-contact-info">
                         <div id="contact-info-header">Contact info</div>
-                        <div id="phone-numer">090177013</div>
-                        <div id="email">gmail@chucknorris.com</div>
-                        <div id="address">277 ABC XYZ</div>
+                        <div id="phone-number">
+                            <span className="icon">
+                                <BiPhoneCall />
+                            </span>
+                            090177013
+                        </div>
+                        <div id="email">
+                            <span className="icon">
+                                <BiMailSend />
+                            </span>
+                            gmail@chucknorris.com
+                        </div>
+                        <div id="address">
+                            <span className="icon">
+                                <BiMapPin/>
+                            </span>
+                            277 ABC XYZ
+                        </div>
                     </div>
                     <div id="more-information">
                         <div className="each-row">
@@ -34,7 +51,7 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
                 <div id="copyright">
-                        HCMUS Socerers Inc. 2021
+                    HCMUS Socerers Inc. 2021
                 </div>
             </div>
         </>
