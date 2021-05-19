@@ -57,3 +57,6 @@ input[type=email]:focus {
   border-bottom: none !important;
   box-shadow: none!important;
 }
+.dropdown:hover .dropdown-menu {
+  display: block !important;
+}

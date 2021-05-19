@@ -84,14 +84,14 @@ class Post extends React.Component<{}, AbcState> {
 		return tagDiv;
 	}
 	componentChap(posts) {
-		console.log(posts.briefChapterDtos);
+		console.log(posts);
 		if(posts.briefChapterDtos != undefined){
 			const chapDiv = posts.briefChapterDtos.map((item, index) => {
 				console.log(item);
 				return (
 					<tr>
-						<Link to={"/"}>
-							<td>{item.index}</td>
+						<Link to={"/" + posts.names[0] + "/" + item.manga + "/" + item.id}>
+							<td>Chapter {item.index}</td>
 						</Link>
 						<td>{item.views}</td>
 						<td>{item.createdAt}</td>
@@ -227,10 +227,10 @@ class Post extends React.Component<{}, AbcState> {
 							<table className="table-fixed">
 								<thead>
 									<tr>
-										<th className="w-1/3">Chapter</th>
-										<th className="w-1/6">Author</th>
-										<th className="w-1/6">Views</th>
-										<th className="w-1/3">Update</th>
+										<th className="w-1/5">Chapter</th>
+										<th className="w-1/5">Lượt xem</th>
+										<th className="w-2/5">Ngày đăng</th>
+										<th className="w-1/5">Khác</th>
 									</tr>
 								</thead>
 								<tbody>
