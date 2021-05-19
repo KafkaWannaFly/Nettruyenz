@@ -1,4 +1,4 @@
-import { ChapterDto, chapterDtoOf, chapterModel } from "../models";
+import { Chapter, ChapterDto, chapterDtoOf, chapterModel } from "../models";
 
 export const chapterController = {
 	async getChapterById(id: string): Promise<ChapterDto | undefined> {
@@ -7,5 +7,9 @@ export const chapterController = {
 		const chapterDto = chapterDtoOf(data);
 
 		return chapterDto;
+	},
+
+	async saveChapterAsync(chapter: Chapter) {
+		return await new chapterModel(chapter).save();
 	},
 };

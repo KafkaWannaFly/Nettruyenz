@@ -20,18 +20,28 @@ const chapterSchema = new Schema(
 );
 
 export interface Chapter {
-	id?: string;
-	images?: string[];
-	manga?: string;
-	index?: number;
+	id: string;
+	images: string[];
+	manga: string;
+	index: number;
 	tittle?: string;
 	uploader?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
 
-export interface ChapterDto extends Chapter {
+export interface ChapterDto {
+	id: string;
+	images: string[];
+	manga: string;
+	index: number;
+	tittle?: string;
+	uploader?: string;
+
 	views: number;
+
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 export interface BriefChapterDto {

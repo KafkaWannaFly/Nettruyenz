@@ -16,3 +16,9 @@ export const PORT = env.PORT;
 export const SECRET = env.SECRET;
 
 export const SALT = parseInt(env.SALT!);
+
+export const CLOUD_NAME = env.CLOUD_NAME!!;
+export const API_KEY = env.API_KEY!!;
+export const API_SECRET = env.API_SECRET!!;
+export const CLOUDINARY_URL = env.CLOUDINARY_URL!!;
+export const UPLOAD_URL = env.UPLOAD_URL!!;

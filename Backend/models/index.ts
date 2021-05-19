@@ -28,6 +28,7 @@ import {
 	CompletedMangaDto,
 	completeMangaDtoOf,
 	Manga,
+	MangaDto,
 	mangaModel,
 } from "./MangaModel";
 import {
@@ -55,6 +56,7 @@ import { MangaTag, MangaTagDto, mangaTagModel } from "./MangaTagModel";
 export {
 	mangaModel,
 	Manga,
+	MangaDto,
 	BriefMangaDto,
 	CompletedMangaDto,
 	completeMangaDtoOf,

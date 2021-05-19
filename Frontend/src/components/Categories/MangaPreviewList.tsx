@@ -1,13 +1,15 @@
 import MangaPreview from "./MangaPreview";
 
-const MangaPreviewList = (props) => {
+function MangaPreviewList(props) {
+    function renderMangas() {
+        const render = props.mangaList.map((eachManga, index) => {
+            return <MangaPreview key={index} manga={eachManga} />
+        });
+        return render;
+    }
     return (
         <div className="manga-list">
-            <MangaPreview/>
-            <MangaPreview/>
-            <MangaPreview/>
-            <MangaPreview/>
-            <MangaPreview/>
+            {renderMangas()}
         </div>
     )
 }

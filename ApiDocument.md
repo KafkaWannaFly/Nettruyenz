@@ -643,7 +643,58 @@ Giá trị trả về là 1 mảng `MangaChapterViewDto`
 ]
 ```
 
+## Upload Manga
 
+Yêu cầu phải là người dùng có `UserLevel`  là `moderator`
+
+### Signature
+
+Để upload được ảnh, người dùng biết upload ảnh đi đâu (upload url) và xác thực danh tính bản thân với server lưu trữ ảnh. Dữ liệu cần thiết để làm việc được lấy tại GET `host/signature`
+
+Dữ liệu trả về như sau
+
+```json
+{
+	"uploadUrl": "https://api.cloudinary.com/v1_1/nettruyenz/image/upload",
+	"apiKey": "667134741932688",
+	"timestamp": 1621438445150,
+	"signature": "d8889ebb20c82bca809de781d4d5ed04df8b4e96"
+}
+```
+
+Khi có `uploadUrl` rồi thì upload ảnh bằng cách gửi POST đến nơi ấy với tham số tại body như sau:
+
+<img src="ApiDocument.assets/image-20210519223744882-1621438669864.png" alt="image-20210519223744882" style="zoom: 200%;" />
+
+Xem thêm tại: [Programmatically Uploading Images, Videos, and Other Files | Cloudinary](https://cloudinary.com/documentation/upload_images#uploading_with_a_direct_call_to_the_rest_api)
+
+Kết quả trả về:
+
+```json
+{
+	"asset_id": "cd6cebc8f51aac057e055e3aa3583fa6",
+	"public_id": "ptsoz9nz0knqu0o2eyi6",
+	"version": 1621438771,
+	"version_id": "cac2c664356ae2e323835f49e92b6665",
+	"signature": "3cb55c51f180da089050547b83a4dec1b6e3bf5a",
+	"width": 984,
+	"height": 1285,
+	"format": "jpg",
+	"resource_type": "image",
+	"created_at": "2021-05-19T15:39:31Z",
+	"tags": [],
+	"bytes": 561105,
+	"type": "upload",
+	"etag": "a8d5b676fa20f9c4ab45130efdf14220",
+	"placeholder": false,
+	"url": "http://res.cloudinary.com/nettruyenz/image/upload/v1621438771/ptsoz9nz0knqu0o2eyi6.jpg",
+	"secure_url": "https://res.cloudinary.com/nettruyenz/image/upload/v1621438771/ptsoz9nz0knqu0o2eyi6.jpg",
+	"original_filename": "eternity_p0",
+	"original_extension": "png"
+}
+```
+
+Sau khi upload ảnh hoàn tất, lưu lại những thông tin cần thiết để lưu trữ tại server của chúng ta.
 
 ## Data Transfer Objects (DTOs)
 
@@ -653,15 +704,15 @@ Là đối tượng chứa thông tin về 1 chap truyện.
 
 ```typescript
 interface ChapterDto {
-    id?: string;
-	images?: string[];
-	manga?: string;
-	index?: number;
+	id: string;
+	images: string[];
+	manga: string;
+	index: number;
 	tittle?: string;
 	uploader?: string;
+
 	views?: number;
-	group?: string;
-    
+
 	createdAt?: Date;
 	updatedAt?: Date;
 }

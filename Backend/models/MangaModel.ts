@@ -43,6 +43,17 @@ export interface Manga {
 	updatedAt?: Date;
 }
 
+export interface MangaDto {
+	id: string;
+	names: string[];
+	cover: string;
+
+	status?: MangaStatus;
+	description: string;
+
+	chapterDto: ChapterDto;
+}
+
 export interface BriefMangaDto {
 	id: string;
 	names: string[];
