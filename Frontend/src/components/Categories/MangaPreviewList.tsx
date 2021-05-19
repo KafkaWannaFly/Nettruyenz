@@ -11,6 +11,7 @@ function MangaPreviewList(props) {
         <div className="manga-list">
             {renderMangas()}
         </div>
+    )
 }
 
 export default MangaPreviewList;

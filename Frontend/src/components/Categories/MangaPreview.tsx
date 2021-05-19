@@ -16,6 +16,7 @@ function MangaPreview(props) {
                 </figcaption>
             </figure>
         </Link>
+    )
 }
 
 
