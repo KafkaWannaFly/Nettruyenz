@@ -1,5 +1,5 @@
 import express from "express";
-import { MangaController } from "../controllers/MangaController";
+import { mangaController } from "../controllers/MangaController";
 const router = express.Router();
 
 router.get("/:mangaId", async (req, res) => {
@@ -8,7 +8,7 @@ router.get("/:mangaId", async (req, res) => {
 		res.status(404).send("Can't see mangaId!");
 	}
 
-	let mangaDtos = await MangaController.getCompletedMangaDtoByIdAsync(id);
+	let mangaDtos = await mangaController.getCompletedMangaDtoByIdAsync(id);
 	res.json(mangaDtos);
 });
 

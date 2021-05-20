@@ -645,11 +645,13 @@ Giá trị trả về là 1 mảng `MangaChapterViewDto`
 
 ## Upload Manga
 
+Nằm tại `host/upload`
+
 Yêu cầu phải là người dùng có `UserLevel`  là `moderator`
 
 ### Signature
 
-Để upload được ảnh, người dùng biết upload ảnh đi đâu (upload url) và xác thực danh tính bản thân với server lưu trữ ảnh. Dữ liệu cần thiết để làm việc được lấy tại GET `host/signature`
+Để upload được ảnh, người dùng biết upload ảnh đi đâu (upload url) và xác thực danh tính bản thân với server lưu trữ ảnh. Dữ liệu cần thiết để làm việc được lấy tại GET `host/upload/signature`
 
 Dữ liệu trả về như sau
 
@@ -694,7 +696,17 @@ Kết quả trả về:
 }
 ```
 
-Sau khi upload ảnh hoàn tất, lưu lại những thông tin cần thiết để lưu trữ tại server của chúng ta.
+Sau khi upload ảnh hoàn tất, lưu lại những thông tin thích hợp, cần thiết để lưu trữ tại server của chúng ta.
+
+### Manga
+
+Nằm tại POST `host/upload/manga`. Là nơi upload bộ truyện hoàn toàn mới của web.
+
+Trong body request, yêu cầu 1 object tên là `mangaDto` có cấu trúc dữ liệu của `MangaDto`.
+
+### Chapter
+
+Nằm tại POST `host/upload/chapter`. Là nơi upload những chapter mới của truyện đã tồn tại. Trong body request yêu cầu 1 object có tên là `chapterDto` có cấu trúc dữ liệu của `ChapterDto`.
 
 ## Data Transfer Objects (DTOs)
 
@@ -717,6 +729,36 @@ interface ChapterDto {
 	updatedAt?: Date;
 }
 ```
+
+### BriefChapterDto
+
+```typescript
+interface BriefChapterDto {
+	manga?: string;
+	mangaNames?: string[];
+	index?: number;
+	tittle?: string;
+	views: number;
+	createdAt?: Date;
+}
+```
+
+### MangaDto
+
+```typescript
+interface MangaDto {
+	id: string;
+	names: string[];
+	cover: string;
+
+	status?: MangaStatus;
+	description: string;
+
+	chapterDto: ChapterDto;
+}
+```
+
+
 
 ### BriefMangaDto
 
@@ -813,19 +855,6 @@ interface MangaChapterView {
 	createdAt?: Date;
 	updatedAt?: Date;
     briefChapterDto: BriefChapterDto;
-}
-```
-
-### BriefChapterDto
-
-```typescript
-interface BriefChapterDto {
-	manga?: string;
-	mangaNames?: string[];
-	index?: number;
-	tittle?: string;
-	views: number;
-	createdAt?: Date;
 }
 ```
 
