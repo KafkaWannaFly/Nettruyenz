@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SALT = exports.SECRET = exports.PORT = exports.EMAIL_PASSWORD = exports.EMAIL_USERNAME = exports.DB_NAME = exports.DB_HOST = exports.DB_PASSWORD = exports.DB_USERNAME = void 0;
+exports.UPLOAD_URL = exports.CLOUDINARY_URL = exports.API_SECRET = exports.API_KEY = exports.CLOUD_NAME = exports.SALT = exports.SECRET = exports.PORT = exports.EMAIL_PASSWORD = exports.EMAIL_USERNAME = exports.DB_NAME = exports.DB_HOST = exports.DB_PASSWORD = exports.DB_USERNAME = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const env = process.env;
@@ -16,3 +16,8 @@ exports.EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 exports.PORT = env.PORT;
 exports.SECRET = env.SECRET;
 exports.SALT = parseInt(env.SALT);
+exports.CLOUD_NAME = env.CLOUD_NAME;
+exports.API_KEY = env.API_KEY;
+exports.API_SECRET = env.API_SECRET;
+exports.CLOUDINARY_URL = env.CLOUDINARY_URL;
+exports.UPLOAD_URL = env.UPLOAD_URL;

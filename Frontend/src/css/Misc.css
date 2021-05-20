@@ -60,3 +60,31 @@ input[type=email]:focus {
 .dropdown:hover .dropdown-menu {
   display: block !important;
 }
+.text-custom-xl{
+	  font-size: 1.6rem/* 24px */;
+    line-height: 2.2rem/* 32px */;
+}
+.bg-black-100 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(36, 37, 38, var(--tw-bg-opacity));
+}
+.hover\:bg-gray-1000:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgba(58, 59, 60, var(--tw-bg-opacity));
+}
+.text-sm-custom {
+  font-size: 1.1rem/* 14px */;
+  line-height: 1.4rem/* 20px */;
+}
+.border-gray-1100{
+  --tw-bg-opacity: 1;
+  background-color: rgba(18, 19, 20, var(--tw-bg-opacity));
+}
+.icon-nav-color{
+  --tw-bg-opacity: 1;
+  background-color: rgba(58, 59, 60, var(--tw-bg-opacity));
+}
+.text-red-1000 {
+  --tw-text-opacity: 1;
+  color: rgba(184, 187, 191,var(--tw-bg-opacity)) !important;
+}

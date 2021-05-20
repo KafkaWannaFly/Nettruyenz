@@ -43,7 +43,7 @@ export const Slideshow = (props) => {
             removeArrowOnDeviceType={["tablet", "mobile"]}
             deviceType={props.deviceType}
             dotListClass="custom-dot-list-style"
-            itemClass="carousel-item-padding-40-px"
+            itemClass="carousel-item-padding-40-px static"
         >
             <div>
             <img src={img1} ></img>

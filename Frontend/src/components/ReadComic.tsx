@@ -193,7 +193,6 @@ export default class readComic extends React.Component<{}, AbcState>{
                 <hr></hr>
                 {this.headerRead()}
                 </div>
-
             </>
         )
     }
