@@ -45,6 +45,7 @@
 	--violet: #8e1aab;
 	--indigo: #3c6478;
 	--grey: #c0c0c0;
+	--darkergrey: #28282f;
 }
 
 html {
@@ -192,6 +193,10 @@ body {
 	margin-right: 10px;
 }
 
+.dropdown-title {
+	margin-top: 10px;
+}
+
 .search-icon {
 	color:white;
 	@apply absolute;
@@ -213,7 +218,74 @@ body {
 	padding-right: 30px !important;
 }
 
-@media (max-width: 1680px) {
+.each-dropdown {
+	@apply flex flex-row;
+	margin-left: 10px;
+}
+
+.dropdown {
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+	font-weight: 300;
+	border: solid 1px white !important;
+	@apply rounded-lg !important;
+	@apply text-white;
+	@apply w-36 h-8 !important;
+	text-indent: 10px;
+	padding-right: 30px !important;
+	margin-top: 12px;
+	@apply inline-block;
+}
+
+.selected-option {
+	@apply w-28 h-8;
+	margin-top: 3px;
+}
+
+.dropdown-menu {
+	@apply hidden;
+}
+
+.dropdown-display {
+	@apply flex flex-row;
+	@apply w-36 h-8 !important;
+}
+
+.dropdown-icon {
+	@apply text-lg;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+.dropdown:hover .dropdown-menu {
+	display: block !important;
+	font-family:  "RedHatDisplay-Regular", sans-serif;
+	font-weight: 300;
+	@apply rounded-b-lg !important;
+	@apply text-white;
+	@apply w-36 !important;
+	height: 96px;
+	text-indent: 10px;
+	margin-top: -5px;
+	@apply absolute;
+	border-left: solid 1px white;
+	border-right: solid 1px white;
+	border-bottom: solid 1px white;
+	background-color: var(--darkgrey);
+}
+
+.selection {
+	@apply py-2 block whitespace-nowrap;
+	@apply h-8 !important;
+	width: 132px;
+}
+
+
+.selection:hover {
+	background-color: var(--darkergrey);
+	@apply cursor-pointer;
+}
+
+@media (max-width: 1200px) {
 	#search-bars-container {
 		@apply flex flex-col justify-items-center;
 	}
@@ -221,9 +293,13 @@ body {
 		@apply text-white;
 		@apply justify-self-center;
 	}
+
+	.selection {
+		width: 127px;
+	}
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 960px) {
 	.search-icon {
 		margin-left: 250px;
 	}
@@ -243,11 +319,11 @@ body {
 	text-indent: 10px;
 }
 
-.each-selection {
-	@apply w-72	 h-8;
-	@apply mx-5 my-3 !important;
-	@apply flex flex-row;
-}
+
+
+
+
+.each-selection:hover 
 
 
 #tag-list {

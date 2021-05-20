@@ -1,45 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import SearchIcon from "@material-ui/icons/Search";
-import Select from 'react-select'
+import {BiChevronDown} from 'react-icons/bi'
 const sort_options = [
-	{
-		label: "View",
-		value: "View",
-	},
-	{
-		label: "Rate",
-		value: "Rate",
-	},
-	{
-		label: "Bookmark",
-		value: "Bookmark",
-	},
+		"View",
+		"Rate",
+		"Bookmark",
 ];
 
 const order_options = [
-	{
-		label: "Descending",
-		value: "Descending",
-	},
-	{
-		label: "Ascending",
-		value: "Ascending",
-	},
+	"Ascending",
+	"Descending"
 ];
 
 const period_options = [
-	{
-		label: "Weekly",
-		value: "Weekly",
-	},
-	{
-		label: "Monthly",
-		value: "Monthly",
-	},
-	{
-		label: "All time",
-		value: "All time",
-	},
+	"Weekly",
+	"Monthly",
+	"All time"
 ];
 
 const selectStyle = {
@@ -142,60 +118,46 @@ export function AdvancedSearchBar(props) {
 					</div>
 				</div>
 			</div>
-			<SortSelection setSortSelection={handleSortSelectionChange}/>
-			<OrderSelection setOrderSelection={handleOrderSelectionChange}/>
-			<PeriodSelection setPeriodSelection={handlePeriodSelectionChange}/>
+			<Selection setSelection={handleSortSelectionChange} options={sort_options} label="Sort"/>
+			<Selection setSelection={handleOrderSelectionChange} options={order_options} label="Order by"/>
+			<Selection setSelection={handlePeriodSelectionChange} options={period_options} label="Period"/>
 		</form>
 	);
 };
 
-function SortSelection(props) {
-	function handleChange(e) {
-		props.setSortSelection(e.value);
+function Selection(props) {
+	const [option, setOption] = useState(props.options[0]);
+
+	
+	function handleClick(option) {
+		console.log(option);
+		props.setSelection(option);
+		setOption(option);
+	}
+
+	function  renderSelection() {
+		const render = props.options.map((option, index) => {
+				return  <li onClick={() => handleClick(option)}
+							className="selection">{option}
+						</li>
+			})
+		return render
 	}
 
 	return (
-		<div className="each-selection">
-			<label className="dropdown-title">Sort</label>
-			<Select 
-			className="select"
-			options={sort_options}
-			style={selectStyle}
-			onChange={handleChange}/>
-		</div>
-	)
-}
-
-function OrderSelection(props) {
-	function handleChange(e) {
-		props.setOrderSelection(e.value);
-	}
-	return (
-		<div className="each-selection">
-			<label className="dropdown-title">Order</label>
-			<Select 
-			className="select"
-			options={order_options}
-			style={selectStyle}
-			onChange={handleChange}/>
-		</div>
-	)
-}
-
-function PeriodSelection(props) {
-
-	function handleChange(e) {
-		props.setPeriodSelection(e.value);
-	}
-
-	return (
-		<div className="each-selection">
-			<label className="dropdown-title">Period</label>
-			<Select 
-			className="select"
-			options={period_options}
-			style={selectStyle}
-			onChange={handleChange}/>
+		<div className="each-dropdown">
+			<label className="dropdown-title">{props.label}</label>
+			<div className="dropdown">
+				<div className="dropdown-display">
+					<div className="selected-option">{option}</div>
+					<div className="dropdown-icon">
+						<BiChevronDown/>
+					</div>
+				</div>
+				<ul className="dropdown-menu">
+					{renderSelection()}
+				</ul>
+			</div>
 		</div>
 	)
 }

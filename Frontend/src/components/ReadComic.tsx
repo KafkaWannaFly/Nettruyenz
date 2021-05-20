@@ -1,7 +1,6 @@
 import axios from "axios";
 import React from "react";
 
-import 'react-dropdown/style.css';
 import { Link, Redirect, useHistory } from "react-router-dom";
 import img1 from "../logos/chutich.jpg";
 interface AbcState {
