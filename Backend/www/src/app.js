@@ -22,6 +22,7 @@ const cors_1 = __importDefault(require("cors"));
 const Bookmarks_route_1 = __importDefault(require("../routes/Bookmarks.route"));
 const History_route_1 = __importDefault(require("../routes/History.route"));
 const Chapters_route_1 = __importDefault(require("../routes/Chapters.route"));
+const Upload_route_1 = __importDefault(require("../routes/Upload.route"));
 dotenv_1.default.config();
 const app = express_1.default();
 app.use(express_1.default.json());
@@ -51,7 +52,8 @@ app.use("/bookmarks", Bookmarks_route_1.default);
 app.use("/history", History_route_1.default);
 app.use("/tags", Tag_route_1.default);
 app.use("/user", User_route_1.default);
-app.get("/test", (req, res) => {
+app.use("/upload", Upload_route_1.default);
+app.get("/test-header", (req, res) => {
     res.json(req.headers);
 });
 app.listen(port, () => {

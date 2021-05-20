@@ -3,6 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MangaController = void 0;
 const models_1 = require("../models");
 exports.MangaController = {
+    saveMangaAsync: async (manga) => {
+        return await new models_1.mangaModel(manga).save();
+    },
+    getMangaByIdAsync: async (id) => {
+        const mangaDoc = await models_1.mangaModel.findOne({ id: id }).exec();
+        return mangaDoc;
+    },
     /**
      * Get top most view mangas in a period of time
      * @param top Top first mangas
@@ -729,7 +736,7 @@ exports.MangaController = {
             let recentUploadChapters = await models_1.chapterModel
                 .aggregate(aggregationStatements)
                 .exec();
-            recentUploadChapters.forEach(element => {
+            recentUploadChapters.forEach((element) => {
                 console.log(element._id);
                 console.log(element.newestChapter.createdAt);
             });
@@ -741,7 +748,7 @@ exports.MangaController = {
                 .lean()
                 .exec()).map((item) => item);
             console.log("---------------");
-            mangaDtos.forEach(element => {
+            mangaDtos.forEach((element) => {
                 console.log(element.id);
             });
             // Fill the rest infomation
@@ -771,7 +778,7 @@ exports.MangaController = {
                     a.briefChapterDto.createdAt?.getTime());
             });
             console.log("---------------");
-            mangaDtos.forEach(element => {
+            mangaDtos.forEach((element) => {
                 console.log(element.briefChapterDto?.createdAt?.getTime());
                 console.log(element.id);
             });
@@ -786,7 +793,7 @@ exports.MangaController = {
      * @param id Manga id
      * @returns CompletedangaDto or undefined if fount nothing
      */
-    getMangaByIdAsync: async (id) => {
+    getCompletedMangaDtoByIdAsync: async (id) => {
         try {
             const agg = [
                 {

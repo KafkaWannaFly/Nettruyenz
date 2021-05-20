@@ -17,11 +17,17 @@ import { TokenClass } from 'typescript';
 
 
 function App() {
-	const [token, setToken] = useState();
+	const [token, setToken] = useState("");
 	var authen = false;
 	var tokenProps = {
-		data: undefined
+		data: ""
 	};
+	console.log(token);
+	if(token == null){
+		console.log("come in");
+		var getToken = localStorage.getItem("token");
+		setToken(getToken?getToken:"");
+	}
 	if(token != null){
 		authen = true;
 		tokenProps = { // make sure all required component's inputs/Props keys&types match

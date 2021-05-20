@@ -19,7 +19,8 @@ export const Home = (props) => {
 	return (	
 		<>
 			<div className="max-w-full max-h-full  bg-gray-1000 text-white">
-				<Slideshow></Slideshow>
+				{/* <Slideshow></Slideshow> */}
+				<Route component={Slideshow}></Route>
 				<Route component={mostView}></Route>
 				<Route component={mostFollow}></Route>
 				<Route component={highRating}></Route>

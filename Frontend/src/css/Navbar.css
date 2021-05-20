@@ -9,7 +9,7 @@
 }
 
 #logo-text {
-	font-size: 40px;
+	font-size: 50px;
 	font-family: "Display";
 	font-weight: 900;
 	font-family: "Red Hat Text";
@@ -27,4 +27,8 @@
   background-color: rgba(0,0,0,0.5);
   z-index: 2;
   cursor: pointer;
+}
+.bg-black-fb {
+    --tw-bg-opacity: 1;
+    background-color: rgba(36, 37, 38, var(--tw-bg-opacity));
 }
