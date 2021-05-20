@@ -29,14 +29,14 @@ async function createFakeComments() {
 	const userComments: UserComment[] = [];
 
 	mangas.forEach(async (manga, index) => {
-		const commentNum = random.number(20);
+		const commentNum = random.number(10);
 
 		for (let i = 0; i < commentNum; i++) {
 			const user = await getRandomUser();
 			const userComment: UserComment = {
 				email: user.email,
 				manga: manga.id,
-				content: faker.lorem.words(random.number({ min: 10, max: 25 })),
+				content: faker.lorem.words(random.number({ min: 5, max: 15 })),
 			};
 
 			userComments.push(userComment);

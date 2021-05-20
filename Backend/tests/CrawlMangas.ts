@@ -251,7 +251,7 @@ async function crawlMangaData(mangaPage: IMangaPage) {
 	});
 
 	let manga: Manga = {
-		id: (++mangaIdCount).toString(),
+		id: Date.now().toString(),
 		cover: img.src,
 		names: [mangaPage.title!, ...alterNames!],
 		description: briefText!,

@@ -8,7 +8,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserModel_1 = require("../models/UserModel");
 const EnvironmentConstants_1 = require("../constants/EnvironmentConstants");
 const saltRound = EnvironmentConstants_1.SALT;
-const normalUserNumber = 20;
+const normalUserNumber = 10;
 const defaultPassword = "123";
 async function createFakeUsers(number, defaultPass) {
     let users = [];
@@ -34,7 +34,15 @@ try {
             level: UserModel_1.UserLevel.moderator,
             avatar: "https://en.gravatar.com/userimage/160211096/bb2f6fdf53965cbc01bb4c2f7e8c320d.jpg?size=200",
         };
+        let mod2 = {
+            email: "18127101@student.hcmus.edu.vn",
+            password: await bcrypt_1.default.hash(defaultPassword, saltRound),
+            nickname: "Việt Hoàng",
+            level: UserModel_1.UserLevel.moderator,
+            avatar: "https://en.gravatar.com/userimage/160211096/bb2f6fdf53965cbc01bb4c2f7e8c320d.jpg?size=200",
+        };
         users.push(mod);
+        users.push(mod2);
         console.log(users);
         await UserModel_1.userModel.insertMany(users);
         console.log(`Insert ${users.length} into DB`);

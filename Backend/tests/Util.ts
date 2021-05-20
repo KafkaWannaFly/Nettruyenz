@@ -1,7 +1,14 @@
 import axios from "axios";
 import { JSDOM } from "jsdom";
 import fs from "fs";
-import { User, userModel } from "../models";
+import {
+	bookmarkModel,
+	chapterModel,
+	creatorModel,
+	mangaModel,
+	User,
+	userModel,
+} from "../models";
 export function shuffle(array: any[]) {
 	var currentIndex = array.length,
 		temporaryValue,

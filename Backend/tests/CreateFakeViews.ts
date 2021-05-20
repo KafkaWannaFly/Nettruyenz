@@ -15,7 +15,7 @@ async function createFakeViews() {
 	console.log(`Found ${chapters.length} chapters`);
 
 	for (let i = 0; i < chapters.length; i++) {
-		let viewCount = random.number(100);
+		let viewCount = random.number(25);
 
 		let views: MangaChapterView[] = [];
 		let user = await getRandomUser();

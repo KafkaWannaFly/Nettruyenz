@@ -13,7 +13,7 @@ async function createMangaRating() {
         return v;
     });
     users.forEach(async (user, index) => {
-        let mangaNum = faker_1.random.number(mangas.length);
+        let mangaNum = faker_1.random.number(mangas.length / 2);
         mangas = Util_1.shuffle(mangas);
         let mangaRates = [];
         for (let i = 0; i < mangaNum; i++) {

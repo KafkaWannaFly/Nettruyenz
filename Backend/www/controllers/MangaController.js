@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MangaController = void 0;
+exports.mangaController = void 0;
 const models_1 = require("../models");
-exports.MangaController = {
+exports.mangaController = {
     saveMangaAsync: async (manga) => {
         return await new models_1.mangaModel(manga).save();
     },

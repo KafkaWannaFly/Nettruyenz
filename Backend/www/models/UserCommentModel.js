@@ -16,7 +16,6 @@ const commentSchema = new Schema({
     // repiledBy: [String],
     content: String,
 }, {
-    _id: false,
     timestamps: true,
 });
 function commentDtoOf(data) {
