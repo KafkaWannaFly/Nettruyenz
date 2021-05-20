@@ -708,6 +708,21 @@ Trong body request, yêu cầu 1 object tên là `mangaDto` có cấu trúc dữ
 
 Nằm tại POST `host/upload/chapter`. Là nơi upload những chapter mới của truyện đã tồn tại. Trong body request yêu cầu 1 object có tên là `chapterDto` có cấu trúc dữ liệu của `ChapterDto`.
 
+## Comment
+
+POST `host/comment`. Với body
+
+```json
+{
+    "comment": {
+		"manga": 10,
+		"content": "Chap này ngắn quá"
+	}
+}
+```
+
+
+
 ## Data Transfer Objects (DTOs)
 
 ### ChapterDto

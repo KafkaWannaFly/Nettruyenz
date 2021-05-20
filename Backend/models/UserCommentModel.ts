@@ -14,7 +14,6 @@ const commentSchema = new Schema(
 		content: String,
 	},
 	{
-		_id: false,
 		timestamps: true,
 	}
 );

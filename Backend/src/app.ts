@@ -18,6 +18,7 @@ import bookmarkRoute from "../routes/Bookmarks.route";
 import historyRoute from "../routes/History.route";
 import chapterRoute from "../routes/Chapters.route";
 import uploadRoute from "../routes/Upload.route";
+import commentRoute from "../routes/Comment.route";
 dotenv.config();
 
 const app = express();
@@ -65,6 +66,8 @@ app.use("/tags", tagRoute);
 app.use("/user", userRoute);
 
 app.use("/upload", uploadRoute);
+
+app.use("/comment", commentRoute);
 
 app.get("/test-header", (req, res) => {
 	res.json(req.headers);
