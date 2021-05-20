@@ -22,8 +22,13 @@ router.post(
 	"/",
 	passport.authenticate("jwt", { session: false }),
 	async (req, res) => {
+		const user = req.user as User;
 		const bookmark = req.body.bookmark as Bookmark;
-		await bookmarkController.saveBookmark(bookmark);
+
+		bookmark.email = user.email;
+
+		const doc = await bookmarkController.saveBookmark(bookmark);
+		console.log(`Bookmark: ${JSON.stringify(doc, null, 4)}`);
 
 		res.json({ message: "Success!" });
 	}

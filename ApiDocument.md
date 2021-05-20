@@ -566,7 +566,7 @@ Trả về `UserDto` object chứa những thông tin liên quan đến người
 
 ## Bookmarks
 
-Nằm ở GET `host/bookmarks` 
+Nằm ở `host/bookmarks` 
 
 ### Route mặc định
 
@@ -606,6 +606,20 @@ Giá trị trả về là 1 mảng `BookmarkDto`
     //...
 ]
 ```
+
+### Tạo Bookmark
+
+POST `host/bookmarks`. Body: 
+
+```json
+{
+	"bookmark": {
+		"manga": "10"
+	}
+}
+```
+
+
 
 ## History
 
