@@ -566,7 +566,7 @@ Trả về `UserDto` object chứa những thông tin liên quan đến người
 
 ## Bookmarks
 
-Nằm ở GET `host/bookmarks` 
+Nằm ở `host/bookmarks` 
 
 ### Route mặc định
 
@@ -606,6 +606,20 @@ Giá trị trả về là 1 mảng `BookmarkDto`
     //...
 ]
 ```
+
+### Tạo Bookmark
+
+POST `host/bookmarks`. Body: 
+
+```json
+{
+	"bookmark": {
+		"manga": "10"
+	}
+}
+```
+
+
 
 ## History
 
@@ -704,9 +718,74 @@ Nằm tại POST `host/upload/manga`. Là nơi upload bộ truyện hoàn toàn 
 
 Trong body request, yêu cầu 1 object tên là `mangaDto` có cấu trúc dữ liệu của `MangaDto`.
 
+```json
+{
+		"mangaDto": {
+		"id": "101",
+		"names": [
+			"Boku No Hero Academia",
+			"My hero Academia",
+			"僕のヒーローアカデミア",
+			"Trường Học Siêu Anh Hùng"
+		],
+		"cover": "https://i.imgur.com/ptcZbuI.jpg",
+		"description": "Câu chuyện lấy bối cảnh thời hiện đại, có khác một điều là những người có năng lực đặc biệt lại trở nên quá đỗi bình thường. Một cậu bé tên Midoriya Izuku tuy không có năng lực gì nhưng cậu vẫn mơ ước",
+		"chapterDto": {
+			"id": "654987",
+			"manga": "101",
+			"index": 25,
+			"images": [
+				"https://storage.fshare.vn/aca/Backup-5807004.png",
+				"https://storage.fshare.vn/aca/Backup-5807005.jpg",
+				"https://storage.fshare.vn/aca/Backup-5807006.jpg",
+				"https://storage.fshare.vn/aca/Backup-5807007.jpg"
+			]
+		}
+	
+	}
+}
+```
+
+
+
 ### Chapter
 
 Nằm tại POST `host/upload/chapter`. Là nơi upload những chapter mới của truyện đã tồn tại. Trong body request yêu cầu 1 object có tên là `chapterDto` có cấu trúc dữ liệu của `ChapterDto`.
+
+Body trong như này:
+
+```json
+{
+	"chapterDto": {
+			"id": "123456",
+			"manga": "10",
+			"index": 15,
+			"images": [
+				"https://3.bp.blogspot.com/-OlzPEEqQI90/VP6HBTRGleI/AAAAAAABeI4/ovwpfRaWxVM/s0/01ACredit.jpg",
+				"https://4.bp.blogspot.com/-aybOU9LCiTA/VP6HDB55-jI/AAAAAAABeJA/4JZ2jk9Zo3w/s0/01R.jpg",
+				"https://2.bp.blogspot.com/-zKO0y4mTkGE/VP6HEa0uuxI/AAAAAAABeJI/6hMGdgU_yV0/s0/02R.jpg",
+				"https://4.bp.blogspot.com/-EXfPE5_eGtE/VP6HF497lrI/AAAAAAABeJQ/BR-DMErV4JA/s0/03-04.jpg",
+			]
+		}
+}
+```
+
+
+
+## Comment
+
+POST `host/comment`. Với body
+
+```json
+{
+    "comment": {
+		"manga": 10,
+		"content": "Chap này ngắn quá"
+	}
+}
+```
+
+
 
 ## Data Transfer Objects (DTOs)
 

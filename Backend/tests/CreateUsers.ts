@@ -4,7 +4,7 @@ import { User, UserLevel, userModel } from "../models/UserModel";
 import { SALT } from "../constants/EnvironmentConstants";
 
 const saltRound = SALT;
-const normalUserNumber = 20;
+const normalUserNumber = 10;
 const defaultPassword = "123";
 
 async function createFakeUsers(number: number, defaultPass: string) {
@@ -36,7 +36,18 @@ try {
 				"https://en.gravatar.com/userimage/160211096/bb2f6fdf53965cbc01bb4c2f7e8c320d.jpg?size=200",
 		};
 
+		let mod2: User = {
+			email: "18127101@student.hcmus.edu.vn",
+			password: await bcrypt.hash(defaultPassword, saltRound),
+			nickname: "Việt Hoàng",
+			level: UserLevel.moderator,
+			avatar:
+				"https://en.gravatar.com/userimage/160211096/bb2f6fdf53965cbc01bb4c2f7e8c320d.jpg?size=200",
+		};
+
 		users.push(mod);
+		users.push(mod2);
+
 		console.log(users);
 
 		await userModel.insertMany(users as any);

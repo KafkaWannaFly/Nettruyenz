@@ -14,7 +14,7 @@ async function createFakeBookmarks() {
 	});
 
 	users.forEach(async (user, index) => {
-		let mangaNum = random.number(mangas.length);
+		let mangaNum = random.number(mangas.length / 2);
 		mangas = shuffle(mangas);
 
 		let bookmarks: Bookmark[] = [];

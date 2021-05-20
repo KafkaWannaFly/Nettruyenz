@@ -8,25 +8,25 @@ const MangaController_1 = require("../controllers/MangaController");
 const router = express_1.default.Router();
 router.get("/most-view", async (req, res) => {
     let timePeriod = req.query.period === undefined ? req.query.period : "all";
-    let mangas = await MangaController_1.MangaController.getTopMostViewAsync(5, timePeriod);
+    let mangas = await MangaController_1.mangaController.getTopMostViewAsync(5, timePeriod);
     res.json(mangas);
 });
 router.get("/most-followed", async (req, res) => {
     let timePeriod = req.query.period === undefined ? req.query.period : "all";
-    let mangas = await MangaController_1.MangaController.getTopMostFollowAsync(5, timePeriod);
+    let mangas = await MangaController_1.mangaController.getTopMostFollowAsync(5, timePeriod);
     res.json(mangas);
 });
 router.get("/most-rating", async (req, res) => {
     let timePeriod = req.query.period === undefined ? req.query.period : "all";
-    let mangas = await MangaController_1.MangaController.getTopMostRatingAsync(5, timePeriod);
+    let mangas = await MangaController_1.mangaController.getTopMostRatingAsync(5, timePeriod);
     res.json(mangas);
 });
 router.get("/recently-uploaded", async (req, res) => {
-    let mangas = await MangaController_1.MangaController.getRecentlyUploadedAsync(5);
+    let mangas = await MangaController_1.mangaController.getRecentlyUploadedAsync(5);
     res.json(mangas);
 });
 router.get("/newly-added", async (req, res) => {
-    let mangas = await MangaController_1.MangaController.getNewlyAddedAsync(5);
+    let mangas = await MangaController_1.mangaController.getNewlyAddedAsync(5);
     res.json(mangas);
 });
 const homeRouter = router;

@@ -11,7 +11,7 @@ router.get("/:mangaId", async (req, res) => {
     if (id == undefined) {
         res.status(404).send("Can't see mangaId!");
     }
-    let mangaDtos = await MangaController_1.MangaController.getCompletedMangaDtoByIdAsync(id);
+    let mangaDtos = await MangaController_1.mangaController.getCompletedMangaDtoByIdAsync(id);
     res.json(mangaDtos);
 });
 const mangaRoute = router;

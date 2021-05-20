@@ -11,7 +11,7 @@ async function createFakeViews() {
     });
     console.log(`Found ${chapters.length} chapters`);
     for (let i = 0; i < chapters.length; i++) {
-        let viewCount = faker_1.random.number(100);
+        let viewCount = faker_1.random.number(25);
         let views = [];
         let user = await Util_1.getRandomUser();
         for (let count = 0; count < viewCount; count++) {

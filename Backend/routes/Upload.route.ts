@@ -39,7 +39,7 @@ router.post(
 		res: express.Response,
 		next: express.NextFunction
 	) => {
-		const mangaDto = req.body.manga as MangaDto;
+		const mangaDto = req.body.mangaDto as MangaDto;
 
 		let error = "";
 
@@ -81,7 +81,7 @@ router.post(
 	},
 	async (req: express.Request, res: express.Response) => {
 		const user = req.user as User;
-		const mangaDto = req.body.manga as MangaDto;
+		const mangaDto = req.body.mangaDto as MangaDto;
 
 		const chapterDto = mangaDto.chapterDto;
 		chapterDto.uploader = user.email;

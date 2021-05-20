@@ -43,13 +43,13 @@ async function createFakeComments() {
     const mangas = (await models_1.mangaModel.find({}).lean().exec()).map((item) => item);
     const userComments = [];
     mangas.forEach(async (manga, index) => {
-        const commentNum = faker_1.random.number(20);
+        const commentNum = faker_1.random.number(10);
         for (let i = 0; i < commentNum; i++) {
             const user = await Util_1.getRandomUser();
             const userComment = {
                 email: user.email,
                 manga: manga.id,
-                content: faker_1.default.lorem.words(faker_1.random.number({ min: 10, max: 25 })),
+                content: faker_1.default.lorem.words(faker_1.random.number({ min: 5, max: 15 })),
             };
             userComments.push(userComment);
             console.log(`${userComment.email} commented at ${manga.names[0]}`);

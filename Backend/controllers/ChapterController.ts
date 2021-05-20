@@ -4,9 +4,12 @@ export const chapterController = {
 	async getChapterById(id: string): Promise<ChapterDto | undefined> {
 		const data = await chapterModel.findOne({ id: id }).exec();
 
-		const chapterDto = chapterDtoOf(data);
+		if (data) {
+			const chapterDto = chapterDtoOf(data);
+			return chapterDto;
+		}
 
-		return chapterDto;
+		return undefined;
 	},
 
 	async saveChapterAsync(chapter: Chapter) {
