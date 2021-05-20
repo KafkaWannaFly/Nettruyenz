@@ -6,9 +6,9 @@ import {
 	UPLOAD_URL,
 } from "../constants/EnvironmentConstants";
 import { chapterController } from "../controllers/ChapterController";
-import { MangaController } from "../controllers/MangaController";
+import { mangaController } from "../controllers/MangaController";
 import { adminUser } from "../middlewares/AdminUser";
-import { MangaDto, User, UserLevel } from "../models";
+import { ChapterDto, MangaDto, User, UserLevel } from "../models";
 import cloudinaryService from "../services/CloudinaryService";
 
 const router = express.Router();
@@ -66,7 +66,7 @@ router.post(
 			error = "Chapter id has already existed";
 		}
 
-		const manga = await MangaController.getCompletedMangaDtoByIdAsync(
+		const manga = await mangaController.getCompletedMangaDtoByIdAsync(
 			mangaDto.id
 		);
 		if (manga) {
@@ -87,9 +87,11 @@ router.post(
 		chapterDto.uploader = user.email;
 
 		await Promise.all([
-			MangaController.saveMangaAsync(mangaDto),
+			mangaController.saveMangaAsync(mangaDto),
 			chapterController.saveChapterAsync(chapterDto),
 		]);
+
+		res.status(204).json({ message: "Success" });
 	}
 );
 
@@ -99,7 +101,45 @@ router.post(
 		req: express.Request,
 		res: express.Response,
 		next: express.NextFunction
-	) => {}
+	) => {
+		try {
+			const chapterDto = req.body.chapterDto as ChapterDto;
+
+			let error = "";
+			if (!chapterDto) {
+				error = "Chapter is undefined";
+			}
+
+			const chapter = await chapterController.getChapterById(chapterDto.id);
+			if (chapter) {
+				error = "Chapter id has already existed";
+			}
+
+			const manga = await mangaController.getMangaByIdAsync(chapterDto.manga);
+			if (!manga) {
+				error = "Manga id not exiested";
+			}
+
+			if (chapterDto.images.length <= 0) {
+				error = "Empty images";
+			}
+
+			if (error != "") {
+				return res.status(400).json({ error });
+			}
+
+			next();
+		} catch (error) {
+			return res.status(400).json({ error });
+		}
+	},
+	async (req: express.Request, res: express.Response) => {
+		const chapterDto = req.body.chapterDto as ChapterDto;
+
+		await chapterController.saveChapterAsync(chapterDto);
+
+		res.status(204).json({ message: "Success" });
+	}
 );
 
 const uploadRoute = router;

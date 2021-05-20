@@ -23,7 +23,7 @@ import {
 } from "../models";
 import { MangaCreatorDto } from "../models/MangaCreator";
 
-export const MangaController = {
+export const mangaController = {
 	saveMangaAsync: async (manga: Manga) => {
 		return await new mangaModel(manga).save();
 	},
