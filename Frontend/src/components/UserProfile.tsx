@@ -7,6 +7,8 @@ import { GiRank3 } from 'react-icons/gi';
 import { GoCalendar } from 'react-icons/go';
 import { GrGroup } from 'react-icons/gr';
 import { useState } from 'react';
+import avatar from "../logos/img_avatar.png";
+
 function editInfor(props: any){
     if(props.flagEdit == false){
         props.setState({valueButton: "Chỉnh sửa thông tin"})
@@ -33,54 +35,23 @@ function ComponentDiv(props: any) {
                                 <div className="mb-4">
                                     <img
                                         className="rounded-lg"
-                                        src="https://avatars2.githubusercontent.com/u/1791228?s=460&v=4"></img>
+                                        src={avatar}></img>
                                 </div>
                                 <div className="mb-4">
                                     <div className="text-3xl font-medium text-grey-darkest">
-                                        Nickname
+                                        {props.nickname}
                                     </div>
-                                    <div className="text-xl text-grey-dark font-light">
-                                        Nickname
+                                    <div className="pt-2 text-lg text-grey-dark font-light">
+                                        {props.email}
                                     </div>
                                 </div>
                             </div>
                             <div className="w-3/4 ml-6 mt-2">
                                 <div className="flex items-center font-thin text-grey-dark text-sm border-b">
                                     <div className="p-4 border-b-2 font-normal text-grey-darkest border-orange -mb-2px">
-                                        Thông tin
+                                        Thông tin cá nhân
                                     </div>
-                                    <div className="p-4 flex items-center">
-                                        <div>
-                                            Truyện đã đăng
-                                        </div>
-                                        <div className="rounded-lg bg-grey-light text-xs ml-1 p-px">
-                                            41
-                                        </div>
-                                    </div>
-                                    <div className="p-4 flex items-center">
-                                        <div>
-                                            Stars
-                                        </div>
-                                        <div className="rounded-lg bg-grey-light text-xs ml-1 p-px">
-                                            6
-                                        </div>
-                                    </div>
-                                    <div className="p-4 flex items-center">
-                                        <div>
-                                            Followers
-                                        </div>
-                                        <div className="rounded-lg bg-grey-light text-xs ml-1 p-px">
-                                            15
-                                        </div>
-                                    </div>
-                                    <div className="p-4 flex items-center">
-                                        <div>
-                                            Following
-                                        </div>
-                                        <div className="rounded-lg bg-grey-light text-xs ml-1 p-px">
-                                            23
-                                        </div>
-                                    </div>
+                            
                                 </div>
                                 <div className="flex items-center">
                                     <div className="mr-1 pt-6 pb-2">
@@ -147,7 +118,7 @@ function ComponentDiv(props: any) {
                                         </div>
                                         <div className="flex text-sm mt-3">
                                             <div className="mr-4 font-thin pl-2 text-base">
-                                                <input type="text" value={props.level} id="information" readOnly></input>
+                                                <input type="text" value={props.level?"Admin":"User"} id="information" readOnly></input>
                                             </div>
 
                                         </div>
@@ -184,7 +155,7 @@ function ComponentDiv(props: any) {
                                             <div className="mr-4 font-thin text-b">
                                                 <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">j2team</span>
                                                 <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">hcmus</span>
-                                                <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">j2team</span>
+                                                <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">OFFB</span>
                                             </div>
 
                                         </div>

@@ -51,13 +51,13 @@ input[type=search]:focus {
 input[type=email] {
     border-bottom: 0px !important; 
 	margin: 0 0 0 0 !important;
-	width: 250px !important;
+	width: 280px !important;
 }
 input[type=email]:focus {
   border-bottom: none !important;
   box-shadow: none!important;
 }
-.dropdown:hover .dropdown-menu {
+.dropdown-nav:hover .dropdown-menu-nav {
   display: block !important;
 }
 .text-custom-xl{

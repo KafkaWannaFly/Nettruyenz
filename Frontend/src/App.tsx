@@ -18,34 +18,34 @@ import { TokenClass } from 'typescript';
 
 function App() {
 	const [token, setToken] = useState("");
-	const [email, setEmail] = useState("");
-
+	var email = "";
 	var authen = false;
 	var tokenProps = {
 		data: ""
 	};
-	if(token == "" && localStorage.getItem("token") != null){
-		console.log("come in");
-		var getTokenLocal = localStorage.getItem("token");
-		setToken(getTokenLocal?getTokenLocal:"");
-		authen = true;
-		var getEmailLocal = localStorage.getItem("token");
-		setEmail(getEmailLocal?getEmailLocal:"");
-	}
-	else if(token != ""){
+	console.log(token);
+	if(token != ""){
 		console.log("token != null")
 		authen = true;
 		tokenProps = { // make sure all required component's inputs/Props keys&types match
 			data: token
 		}
-		var getEmailLocal = localStorage.getItem("token");
-		setEmail(getEmailLocal?getEmailLocal:"");
+		var getEmailLocal = localStorage.getItem("email");
+		email = getEmailLocal?getEmailLocal:"";
+	}
+	if(token == "" && localStorage.getItem("token") != null){
+		console.log("come in");
+		var getTokenLocal = localStorage.getItem("token");
+		var getEmailLocal = localStorage.getItem("email");
+		setToken(getTokenLocal?getTokenLocal:"");
+		authen = true;
+		email = getEmailLocal?getEmailLocal:"";
 	}
 	return (
 		<>
 		<BrowserRouter>
 			<>
-				<Navbar authentication = {authen} setToken={setToken}></Navbar>
+				<Navbar email={email} authentication = {authen} setToken={setToken}></Navbar>
 						<div className="App bg-gray-1000 h-full">
 						{/* <Route exact path = "/signin" component={handleAccount}></Route> */}
 						<Switch>
@@ -56,7 +56,7 @@ function App() {
 							<Redirect exact from="/:name/:id1/:id2/reload" to="/:name/:id1/:id2" />
 							{authen?<Route exact path="/follow" component={() => (<Follow {...tokenProps}></Follow>)}></Route>:<div>Vui lòng đăng nhập</div>}
 							{authen?<Route exact path="/history" component={() => (<History {...tokenProps}></History>)}></Route>:<div>Vui lòng đăng nhập</div>}
-							{authen?<Route exact path="/profile/email" component={() => (<UserProfile data = {token}></UserProfile>)}></Route>:<div>Vui lòng đăng nhập</div>}
+							{authen?<Route exact path="/profile/:email" component={() => (<UserProfile data = {token}></UserProfile>)}></Route>:<div>Vui lòng đăng nhập</div>}
 						</Switch>
 					</div>
 				<Footer/>
