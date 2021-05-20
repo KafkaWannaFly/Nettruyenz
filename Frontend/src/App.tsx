@@ -18,23 +18,29 @@ import { TokenClass } from 'typescript';
 
 function App() {
 	const [token, setToken] = useState("");
+	const [email, setEmail] = useState("");
+
 	var authen = false;
 	var tokenProps = {
 		data: ""
 	};
-	console.log(token);
-	if(token == null){
+	if(token == "" && localStorage.getItem("token") != null){
 		console.log("come in");
-		var getToken = localStorage.getItem("token");
-		setToken(getToken?getToken:"");
+		var getTokenLocal = localStorage.getItem("token");
+		setToken(getTokenLocal?getTokenLocal:"");
+		authen = true;
+		var getEmailLocal = localStorage.getItem("token");
+		setEmail(getEmailLocal?getEmailLocal:"");
 	}
-	if(token != null){
+	else if(token != ""){
+		console.log("token != null")
 		authen = true;
 		tokenProps = { // make sure all required component's inputs/Props keys&types match
 			data: token
 		}
+		var getEmailLocal = localStorage.getItem("token");
+		setEmail(getEmailLocal?getEmailLocal:"");
 	}
-	console.log(token);
 	return (
 		<>
 		<BrowserRouter>

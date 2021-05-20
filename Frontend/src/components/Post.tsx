@@ -78,14 +78,13 @@ class Post extends React.Component<{}, AbcState> {
 			console.log(item);
 			return (
 				<span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">{item}</span>
-
 			);
 		})
 		return tagDiv;
 	}
 	componentChap(posts) {
 		console.log(posts);
-		if(posts.briefChapterDtos != undefined){
+		if (posts.briefChapterDtos != undefined) {
 			const chapDiv = posts.briefChapterDtos.map((item, index) => {
 				console.log(item);
 				return (
@@ -266,21 +265,21 @@ class Post extends React.Component<{}, AbcState> {
 
 						</div>
 						<div className="items-center text-center">
-								<ReactPaginate
-									previousLabel={<BsChevronDoubleLeft></BsChevronDoubleLeft>}
-									nextLabel={<BsChevronDoubleRight></BsChevronDoubleRight>}
-									breakLabel={'...'}
-									breakClassName={'break-me'}
-									pageCount={this.state.pageCount}
-									marginPagesDisplayed={2}
-									pageRangeDisplayed={5}
-									onPageChange={this.handlePageClick}
-									containerClassName={'flex pl-0 rounded list-none flex-wrap  m-auto w-80  justify-center'}
-									previousLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-blueGray-500'}
-									activeLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-black'}
-									nextLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-blueGray-500'}
-									pageLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-blueGray-500'}
-								/>
+							<ReactPaginate
+								previousLabel={<BsChevronDoubleLeft></BsChevronDoubleLeft>}
+								nextLabel={<BsChevronDoubleRight></BsChevronDoubleRight>}
+								breakLabel={'...'}
+								breakClassName={'break-me'}
+								pageCount={this.state.pageCount}
+								marginPagesDisplayed={2}
+								pageRangeDisplayed={5}
+								onPageChange={this.handlePageClick}
+								containerClassName={'flex pl-0 rounded list-none flex-wrap  m-auto w-80  justify-center'}
+								previousLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-blueGray-500'}
+								activeLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-black'}
+								nextLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-blueGray-500'}
+								pageLinkClassName={'first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-blueGray-500 text-white bg-blueGray-500'}
+							/>
 						</div>
 					</div>
 				</div>
