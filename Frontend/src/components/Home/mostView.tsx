@@ -30,6 +30,7 @@ class mostView extends React.Component<{}, AbcState> {
       .then(res => res.json())
       .then(
         (result) => {
+          console.log(result);
           this.setState({
             isLoaded: true,
             homes: result

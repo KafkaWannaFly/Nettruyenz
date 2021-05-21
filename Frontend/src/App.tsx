@@ -14,38 +14,69 @@ import readComic from './components/ReadComic';
 import { HistoryOutlined } from "@material-ui/icons";
 import handleAccount from "./components/Signin";
 import { TokenClass } from 'typescript';
+import axios from 'axios';
 
-
+const inter = {
+	user: {
+		_id: "",
+		email: "",
+		password: "",
+		level: 0,
+		createdAt: "",
+		updatedAt: "",
+		__v: 0
+	},
+	token: ""
+}
 function App() {
-	const [token, setToken] = useState("");
-	var email = "";
+	const [token, setToken] = useState(inter);
 	var authen = false;
 	var tokenProps = {
-		data: ""
+		data: inter
 	};
 	console.log(token);
-	if(token != ""){
+	if(token.token == "" && localStorage.getItem("token") != null){
+		console.log("come in");
+		var getTokenLocal = localStorage.getItem("token");
+		var getEmailLocal = localStorage.getItem("email");
+		var getPassLocal = localStorage.getItem("password");
+		var getlevelLocal = localStorage.getItem("level");
+
+		var dataSignIn = {
+			email: getEmailLocal,
+			password: getPassLocal
+		  }
+		axios
+        .post("http://localhost:3000/sign-in", dataSignIn)
+        .then(function (response) {
+          console.log(response);
+          if (response.data.error) {
+          }
+          else {
+			tokenProps = { // make sure all required component's inputs/Props keys&types match
+				data: response.data
+			}
+          }
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+		authen = true;
+	}
+	else if(token.token != ""){
 		console.log("token != null")
 		authen = true;
 		tokenProps = { // make sure all required component's inputs/Props keys&types match
 			data: token
 		}
-		var getEmailLocal = localStorage.getItem("email");
-		email = getEmailLocal?getEmailLocal:"";
 	}
-	if(token == "" && localStorage.getItem("token") != null){
-		console.log("come in");
-		var getTokenLocal = localStorage.getItem("token");
-		var getEmailLocal = localStorage.getItem("email");
-		setToken(getTokenLocal?getTokenLocal:"");
-		authen = true;
-		email = getEmailLocal?getEmailLocal:"";
-	}
+	// console.log(token.user.email);
 	return (
 		<>
 		<BrowserRouter>
 			<>
-				<Navbar email={email} authentication = {authen} setToken={setToken}></Navbar>
+				<Navbar email = {token.user.email} level={token.user.level} authentication = {authen} setToken={setToken}></Navbar>
 						<div className="App bg-gray-1000 h-full">
 						{/* <Route exact path = "/signin" component={handleAccount}></Route> */}
 						<Switch>
@@ -56,7 +87,7 @@ function App() {
 							<Redirect exact from="/:name/:id1/:id2/reload" to="/:name/:id1/:id2" />
 							{authen?<Route exact path="/follow" component={() => (<Follow {...tokenProps}></Follow>)}></Route>:<div>Vui lòng đăng nhập</div>}
 							{authen?<Route exact path="/history" component={() => (<History {...tokenProps}></History>)}></Route>:<div>Vui lòng đăng nhập</div>}
-							{authen?<Route exact path="/profile/:email" component={() => (<UserProfile data = {token}></UserProfile>)}></Route>:<div>Vui lòng đăng nhập</div>}
+							{authen?<Route exact path="/profile/:email" component={() => (<UserProfile data = {tokenProps.data}></UserProfile>)}></Route>:<div>Vui lòng đăng nhập</div>}
 						</Switch>
 					</div>
 				<Footer/>

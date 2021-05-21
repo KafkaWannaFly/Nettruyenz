@@ -14,6 +14,9 @@ import {RiChatFollowUpLine} from 'react-icons/ri';
 // }
 function signOut(){
 	localStorage.removeItem("token");
+	localStorage.removeItem("email");
+	localStorage.removeItem("password");
+	localStorage.removeItem("level");
 	// localStorage.removeItem("email");
 	window.location.reload();
 }
@@ -53,7 +56,6 @@ export default function Navbar(props: any) {
 	}
 	var getUrl = window.location.href;
 	var splitUrl = getUrl.split("/");
-	console.log(splitUrl);
 	return (
 		<div className="w-full py-3 bg-black text-white">
 			<div className="table w-full py-6 px-44">
@@ -88,7 +90,7 @@ export default function Navbar(props: any) {
 										<img src={avatar} alt="" id="avatar" className="rounded-full h-14 w-14 flex items-center justify-center" />
 										<ul className="dropdown-menu-nav rounded-lg border-gray-1100 border-2 bg-black-100 hidden absolute text-white text-sm-custom">
 											<li className="rounded-b hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap"><Link to={"/profile/"+props.email}>Trang cá nhân</Link></li>
-											<li className=" hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap"><a  href="#">Đăng truyện</a></li>
+											{props.level?<li className=" hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap"><a  href="#">Quản lý truyện</a></li>:""}
 											<li className="rounded-b hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap"><a  onClick={() => signOut()}>Đăng xuất</a></li>
 										</ul>
 									</div>
