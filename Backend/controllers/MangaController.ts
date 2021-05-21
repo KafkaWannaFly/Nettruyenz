@@ -890,21 +890,110 @@ export const mangaController = {
 
 				mangaDtos[i].briefChapterDto = briefChapterDtoOf(chapterData);
 
-				mangaDtos[i].averageRate = (
-					await getMangaRating(mangaDtos[i].id)
-				).average;
+				const agg = [
+					{
+						$match: {
+							id: mangaDtos[i].id,
+						},
+					},
+					{
+						$lookup: {
+							from: "bookmarks",
+							localField: "id",
+							foreignField: "manga",
+							as: "bookmarkDocs",
+						},
+					},
+					{
+						$set: {
+							bookmarks: {
+								$size: "$bookmarkDocs",
+							},
+						},
+					},
+					{
+						$lookup: {
+							from: "views",
+							localField: "id",
+							foreignField: "manga",
+							as: "viewDocs",
+						},
+					},
+					{
+						$set: {
+							views: {
+								$size: "$viewDocs",
+							},
+						},
+					},
+					{
+						$lookup: {
+							from: "manga-rates",
+							localField: "id",
+							foreignField: "manga",
+							as: "rateDocs",
+						},
+					},
+					{
+						$set: {
+							averageRate: {
+								$divide: [
+									{
+										$sum: "$rateDocs.rate",
+									},
+									{
+										$cond: [
+											{
+												$eq: [
+													{
+														$size: "$rateDocs",
+													},
+													0,
+												],
+											},
+											1,
+											{
+												$size: "$rateDocs",
+											},
+										],
+									},
+								],
+							},
+						},
+					},
+					{
+						$lookup: {
+							from: "chapters",
+							localField: "id",
+							foreignField: "manga",
+							as: "chapterDocs",
+						},
+					},
+					{
+						$set: {
+							briefChapterDto: {
+								$last: "$chapterDocs",
+							},
+						},
+					},
+					{
+						$unset: ["viewDocs", "rateDocs", "bookmarkDocs", "chapterDocs"],
+					},
+				];
 
-				mangaDtos[i].views = await mangaChapterViewModel
-					.find({ manga: mangaDtos[i].id })
-					.countDocuments()
-					.exec();
+				let data = await mangaModel.aggregate(agg).exec() as any;
+				
+				console.log(data);
 
-				mangaDtos[i].bookmarks = await bookmarkModel
-					.find({
-						manga: mangaDtos[i].id,
-					})
-					.countDocuments()
-					.exec();
+				if (!data) {
+					return [];
+				}
+
+				let tempMangaDtos = data.map((item: any) => briefMangaDtoOf(item)); 
+
+				mangaDtos[i].averageRate = tempMangaDtos.averageRate;
+				mangaDtos[i].views = tempMangaDtos.views;
+				mangaDtos[i].bookmarks = tempMangaDtos.bookmarks;
 			}
 
 			mangaDtos.sort((a, b) => {
@@ -1442,21 +1531,104 @@ export const mangaController = {
 						period
 					);
 				} else {
-					mangaDtos[i].averageRate = (
-						await getMangaRating(mangaDtos[i].id)
-					).average;
+					const agg = [
+						{
+							$match: {
+								id: mangaDtos[i].id,
+							},
+						},
+						{
+							$lookup: {
+								from: "bookmarks",
+								localField: "id",
+								foreignField: "manga",
+								as: "bookmarkDocs",
+							},
+						},
+						{
+							$set: {
+								bookmarks: {
+									$size: "$bookmarkDocs",
+								},
+							},
+						},
+						{
+							$lookup: {
+								from: "views",
+								localField: "id",
+								foreignField: "manga",
+								as: "viewDocs",
+							},
+						},
+						{
+							$set: {
+								views: {
+									$size: "$viewDocs",
+								},
+							},
+						},
+						{
+							$lookup: {
+								from: "manga-rates",
+								localField: "id",
+								foreignField: "manga",
+								as: "rateDocs",
+							},
+						},
+						{
+							$set: {
+								averageRate: {
+									$divide: [
+										{
+											$sum: "$rateDocs.rate",
+										},
+										{
+											$cond: [
+												{
+													$eq: [
+														{
+															$size: "$rateDocs",
+														},
+														0,
+													],
+												},
+												1,
+												{
+													$size: "$rateDocs",
+												},
+											],
+										},
+									],
+								},
+							},
+						},
+						{
+							$lookup: {
+								from: "chapters",
+								localField: "id",
+								foreignField: "manga",
+								as: "chapterDocs",
+							},
+						},
+						{
+							$set: {
+								briefChapterDto: {
+									$last: "$chapterDocs",
+								},
+							},
+						},
+						{
+							$unset: ["viewDocs", "rateDocs", "bookmarkDocs", "chapterDocs"],
+						},
+					];
 
-					mangaDtos[i].views = await mangaChapterViewModel
-						.find({ manga: mangaDtos[i].id })
-						.countDocuments()
-						.exec();
+					let data: any = await mangaModel.aggregate(agg).exec();
 
-					mangaDtos[i].bookmarks = await bookmarkModel
-						.find({
-							manga: mangaDtos[i].id,
-						})
-						.countDocuments()
-						.exec();
+					let tempMangaDtos: BriefMangaDto = data.map((item: any) => briefMangaDtoOf(item)); 
+
+					mangaDtos[i].averageRate = tempMangaDtos.averageRate;
+					mangaDtos[i].views = tempMangaDtos.views;
+					mangaDtos[i].bookmarks = tempMangaDtos.bookmarks;
 				}
 			}
 
@@ -1530,7 +1702,7 @@ export const mangaController = {
 
 			mangaDtos.forEach((element) => {
 				if (sort === "view") console.log(element.views);
-				if (sort === "date") console.log(element.updatedAt?.getSeconds());
+				if (sort === "date") console.log(element.updatedAt?.getTime());
 				if (sort === "follow") console.log(element.bookmarks);
 				if (sort === "rate") console.log(element.averageRate);
 				console.log("-------------");
