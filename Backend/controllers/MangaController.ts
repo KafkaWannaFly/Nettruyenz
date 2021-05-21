@@ -1384,7 +1384,7 @@ export const mangaController = {
 
 			listMangaNeed = Array.from(new Set(listMangaNeed));
 
-			console.log(listMangaNeed);
+			// console.log(listMangaNeed);
 
 			let mangaDtos: BriefMangaDto[] = [];
 
@@ -1526,7 +1526,7 @@ export const mangaController = {
 				}
 			}
 
-			console.log(sort);
+			// console.log(sort);
 
 			mangaDtos.forEach((element) => {
 				if (sort === "view") console.log(element.views);
@@ -1544,8 +1544,8 @@ export const mangaController = {
 			let periodMangaDtos: BriefMangaDto[] = [];
 			mangaDtos.forEach((element) => {
 				let tempDate: Date = element.updatedAt || new Date(0);
-				console.log(tempDate);
-				console.log("-------------");
+				// console.log(tempDate);
+				// console.log("-------------");
 				if (period === "weekly") {
 					console.log(inCurrentWeek(tempDate));
 					if (inCurrentWeek(tempDate) === true) periodMangaDtos.push(element);
