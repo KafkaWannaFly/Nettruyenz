@@ -18,27 +18,9 @@ const period_options = [
 	"All time"
 ];
 
-const selectStyle = {
-	option: (provided, state) => ({
-		...provided,
-		borderColor: "#ffffff",
-		border: '1px solid white',
-		minHeight: "32px",
-		height:"32px",
-		minWidth: "224px",
-		width: "224px",
-		backgroundColor: state.isFocused? '#000000' : '#33343d',
-	}),
-	control: (provided) => ({
-		...provided,
-		marginTop: "20px",
-		marginBottom: "20px",
-		marginLeft: "12px",
-		marginRight: "12px"
-	})
-}
 export function AdvancedSearchBar(props) {
 	const [input, setInput] = useState(["", "", "", "", ""]);
+
 	function addToInputList(value, index) {
 		let temp = input.splice(index, 1, value);
 		setInput(input);
@@ -89,7 +71,7 @@ export function AdvancedSearchBar(props) {
 					<label className="search-bar-title">Title</label>
 					<div className="inpurt-with-icon">
 						<div className="search-icon">
-							<SearchIcon />
+							<SearchIcon onClick={handleTitleChange}/>
 						</div>
 						<input
 							className="search-field"
@@ -106,7 +88,7 @@ export function AdvancedSearchBar(props) {
 					<label className="search-bar-title">Author</label>
 					<div className="input-with-icon">
 						<div className="search-icon">
-							<SearchIcon />
+							<SearchIcon onClick={handleAuthorChange}/>
 						</div>
 						<input
 							className="search-field"

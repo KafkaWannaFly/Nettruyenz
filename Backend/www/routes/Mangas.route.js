@@ -14,5 +14,9 @@ router.get("/:mangaId", async (req, res) => {
     let mangaDtos = await MangaController_1.mangaController.getCompletedMangaDtoByIdAsync(id);
     res.json(mangaDtos);
 });
+router.get("/get-all", async (req, res) => {
+    let mangaDtos = await MangaController_1.mangaController.getAllCompletedMangaDtoAsync();
+    res.json(mangaDtos);
+});
 const mangaRoute = router;
 exports.default = mangaRoute;

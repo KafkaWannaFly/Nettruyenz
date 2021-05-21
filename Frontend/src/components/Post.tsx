@@ -11,7 +11,7 @@ import React from "react";
 import { CompletedMangaDto } from "../DTOs/CompletedMangaDto";
 import ReactPaginate from 'react-paginate';
 import { PostAddSharp } from "@material-ui/icons";
-
+import axios from 'axios'
 interface AbcState {
 	error: any,
 	isLoaded: boolean,
@@ -136,6 +136,36 @@ class Post extends React.Component<{}, AbcState> {
 			commentsPag: commentData?.slice(selected * 5, Number(len) - (Number(len) - ((selected + 1) * 5)))
 		});
 	};
+
+	handleBookmarkClick(id) {
+		console.log(this.state)
+		const res = axios({
+			method: 'post',
+			url: 'http://localhost:3000/bookmarks',
+			data: {
+				"bookmark": {
+					"manga": id
+				}
+			}
+		});
+	}
+
+	handleCommentChange = (e) => {
+		const comments = [e.target.value, ...this.state.comments];
+		this.setState({ comments: comments });
+	}
+
+	handleCommentSubmit(id) {
+		axios({
+			method: 'post',
+			url: 'http://localhost:3000/comments',
+			data: {
+				"manga": id,
+				"content": this.state.comments[0]
+			}
+		});
+	}
+
 	render() {
 		const { error, isLoaded, posts, filter, match } = this.state;
 		console.log(posts);
@@ -191,7 +221,8 @@ class Post extends React.Component<{}, AbcState> {
 								<img className="rounded-lg h-60 w-full" src={posts.cover}>
 								</img>
 								<div className="w-full pt-2">
-									<button className="bg-gray-300 pl-28 hover:bg-gray-400 text-gray-800 font-semibold py-2 w-full border-2 border-gray-400 rounded shadow inline-flex items-center">
+									<button className="bg-gray-300 pl-28 hover:bg-gray-400 text-gray-800 font-semibold py-2 w-full border-2 border-gray-400 rounded shadow inline-flex items-center"
+										onClick={(e) => this.handleBookmarkClick(posts.id)}>
 										<span className="px-2">Follow</span>
 										<BsBookmarks className="fa-flag" size="20px"></BsBookmarks>
 									</button>
@@ -247,10 +278,10 @@ class Post extends React.Component<{}, AbcState> {
 					</div>
 					<div>
 						<div className="flex mx-auto items-center justify-center mt-1 mb-2 max-w-lg">
-							<form className="w-full max-w-xl bg-gray-1000 pt-2">
+							<form className="w-full max-w-xl bg-gray-1000 pt-2" onSubmit={(e) => this.handleCommentSubmit(posts.id)}>
 								<div className="flex flex-wrap -mx-3 mb-6">
 									<div className="w-full md:w-full px-3 mb-2 mt-2">
-										<textarea className="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-20 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" name="body" placeholder='Type Your Comment' required></textarea>
+										<textarea className="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-20 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" name="body" placeholder='Type Your Comment' required onChange={this.handleCommentChange}></textarea>
 									</div>
 									<div className="w-full md:w-full flex items-start px-3 ">
 										<div className="-mr-1 text-black">
