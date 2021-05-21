@@ -1000,6 +1000,133 @@ export const mangaController = {
 		}
 	},
 
+	getAllCompletedMangaDtoAsync: async () => {
+		try {
+			const agg = [
+				{
+					$lookup: {
+						from: "chapters",
+						localField: "id",
+						foreignField: "manga",
+						as: "chapterDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "chapterDocs.id",
+						foreignField: "chapter",
+						as: "viewChapterDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "rateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$rateDocs.rate",
+								},
+								{
+									$size: "$rateDocs",
+								},
+							],
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "user-comments",
+						localField: "id",
+						foreignField: "manga",
+						as: "commentDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-creators",
+						localField: "id",
+						foreignField: "manga",
+						as: "creatorDocs",
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-tags",
+						localField: "id",
+						foreignField: "manga",
+						as: "tagDocs",
+					},
+				},
+				{
+					$unset: ["viewDocs", "rateDocs", "bookmarkDocs", "viewChapterDocs"],
+				},
+			];
+
+			const data:[] = await mangaModel.aggregate(agg).exec();
+
+			if (!data) {
+				return undefined;
+			}
+
+			const completedangaDto: CompletedMangaDto[] = []
+			for(let i = 9; i < data.length; i++){
+				completedangaDto.push(completeMangaDtoOf(data[i]));
+			}
+
+			for (let j = 0; j < completedangaDto.length; j++){
+				for (let i = 0; i < completedangaDto[j].briefChapterDtos.length; i++) {
+					const views = await mangaChapterViewModel
+						.find({ chapter: completedangaDto[j].briefChapterDtos[i].id })
+						.countDocuments()
+						.exec();
+					completedangaDto[j].briefChapterDtos[i].views = views;
+				}
+			}
+
+			return completedangaDto;
+		} catch (e) {
+			console.error(e);
+		}
+	},
+
 	//Test area
 	getAllAuthor: async (author: string) => {
 		if (author === undefined) author = "";
