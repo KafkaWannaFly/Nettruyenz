@@ -10,11 +10,14 @@ import Footer from "./components/Footer";
 import {Categories} from "./components/Categories/Categories";
 import UserProfile from './components/UserProfile';
 import readComic from './components/ReadComic';
+import manageManga from './components/manageManga';
+
 
 import { HistoryOutlined } from "@material-ui/icons";
 import handleAccount from "./components/Signin";
 import { TokenClass } from 'typescript';
 import axios from 'axios';
+import UploadChapter from './components/UploadChapter';
 
 const inter = {
 	user: {
@@ -46,6 +49,7 @@ function App() {
 			email: getEmailLocal,
 			password: getPassLocal
 		  }
+		console.log(dataSignIn)
 		axios
         .post("http://localhost:3000/sign-in", dataSignIn)
         .then(function (response) {
@@ -85,6 +89,8 @@ function App() {
 							<Route path="/comic/:id" component={Post}></Route>
 							<Route exact path="/:name/:id1/:id2" component={readComic}></Route>
 							<Redirect exact from="/:name/:id1/:id2/reload" to="/:name/:id1/:id2" />
+							<Route path="/manage" component={manageManga}></Route>
+							<Route exact path="/upload/:id/" component={UploadChapter}></Route>
 							{authen?<Route exact path="/follow" component={() => (<Follow {...tokenProps}></Follow>)}></Route>:<div>Vui lòng đăng nhập</div>}
 							{authen?<Route exact path="/history" component={() => (<History {...tokenProps}></History>)}></Route>:<div>Vui lòng đăng nhập</div>}
 							{authen?<Route exact path="/profile/:email" component={() => (<UserProfile data = {tokenProps.data}></UserProfile>)}></Route>:<div>Vui lòng đăng nhập</div>}
