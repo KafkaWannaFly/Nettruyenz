@@ -122,7 +122,7 @@ export function completeMangaDtoOf(data: any): CompletedMangaDto {
 				? chapterDocs.map((item) => briefChapterDtoOf(item))
 				: [],
 		userCommentDtos:
-			commentDocs.length > 0
+			commentDocs?.length > 0
 				? commentDocs.map((item) => userCommentDtoOf(item))
 				: [],
 	};

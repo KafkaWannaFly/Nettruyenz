@@ -1091,87 +1091,6 @@ export const mangaController = {
 				},
 				{
 					$lookup: {
-						from: "views",
-						localField: "chapterDocs.id",
-						foreignField: "chapter",
-						as: "viewChapterDocs",
-					},
-				},
-				{
-					$lookup: {
-						from: "bookmarks",
-						localField: "id",
-						foreignField: "manga",
-						as: "bookmarkDocs",
-					},
-				},
-				{
-					$set: {
-						bookmarks: {
-							$size: "$bookmarkDocs",
-						},
-					},
-				},
-				{
-					$lookup: {
-						from: "views",
-						localField: "id",
-						foreignField: "manga",
-						as: "viewDocs",
-					},
-				},
-				{
-					$set: {
-						views: {
-							$size: "$viewDocs",
-						},
-					},
-				},
-				{
-					$lookup: {
-						from: "manga-rates",
-						localField: "id",
-						foreignField: "manga",
-						as: "rateDocs",
-					},
-				},
-				{
-					$set: {
-						averageRate: {
-							$divide: [
-								{
-									$sum: "$rateDocs.rate",
-								},
-								{
-									$cond: [
-										{
-											$eq: [
-												{
-													$size: "$rateDocs",
-												},
-												0,
-											],
-										},
-										1,
-										{
-											$size: "$rateDocs",
-										},
-									],
-								},
-							],
-						},
-					},
-				},
-				{
-					$lookup: {
-						from: "user-comments",
-						localField: "id",
-						foreignField: "manga",
-						as: "commentDocs",
-					},
-				},
-				{
-					$lookup: {
 						from: "manga-creators",
 						localField: "id",
 						foreignField: "manga",
@@ -1187,35 +1106,33 @@ export const mangaController = {
 					},
 				},
 				{
-					$unset: ["viewDocs", "rateDocs", "bookmarkDocs", "viewChapterDocs"],
+					$unset: [
+						"viewDocs",
+						"rateDocs",
+						"bookmarkDocs",
+						"viewChapterDocs",
+						"chapterDocs.images",
+						"chapterDocs.description",
+					],
 				},
 			];
 
-			const data: [] = await mangaModel.aggregate(agg).exec();
+			const data: any[] = await mangaModel.aggregate(agg).exec();
 
 			if (!data) {
-				return undefined;
+				return [];
 			}
 
-			const completedangaDto: CompletedMangaDto[] = [];
-			for (let i = 9; i < data.length; i++) {
-				completedangaDto.push(completeMangaDtoOf(data[i]));
-			}
-
-			for (let j = 0; j < completedangaDto.length; j++) {
-				for (let i = 0; i < completedangaDto[j].briefChapterDtos.length; i++) {
-					const views = await mangaChapterViewModel
-						.find({ chapter: completedangaDto[j].briefChapterDtos[i].id })
-						.countDocuments()
-						.exec();
-					completedangaDto[j].briefChapterDtos[i].views = views;
-				}
-			}
+			const completedangaDto: CompletedMangaDto[] = data.map((item) =>
+				completeMangaDtoOf(item)
+			);
 
 			return completedangaDto;
 		} catch (e) {
 			console.error(e);
 		}
+
+		return [];
 	},
 
 	//Test area
@@ -1467,7 +1384,7 @@ export const mangaController = {
 
 			listMangaNeed = Array.from(new Set(listMangaNeed));
 
-			console.log(listMangaNeed);
+			// console.log(listMangaNeed);
 
 			let mangaDtos: BriefMangaDto[] = [];
 
@@ -1609,7 +1526,7 @@ export const mangaController = {
 				}
 			}
 
-			console.log(sort);
+			// console.log(sort);
 
 			mangaDtos.forEach((element) => {
 				if (sort === "view") console.log(element.views);
@@ -1627,8 +1544,8 @@ export const mangaController = {
 			let periodMangaDtos: BriefMangaDto[] = [];
 			mangaDtos.forEach((element) => {
 				let tempDate: Date = element.updatedAt || new Date(0);
-				console.log(tempDate);
-				console.log("-------------");
+				// console.log(tempDate);
+				// console.log("-------------");
 				if (period === "weekly") {
 					console.log(inCurrentWeek(tempDate));
 					if (inCurrentWeek(tempDate) === true) periodMangaDtos.push(element);
