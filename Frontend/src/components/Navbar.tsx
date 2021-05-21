@@ -74,10 +74,11 @@ export default function Navbar(props: any) {
 					<div className="table-cell w-4/5 right text-sm">
 						<div className="rounded-full h-14 border-2 px-5 bg-black flex items-center">
 							<input
-								className="rounded-full bg-opacity-0"
-								type="search"
+								className=""
+								type="text"
 								name="search"
 								placeholder="Tìm kiếm"
+								autoComplete="off"
 							/>
 							<FiSearch className="h-8 w-8"></FiSearch>
 						</div>
