@@ -15,6 +15,7 @@ export function Categories(props) {
 
 
     function getInputFromSearchBar(input: string[]) {
+        console.log(input)
         setInput(input);
         getMangasAsync();
     }
@@ -28,7 +29,8 @@ export function Categories(props) {
     async function getMangasAsync() {
         const res = await axios.get(`http://localhost:3000/categories`, { params: { tags: tagList, title: input[0], author: input[1], sortBy: input[2], order: input[3], pediod: input[4] } })
             .then((response) => {
-                setMangas(response.data);
+                console.log(response.data);
+                // setMangas(response.data);
             })
             .catch(err => setError(err));
     }
@@ -42,6 +44,7 @@ export function Categories(props) {
         getRencentlyUpload()
             .then((result) => {
                 if (mounted) {
+                    console.log(result);
                     setMangas(result);
                 }
             },

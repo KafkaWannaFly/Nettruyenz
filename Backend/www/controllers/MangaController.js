@@ -75,7 +75,20 @@ exports.mangaController = {
                                     $sum: "$mangaRateDocs.rate",
                                 },
                                 {
-                                    $size: "$mangaRateDocs",
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$mangaRateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$mangaRateDocs",
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -219,7 +232,20 @@ exports.mangaController = {
                                     $sum: "$mangaRateDocs.rate",
                                 },
                                 {
-                                    $size: "$mangaRateDocs",
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$mangaRateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$mangaRateDocs",
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -363,7 +389,20 @@ exports.mangaController = {
                                     $sum: "$mangaRateDocs.rate",
                                 },
                                 {
-                                    $size: "$mangaRateDocs",
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$mangaRateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$mangaRateDocs",
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -506,7 +545,20 @@ exports.mangaController = {
                                     $sum: "$mangaRateDocs.rate",
                                 },
                                 {
-                                    $size: "$mangaRateDocs",
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$mangaRateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$mangaRateDocs",
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -638,7 +690,20 @@ exports.mangaController = {
                                     $sum: "$mangaRateDocs.rate",
                                 },
                                 {
-                                    $size: "$mangaRateDocs",
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$mangaRateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$mangaRateDocs",
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -863,7 +928,20 @@ exports.mangaController = {
                                     $sum: "$rateDocs.rate",
                                 },
                                 {
-                                    $size: "$rateDocs",
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$rateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$rateDocs",
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -908,6 +986,141 @@ exports.mangaController = {
                     .countDocuments()
                     .exec();
                 completedangaDto.briefChapterDtos[i].views = views;
+            }
+            return completedangaDto;
+        }
+        catch (e) {
+            console.error(e);
+        }
+    },
+    getAllCompletedMangaDtoAsync: async () => {
+        try {
+            const agg = [
+                {
+                    $lookup: {
+                        from: "chapters",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "chapterDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "views",
+                        localField: "chapterDocs.id",
+                        foreignField: "chapter",
+                        as: "viewChapterDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "bookmarks",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "bookmarkDocs",
+                    },
+                },
+                {
+                    $set: {
+                        bookmarks: {
+                            $size: "$bookmarkDocs",
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "views",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "viewDocs",
+                    },
+                },
+                {
+                    $set: {
+                        views: {
+                            $size: "$viewDocs",
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "manga-rates",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "rateDocs",
+                    },
+                },
+                {
+                    $set: {
+                        averageRate: {
+                            $divide: [
+                                {
+                                    $sum: "$rateDocs.rate",
+                                },
+                                {
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: "$rateDocs",
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                        1,
+                                        {
+                                            $size: "$rateDocs",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "user-comments",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "commentDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "manga-creators",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "creatorDocs",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "manga-tags",
+                        localField: "id",
+                        foreignField: "manga",
+                        as: "tagDocs",
+                    },
+                },
+                {
+                    $unset: ["viewDocs", "rateDocs", "bookmarkDocs", "viewChapterDocs"],
+                },
+            ];
+            const data = await models_1.mangaModel.aggregate(agg).exec();
+            if (!data) {
+                return undefined;
+            }
+            const completedangaDto = [];
+            for (let i = 9; i < data.length; i++) {
+                completedangaDto.push(models_1.completeMangaDtoOf(data[i]));
+            }
+            for (let j = 0; j < completedangaDto.length; j++) {
+                for (let i = 0; i < completedangaDto[j].briefChapterDtos.length; i++) {
+                    const views = await models_1.mangaChapterViewModel
+                        .find({ chapter: completedangaDto[j].briefChapterDtos[i].id })
+                        .countDocuments()
+                        .exec();
+                    completedangaDto[j].briefChapterDtos[i].views = views;
+                }
             }
             return completedangaDto;
         }

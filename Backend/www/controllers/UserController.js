@@ -134,7 +134,20 @@ exports.userController = {
                                 $sum: "$mangaRateDocs.rate",
                             },
                             {
-                                $size: "$mangaRateDocs",
+                                $cond: [
+                                    {
+                                        $eq: [
+                                            {
+                                                $size: "$mangaRateDocs",
+                                            },
+                                            0,
+                                        ],
+                                    },
+                                    1,
+                                    {
+                                        $size: "$mangaRateDocs",
+                                    },
+                                ],
                             },
                         ],
                     },
