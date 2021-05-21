@@ -101,7 +101,20 @@ export const mangaController = {
 									$sum: "$mangaRateDocs.rate",
 								},
 								{
-									$size: "$mangaRateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$mangaRateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$mangaRateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -252,7 +265,20 @@ export const mangaController = {
 									$sum: "$mangaRateDocs.rate",
 								},
 								{
-									$size: "$mangaRateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$mangaRateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$mangaRateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -400,7 +426,20 @@ export const mangaController = {
 									$sum: "$mangaRateDocs.rate",
 								},
 								{
-									$size: "$mangaRateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$mangaRateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$mangaRateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -547,7 +586,20 @@ export const mangaController = {
 									$sum: "$mangaRateDocs.rate",
 								},
 								{
-									$size: "$mangaRateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$mangaRateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$mangaRateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -684,7 +736,20 @@ export const mangaController = {
 									$sum: "$mangaRateDocs.rate",
 								},
 								{
-									$size: "$mangaRateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$mangaRateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$mangaRateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -943,7 +1008,20 @@ export const mangaController = {
 									$sum: "$rateDocs.rate",
 								},
 								{
-									$size: "$rateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$rateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$rateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -1065,7 +1143,20 @@ export const mangaController = {
 									$sum: "$rateDocs.rate",
 								},
 								{
-									$size: "$rateDocs",
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$rateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$rateDocs",
+										},
+									],
 								},
 							],
 						},
@@ -1100,18 +1191,18 @@ export const mangaController = {
 				},
 			];
 
-			const data:[] = await mangaModel.aggregate(agg).exec();
+			const data: [] = await mangaModel.aggregate(agg).exec();
 
 			if (!data) {
 				return undefined;
 			}
 
-			const completedangaDto: CompletedMangaDto[] = []
-			for(let i = 9; i < data.length; i++){
+			const completedangaDto: CompletedMangaDto[] = [];
+			for (let i = 9; i < data.length; i++) {
 				completedangaDto.push(completeMangaDtoOf(data[i]));
 			}
 
-			for (let j = 0; j < completedangaDto.length; j++){
+			for (let j = 0; j < completedangaDto.length; j++) {
 				for (let i = 0; i < completedangaDto[j].briefChapterDtos.length; i++) {
 					const views = await mangaChapterViewModel
 						.find({ chapter: completedangaDto[j].briefChapterDtos[i].id })
