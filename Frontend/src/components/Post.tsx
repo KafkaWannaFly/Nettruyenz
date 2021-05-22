@@ -72,6 +72,28 @@ class Post extends React.Component<{}, AbcState> {
 	}
 	ratingChanged = (newRating) => {
 		console.log(newRating);
+		var dataRate = {
+			rate: newRating,
+			mangaId:  this.state.posts.id
+		}
+		console.log(dataRate);
+
+		var token = localStorage.getItem("token");
+        let axiosConfig = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        };
+		axios.post("http://localhost:3000/rate", dataRate, axiosConfig)
+		.then(
+			(result) => {
+				console.log(result);
+			},
+			// error handler
+			(error) => {
+				console.log(error);
+			}
+		)
 	};
 	componentTag(posts) {
 		const tagDiv = posts.tags.map((item) => {
@@ -182,10 +204,14 @@ class Post extends React.Component<{}, AbcState> {
 			}
 		});
 	}
+	// handleRatingChange(id, rate){
+	// 	console.log(id);
 
+	// }
 	render() {
 		const { error, isLoaded, posts, filter, match } = this.state;
-		console.log(posts);
+		console.log(posts.averageRate);
+		var value = posts.averageRate;
 		return (
 			<div className="container flex flex-wrap px-10  ">
 				<div className="lg:w-3/4 px-3 bg-gray-1000 text-white">
@@ -197,7 +223,7 @@ class Post extends React.Component<{}, AbcState> {
 									count={5}
 									onChange={this.ratingChanged}
 									size={30}
-									value={3.4}
+									value={3.6}
 									isHalf={true}
 									emptyIcon={<BsStar></BsStar>}
 									halfIcon={<BsStarHalf></BsStarHalf>}
