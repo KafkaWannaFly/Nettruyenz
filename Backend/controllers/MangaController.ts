@@ -1249,10 +1249,8 @@ export const mangaController = {
 		}
 	},
 
-	getMangaByName: async (name: string, id: string, period: string = "all") => {
+	getMangaByName: async (name: string) => {
 		if (name === undefined) name = "";
-
-		if (id === undefined) id = "";
 
 		try {
 			let aggregationStatements: any[] = [
@@ -1269,21 +1267,74 @@ export const mangaController = {
 					},
 				},
 				{
-					$match: {
-						id: {
-							$regex: `.*${id}.*`,
+					$lookup: {
+						from: "bookmarks",
+						localField: "id",
+						foreignField: "manga",
+						as: "bookmarkDocs",
+					},
+				},
+				{
+					$set: {
+						bookmarks: {
+							$size: "$bookmarkDocs",
 						},
 					},
 				},
+				{
+					$lookup: {
+						from: "views",
+						localField: "id",
+						foreignField: "manga",
+						as: "viewDocs",
+					},
+				},
+				{
+					$set: {
+						views: {
+							$size: "$viewDocs",
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: "manga-rates",
+						localField: "id",
+						foreignField: "manga",
+						as: "rateDocs",
+					},
+				},
+				{
+					$set: {
+						averageRate: {
+							$divide: [
+								{
+									$sum: "$rateDocs.rate",
+								},
+								{
+									$cond: [
+										{
+											$eq: [
+												{
+													$size: "$rateDocs",
+												},
+												0,
+											],
+										},
+										1,
+										{
+											$size: "$rateDocs",
+										},
+									],
+								},
+							],
+						},
+					},
+				},
+				{
+					$unset: ["viewDocs", "rateDocs", "bookmarkDocs"],
+				},
 			];
-
-			if (period === "weekly") {
-				let weeklyFilter = getWeeklyFilter();
-				aggregationStatements = [weeklyFilter, ...aggregationStatements];
-			} else if (period === "monthly") {
-				let monthlyFilter = getMonthlyFilter();
-				aggregationStatements = [monthlyFilter, ...aggregationStatements];
-			}
 
 			let mangaDtos: BriefMangaDto[] = await mangaModel
 				.aggregate(aggregationStatements)
