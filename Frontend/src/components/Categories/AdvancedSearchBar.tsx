@@ -35,6 +35,8 @@ export function AdvancedSearchBar(props) {
 		}
 	}
 
+
+
 	const [author, setAuthor] = useState("");
 	function handleAuthorChange(e) {
 		if(e.key === "Enter") {
@@ -71,7 +73,7 @@ export function AdvancedSearchBar(props) {
 					<label className="search-bar-title">Title</label>
 					<div className="inpurt-with-icon">
 						<div className="search-icon">
-							<SearchIcon onClick={handleTitleChange}/>
+							<SearchIcon/>
 						</div>
 						<input
 							className="search-field"
@@ -88,7 +90,7 @@ export function AdvancedSearchBar(props) {
 					<label className="search-bar-title">Author</label>
 					<div className="input-with-icon">
 						<div className="search-icon">
-							<SearchIcon onClick={handleAuthorChange}/>
+							<SearchIcon/>
 						</div>
 						<input
 							className="search-field"
