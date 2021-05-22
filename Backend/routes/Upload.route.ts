@@ -125,12 +125,12 @@ router.post(
 			}
 
 			if (error != "") {
-				return res.status(400).json({ error });
+				return res.json({ error });
 			}
 
 			next();
 		} catch (error) {
-			return res.status(400).json({ error });
+			return res.json({ error });
 		}
 	},
 	async (req: express.Request, res: express.Response) => {
@@ -138,7 +138,7 @@ router.post(
 
 		await chapterController.saveChapterAsync(chapterDto);
 
-		res.status(204).json({ message: "Success" });
+		res.json({ message: "Success" });
 	}
 );
 
