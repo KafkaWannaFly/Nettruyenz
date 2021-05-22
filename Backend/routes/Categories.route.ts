@@ -43,12 +43,9 @@ router.get("/all-author", async (req, res) => {
 });
 
 router.get("/find-by-name", async (req, res) => {
-	let subPeriod = req.query.period === undefined ? req.query.period : "all";
-
 	let name = req.query.title as string;
-	let id = req.query.id as string;
 
-	let mangas = await mangaController.getMangaByName(name, id, subPeriod);
+	let mangas = await mangaController.getMangaByName(name);
 	res.json(mangas);
 });
 
