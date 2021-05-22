@@ -27,10 +27,11 @@ export function Categories(props) {
     }
 
     async function getMangasAsync() {
-        const res = await axios.get(`http://localhost:3000/categories`, { params: { tags: tagList, title: input[0], author: input[1], sortBy: input[2], order: input[3], pediod: input[4] } })
+        const res = await axios.get(`http://localhost:3000/categories`, 
+        { params: { tags: tagList, title: input[0], author: input[1], sortBy: input[2], order: input[3], pediod: input[4] } })
             .then((response) => {
                 console.log(response.data);
-                // setMangas(response.data);
+                setMangas(response.data);
             })
             .catch(err => setError(err));
     }
