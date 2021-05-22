@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { BiUserPin, BiDetail, BiCalendar } from 'react-icons/bi';
 import { ImProfile } from 'react-icons/im';
 import { HiOutlineMail } from 'react-icons/hi';
@@ -10,6 +10,7 @@ import { MdDescription, MdAddCircleOutline } from 'react-icons/md';
 import { useState } from 'react';
 import avatar from "../logos/img_avatar.png";
 import axios from 'axios';
+import { Ri24HoursFill } from 'react-icons/ri';
 
 
 interface AbcState {
@@ -21,8 +22,10 @@ interface AbcState {
     apiKey: string,
     signature: string,
     timestamp: string,
+    name: string,
 }
-class UploadChapter extends React.Component<{}, AbcState> {
+class UploadManga extends React.Component<{}, AbcState> {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -31,9 +34,10 @@ class UploadChapter extends React.Component<{}, AbcState> {
             data: new Array(),
             filter: true,
             url: "",
-            apiKey:"",
+            apiKey: "",
             signature: "",
             timestamp: "",
+            name: ""
         };
     }
     componentDidMount() {
@@ -41,66 +45,31 @@ class UploadChapter extends React.Component<{}, AbcState> {
         var spitUrl = getUrl.split("/");
         var getId = spitUrl[spitUrl.length - 1];
         console.log(getId);
-        axios.get(`http://localhost:3000/mangas/${getId}`)
-            .then(
-                (result) => {
-                    console.log(result);
-                    this.setState({
-                        isLoaded: true,
-                        data: result.data
-                    });
-                },
-                // error handler
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
     }
-    tagChapter(props) {
-        if(props){
-            const tagchap = props.map((item) => {
-                return (
-                    <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">{"Chapter " + item.index}</span>
-                );
-            })
-            console.log(props);
-            return tagchap;
-        }
-        else{
-            return <div>a</div>;
-        }
-    }
-    uploadImage(){
-
-    }
-    ComponentDiv(props) {
+    ComponentDiv() {
         // const historyDiv = information.map((item) => {
-        console.log(props);
         return (
             <>
                 <div className="bg-white pt-10">
                     <div className="flex -mx-4">
                         <div className="container mx-auto px-8">
                             <div className="flex px-10">
-                                <div className="w-1/4">
+                                <div className="w-1/4 pt-36">
                                     <div className="mb-4">
-                                        <img
-                                            className="rounded-lg h-full w-full"
-                                            src={props.cover}></img>
+                                        <div className="w-full h-full relative">
+                                            <p className="text-xl pb-3">Chọn avatar: </p>
+                                            <input id="inputavatar" type="file" className="absolute"></input>
+                                        </div>
                                     </div>
                                     <div className="mb-4">
                                         <div className="text-3xl font-medium text-grey-darkest">
-                                            {props.names?props.names[0]:""}
                                         </div>
                                     </div>
                                 </div>
                                 <div className="w-3/4 ml-6 mt-2">
                                     <div className="flex items-center font-thin text-grey-dark text-sm border-b">
                                         <div className="p-4 border-b-2 font-normal text-xl text-grey-darkest border-orange -mb-2px">
-                                            Chi tiết truyện
+                                            Thêm thông tin chi tiết
                                         </div>
 
                                     </div>
@@ -132,10 +101,9 @@ class UploadChapter extends React.Component<{}, AbcState> {
                                                     </div>
                                                 </div>
                                                 <div className="flex text-sm mt-3">
-                                                    <div className="mr-4 pl-2 font-thin text-base">
-                                                        <input id="nickName"
-                                                            readOnly
-                                                            type="text" value={props.names?props.names[0]:""}
+                                                    <div className="mr-4 w-full pl-2 font-thin text-base break-normal">
+                                                        <input id="nameManga"
+                                                            type="text"
                                                         ></input>
                                                     </div>
                                                 </div>
@@ -168,7 +136,7 @@ class UploadChapter extends React.Component<{}, AbcState> {
                                                 </div>
                                                 <div className="mt-3">
                                                     <div className="mr-4 w-auto h-auto font-thin text-base pl-2">
-                                                        <input className="break-words" type="text" id="date" value={props.description} readOnly></input>
+                                                        <input className="break-words" type="text" id="describeManga"></input>
                                                     </div>
                                                 </div>
                                             </div>
@@ -186,9 +154,8 @@ class UploadChapter extends React.Component<{}, AbcState> {
                                             </div>
                                             <div className="flex text-sm mt-3">
                                                 <div className="mr-4 font-thin text-b">
-                                                    {this.tagChapter(props.briefChapterDtos)}
                                                     <div>
-                                                        <input id="inputfile" type="file" name="files" multiple></input>
+                                                        <input id="inputchap" type="file" name="files" multiple></input>
                                                     </div>
                                                     {/* <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">j2team</span>
                                                 <span className="inline-block bg-black rounded-full px-2 text-sm font-semibold text-white mr-2 mb-2">hcmus</span>
@@ -208,116 +175,134 @@ class UploadChapter extends React.Component<{}, AbcState> {
         // });
         // return historyDiv;
     }
-    submitChapter(data){
+    submitChapter() {
+
         var token = localStorage.getItem("token");
         let axiosConfig = {
             headers: {
                 'Authorization': `Bearer ${token}`,
             }
         };
-        var files = (document.getElementById("inputfile") as HTMLInputElement).files;
-        console.log(files);
-        if(files!!.length > 0)
-        {
-            axios.get(`http://localhost:3000/upload/signature`, axiosConfig)
-            .then(
-                (result) => {
-                    console.log(result);
-                    // var body = {
-                    //     file: files,
-                    //     api_key: result.data.apiKey,
-                    //     timestamp:result.data.timestamp,
-                    //     signature: result.data.signature
-                    // }
-                    // console.log(body);
-                    var images: string[] = [];
-                    var id: string[] = [];
-                    for(let i = 0; i < files!!.length; i++){
-                        const formData = new FormData();
-                        let file = files!![i];
-                        console.log(file);
-                        formData.append("file", file);
-                        formData.append("api_key", result.data.apiKey);
-                        formData.append("timestamp", result.data.timestamp);
-                        formData.append("signature", result.data.signature);
-                        console.log(formData.get("file"));
-                        axios.post(result.data.uploadUrl, formData)
-                        .then(
-                            (result1) => {
-                                var secure_url = result1.data.secure_url;
-                                var id_ = result1.data.public_id;
-                                if(secure_url != ""){
-                                    images.push(secure_url);
-                                    id.push(id_);
-                                    if(i == files!!.length- 1){
-                                        var axiosData = {
-                                            "chapterDto": {
-                                                    id: getId + "-" + (data.briefChapterDtos.length + 1),
-                                                    manga: getId,
-                                                    index: Number(data.briefChapterDtos.length + 1),
-                                                    images: images,
-                                                }
-                                        }
-                                        console.log(images);
-                                        axios.post(`http://localhost:3000/upload/chapter`, axiosData, axiosConfig)
-                                        .then(
-                                            (result) => {
-                                                console.log(result)
-                                                alert("Thêm chapter mới thành công");
-                                                window.location.reload();
-                                            },
-                                            // error handler
-                                            (error) => {
-                                                console.log(error);
-                                            }
-                                        )
-                                    }
-                                }
-                            },
-                            // error handler
-                            (error) => {
-                                console.log(error);
-                            }
-                        )
-                    }
-                    var getUrl = window.location.href;
-                    var spitUrl = getUrl.split("/");
-                    var getId = spitUrl[spitUrl.length - 1];
-                    // var axiosData = {
-                    //     chapterDto :  {
-                    //         id: getId + "-" + data.briefChapterDtos.length + 1,
-                    //         images: images,
-                    //         manga: getId,
-                    //         index: Number(data.briefChapterDtos.length),
-                    //         uploader: "Admin",
-                    //         views: 0,
-                    //     }
-                    // }
-                },
-                // error handler
-                (error) => {
-                    console.log(error);
-                }
-            )
+        var inputName = (document.getElementById("nameManga") as HTMLInputElement).value;
+        var inputDescribe = (document.getElementById("describeManga") as HTMLInputElement).value;
+        var avatar = (document.getElementById("inputavatar") as HTMLInputElement).files;
+        var files = (document.getElementById("inputchap") as HTMLInputElement).files;
+        if (inputName == "" || inputDescribe == "" || avatar!!.length == 0 || files!!.length == 0) {
+            alert("Vui lòng điền đầy đủ thông tin");
+        }
+        else {
+            console.log(files);
+            if (files!!.length > 0) {
+                axios.get(`http://localhost:3000/upload/signature`, axiosConfig)
+                    .then(
+                        (result) => {
+                            var getUrl = window.location.href;
+                            var spitUrl = getUrl.split("/");
+                            var getId = spitUrl[spitUrl.length - 1];
+                            console.log(result);
+                            var images: string[] = [];
+                            var id: string[] = [];
 
+
+                            //post avatar to server
+                            const formAvatar = new FormData();
+                            console.log(avatar!![0]);
+                            formAvatar.append("file", avatar!![0]);
+                            formAvatar.append("api_key", result.data.apiKey);
+                            formAvatar.append("timestamp", result.data.timestamp);
+                            formAvatar.append("signature", result.data.signature);
+
+                            for (let i = 0; i < files!!.length; i++) {
+                                const formData = new FormData();
+                                let file = files!![i];
+                                console.log(file);
+                                formData.append("file", file);
+                                formData.append("api_key", result.data.apiKey);
+                                formData.append("timestamp", result.data.timestamp);
+                                formData.append("signature", result.data.signature);
+
+                                axios.post(result.data.uploadUrl, formData)
+                                    .then(
+                                        (result1) => {
+                                            var secure_url = result1.data.secure_url;
+                                            if (secure_url != "") {
+                                                images.push(secure_url);
+                                                if (i == files!!.length - 1) {
+                                                    axios.post(result.data.uploadUrl, formAvatar)
+                                                        .then(
+                                                            (result1) => {
+                                                                console.log(result1); //data avatar
+                                                                console.log(images);
+                                                                var axiosData = {
+                                                                    "chapterDto": {
+                                                                        id: result1.data.public_id + "-1",
+                                                                        manga: result1.data.public_id,
+                                                                        index: Number(1),
+                                                                        images: images,
+                                                                    }
+                                                                }
+                                                                var axiosDataManga = {
+                                                                    mangaDto: {
+                                                                        id: result1.data.public_id,
+                                                                        names: [inputName],
+                                                                        cover: result1.data.secure_url,
+                                                                        description: inputDescribe,
+                                                                        chapterDto: axiosData.chapterDto,
+                                                                    }
+                                                                }
+                                                                axios.post(`http://localhost:3000/upload/manga`, axiosDataManga, axiosConfig)
+                                                                    .then(
+                                                                        (result) => {
+                                                                            console.log(result);
+                                                                            alert("Thêm truyện mới thành công");
+                                                                            window.location.href = `/upload/` + result1.data.public_id;
+                                                                        },
+                                                                        // error handler
+                                                                        (error) => {
+                                                                            console.log(error);
+                                                                        }
+                                                                    )
+                                                            },
+                                                            // error handler
+                                                            (error) => {
+                                                                console.log(error);
+                                                            }
+                                                        )
+                                                }
+                                            }
+                                        },
+                                        // error handler
+                                        (error) => {
+                                            console.log(error);
+                                        }
+                                    )
+                            }
+                        },
+                        // error handler
+                        (error) => {
+                            console.log(error);
+                        }
+                    )
+
+            }
+            else {
+                alert("Chưa có dữ liệu mới nào");
+            }
         }
-        else{
-            alert("Chưa có dữ liệu mới nào");  
-        }  
-        }
+    }
     render() {
         const { error, isLoaded, data, filter } = this.state;
         console.log(data);
         return (
             <div className="px-20 border rounded-lg mx-20 pt-5 mt-10 bg-white">
                 <h1 className="pt-10 pb-2 text-3xl text-center">
-                    THÊM CHAPTER MỚI
+                    THÊM TRUYỆN MỚI
                 </h1>
                 <hr></hr>
-                {this.ComponentDiv(data)}
-                <div className="text-center pt-5 pb-10"><a className="border-solid border-2 border-black py-2 px-4 rounded-md text-lg hover:bg-red-400" onClick={() => this.submitChapter(data)}>UPLOAD</a></div>
+                {this.ComponentDiv()}
+                <div className="text-center pt-5 pb-10"><a className="border-solid border-2 border-black py-2 px-4 rounded-md text-lg hover:bg-red-400" onClick={() => this.submitChapter()}>UPLOAD</a></div>
             </div>
         );
     }
 }
-export default UploadChapter
+export default UploadManga

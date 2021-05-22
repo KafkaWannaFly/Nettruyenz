@@ -24,7 +24,7 @@ class manageManga extends React.Component<{}, AbcState> {
             }
         };
         console.log(axiosConfig);
-        axios.get('http://localhost:3000/history', axiosConfig)
+        axios.get('http://localhost:3000/mangas/get-all', axiosConfig)
             .then((result) => {
                 console.log(result);
                     this.setState({
@@ -44,11 +44,6 @@ class manageManga extends React.Component<{}, AbcState> {
     elementDropdownChapter(chapters){
         const chapli = chapters.map((item) => {
             return (
-				// <tr className="border-none hover:bg-gray-600 ">
-				// 	<td><Link to={"/comic/" + item.id}>{item.names[0]}</Link></td>
-				// 	<td>{this.dropdownChapter(item.briefChapterDtos)}</td>
-				// 	<td>upload</td>
-				// </tr>
                 <li className="rounded-b hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap">{"Chapter " + item.index}</li>
 			);
 		})
@@ -62,144 +57,12 @@ class manageManga extends React.Component<{}, AbcState> {
                     <IoIosArrowDropdown size="25px"/>
                 </a>
                 <ul className="dropdown-menu-nav rounded-lg border-gray-1100 border-2 bg-black-100 hidden absolute text-white text-sm-custom">
-                    {/* <li className="rounded-b hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap">Trang cá nhân</li>
-                    <li className=" hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap">Quản lý truyện</li>
-                    <li className="rounded-b hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap">Đăng xuất</li> */}
                     {this.elementDropdownChapter(chapters)}
                 </ul>
             </div>
         )
     }
     componentDiv(mangas) {
-        mangas = [{
-            id: "11",
-            names: [
-                "Bokutachi wa benkyou ga dekinai",
-                "We can't Study",
-                "Học vầy sao mà được",
-                "Chúng ta không thể học"
-            ],
-            cover: "https://static.hocvientruyentranh.net/upload/thumb/1605101440099-1jpg.jpeg",
-            briefChapterDtos: [
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-            ],
-        },{
-            id: "11",
-            names: [
-                "Bokutachi wa benkyou ga dekinai",
-                "We can't Study",
-                "Học vầy sao mà được",
-                "Chúng ta không thể học"
-            ],
-            cover: "https://static.hocvientruyentranh.net/upload/thumb/1605101440099-1jpg.jpeg",
-            briefChapterDtos: [
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-            ],
-        },{
-            id: "11",
-            names: [
-                "Bokutachi wa benkyou ga dekinai",
-                "We can't Study",
-                "Học vầy sao mà được",
-                "Chúng ta không thể học"
-            ],
-            cover: "https://static.hocvientruyentranh.net/upload/thumb/1605101440099-1jpg.jpeg",
-            briefChapterDtos: [
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-            ],
-        },{
-            id: "11",
-            names: [
-                "Bokutachi wa benkyou ga dekinai",
-                "We can't Study",
-                "Học vầy sao mà được",
-                "Chúng ta không thể học"
-            ],
-            cover: "https://static.hocvientruyentranh.net/upload/thumb/1605101440099-1jpg.jpeg",
-            briefChapterDtos: [
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-                {
-                    id: "11-101",
-                    manga: "11",
-                    index: 1,
-                    tittle: "",
-                    createdAt: "2021-04-25T15:04:59.181Z"
-                },
-            ],
-        }]
 		let i = mangas.lentgth;
 		const chapDiv = mangas.map((item) => {
 			console.log(item);
@@ -207,7 +70,7 @@ class manageManga extends React.Component<{}, AbcState> {
 				<tr className="border-none hover:bg-gray-600">
 					<td className="hover:text-red-500"><Link to={"/comic/" + item.id}>{item.names[0]}</Link></td>
 					<td className="hover:text-red-500">{this.dropdownChapter(item.briefChapterDtos)}</td>
-					<td><Link to={"/upload/1621529285500"} className="hover:text-red-500"><BiUpload className="mx-auto" size="25px"></BiUpload></Link></td>
+					<td><Link to={"/upload/" + item.id} className="hover:text-red-500"><BiUpload className="mx-auto" size="25px"></BiUpload></Link></td>
 				</tr>
 			);
 		})
@@ -218,9 +81,9 @@ class manageManga extends React.Component<{}, AbcState> {
             <>
                 <section className="bg-black text-white mx-40 mt-6 px-4 border-2 border-gray-500 rounded-lg shadow-2xl">
                     <div className="">
-                        <div>
-                            <h1 className="font-bold text-2xl p-4 border-b-2">Danh sách truyện</h1>
-
+                        <div className="flex border-b-2 justify-between">
+                            <h1 className="font-bold text-2xl p-4">Danh sách truyện</h1>
+                            <h1 className="font-bold text-lg my-auto border-2 border-white p-2 rounded-lg hover:bg-red-600"><Link to="/manga/upload" className="align-middle">Thêm truyện mới</Link></h1>
                         </div>
                         <table className="table-fixed">
                             <thead>
@@ -241,20 +104,6 @@ class manageManga extends React.Component<{}, AbcState> {
     render() {
         const { error, isLoaded, mangas } = this.state;
         console.log(mangas);
-        // if (error) {
-        //     return (
-        //         <div className="col">
-        //             Error: {error.message}
-        //         </div>
-        //     );
-        // } else if (!isLoaded) {
-        //     return (
-        //         <div className="col">
-        //             Loading...
-        //         </div>
-        //     );
-        // } else {
-
             return (
                 <div className="col">
                     {this.historyDiv(mangas)}

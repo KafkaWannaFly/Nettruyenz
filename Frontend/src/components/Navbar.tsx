@@ -106,11 +106,11 @@ export default function Navbar(props: any) {
 									/>
 									<ul className="dropdown-menu-nav rounded-lg border-gray-1100 border-2 bg-black-100 hidden absolute text-white text-sm-custom">
 										<li className="rounded-b hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap">
-											<Link to={"/profile/" + props.email}>Trang cá nhân</Link>
+											<Link to={"/profile/" + email}>Trang cá nhân</Link>
 										</li>
-										{props.level ? (
+										{level ? (
 											<li className=" hover:bg-gray-1000 py-2 px-4 block whitespace-no-wrap">
-												<a href="#">Quản lý truyện</a>
+												<a href="/manage">Quản lý truyện</a>
 											</li>
 										) : (
 											""

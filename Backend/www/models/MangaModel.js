@@ -51,7 +51,7 @@ function completeMangaDtoOf(data) {
         briefChapterDtos: chapterDocs.length > 0
             ? chapterDocs.map((item) => ChapterModel_1.briefChapterDtoOf(item))
             : [],
-        userCommentDtos: commentDocs.length > 0
+        userCommentDtos: commentDocs?.length > 0
             ? commentDocs.map((item) => UserCommentModel_1.commentDtoOf(item))
             : [],
     };

@@ -18,6 +18,7 @@ import handleAccount from "./components/Signin";
 import { TokenClass } from 'typescript';
 import axios from 'axios';
 import UploadChapter from './components/UploadChapter';
+import UploadManga from './components/UploadManga';
 
 const inter = {
 	user: {
@@ -89,8 +90,9 @@ function App() {
 							<Route path="/comic/:id" component={Post}></Route>
 							<Route exact path="/:name/:id1/:id2" component={readComic}></Route>
 							<Redirect exact from="/:name/:id1/:id2/reload" to="/:name/:id1/:id2" />
-							<Route path="/manage" component={manageManga}></Route>
-							<Route exact path="/upload/:id/" component={UploadChapter}></Route>
+							{authen?<Route path="/manage" component={manageManga}></Route>:<div>Vui lòng đăng nhập quyền admin</div>}
+							{authen?<Route exact path="/upload/:id" component={UploadChapter}></Route>:<div>Vui lòng đăng nhập quyền admin</div>}
+							{authen?<Route exact path = "/manga/upload" component={UploadManga}></Route>:<div>Vui lòng đăng nhập quyền admin</div>}
 							{authen?<Route exact path="/follow" component={() => (<Follow {...tokenProps}></Follow>)}></Route>:<div>Vui lòng đăng nhập</div>}
 							{authen?<Route exact path="/history" component={() => (<History {...tokenProps}></History>)}></Route>:<div>Vui lòng đăng nhập</div>}
 							{authen?<Route exact path="/profile/:email" component={() => (<UserProfile data = {tokenProps.data}></UserProfile>)}></Route>:<div>Vui lòng đăng nhập</div>}
