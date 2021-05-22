@@ -18,7 +18,7 @@ function validateEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
-function postDataSignIn(setToken: any) {
+function postDataSignIn(props: any) {
   const inputUsername = (document.getElementById("emailSignIn") as HTMLInputElement).value;
   const inputPassword = (document.getElementById("passwordSignIn") as HTMLInputElement).value;
   const output = document.getElementById("notiSignIn");
@@ -47,10 +47,10 @@ function postDataSignIn(setToken: any) {
             if (output)
               output.innerHTML = "Đăng nhập thành công";
             console.log(response.data)
-            setToken(response.data);
+            props.setToken(response.data);
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("email", response.data.user.email);
-            localStorage.setItem("password", response.data.user.password);
+            localStorage.setItem("password", inputPassword);
             localStorage.setItem("level", response.data.user.level + "");
             offLogin();
           }
@@ -303,7 +303,7 @@ const Tabs = (props: any) => {
                   <button
                     className="focus:bg-black bg-red-600 h-12 text-white font-bold py-2 rounded-xl shadow-lg hover:shadow-xl transition duration-200"
                     type="submit"
-                    onClick={() => postDataSignIn(props.setToken)}
+                    onClick={() => postDataSignIn(props)}
                   >
                     SIGN IN
                   </button>

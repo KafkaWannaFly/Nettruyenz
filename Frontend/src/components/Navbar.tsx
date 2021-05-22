@@ -55,6 +55,12 @@ export default function Navbar(props: any) {
 	};
 	var getUrl = window.location.href;
 	var splitUrl = getUrl.split("/");
+	var email = props.email;
+	var level = props.level;
+	if(email == "" || level == ""){
+		email = localStorage.getItem("email");
+		level = localStorage.getItem("level");
+	}
 	return (
 		<div className="w-full py-3 bg-black text-white">
 			<div className="table w-full py-6 px-44">
