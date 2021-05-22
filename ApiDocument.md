@@ -619,6 +619,33 @@ POST `host/bookmarks`. Body:
 }
 ```
 
+## Rate Manga
+
+### Đánh giá 1 bộ manga
+
+POST `host/rate`
+
+Body
+
+```json
+{
+	"rate": 5,
+	"mangaId": "10"
+}
+```
+
+### Xóa đánh giá
+
+POST `host/rate/clear`
+
+Body
+
+```json
+{
+	"mangaId": "10"
+}
+```
+
 
 
 ## History
