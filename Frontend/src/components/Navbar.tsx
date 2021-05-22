@@ -1,7 +1,7 @@
-import React, { Children, Component } from "react";
+import React, { Children, Component, useState } from "react";
 import logo from "../logos/fox.svg";
 import avatar from "../logos/img_avatar.png";
-import { NavLink, Link, withRouter, Route } from "react-router-dom";
+import { NavLink, Link, withRouter, Route, useHistory } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import HandleAccount from "./Signin";
 import { AiOutlineHome } from "react-icons/ai";
@@ -48,6 +48,8 @@ function setNewDiv(id) {
 	prevId = id;
 }
 export default function Navbar(props: any) {
+	const [searchKeyword, setSearchKeyword] = useState("");
+
 	console.log(props);
 	const setStyleProps = {
 		class: "overlay",
@@ -57,10 +59,17 @@ export default function Navbar(props: any) {
 	var splitUrl = getUrl.split("/");
 	var email = props.email;
 	var level = props.level;
-	if(email == "" || level == ""){
+	if (email == "" || level == "") {
 		email = localStorage.getItem("email");
 		level = localStorage.getItem("level");
 	}
+
+	const history = useHistory();
+	const onSearch = (keyword: string) => {
+		console.log(keyword);
+		history.push(`/categories?searchKeyword=${keyword}`);
+	};
+
 	return (
 		<div className="w-full py-3 bg-black text-white">
 			<div className="table w-full py-6 px-44">
@@ -85,6 +94,13 @@ export default function Navbar(props: any) {
 								name="search"
 								placeholder="Tìm kiếm"
 								autoComplete="off"
+								onKeyPress={(e) => {
+									if (e.key == "Enter") {
+										e.preventDefault();
+										onSearch(searchKeyword);
+									}
+								}}
+								onChange={(e) => setSearchKeyword(e.target.value)}
 							/>
 							<FiSearch className="h-8 w-8"></FiSearch>
 						</div>
