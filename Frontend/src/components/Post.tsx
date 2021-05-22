@@ -138,16 +138,33 @@ class Post extends React.Component<{}, AbcState> {
 	};
 
 	handleBookmarkClick(id) {
-		console.log(this.state)
-		const res = axios({
-			method: 'post',
-			url: 'http://localhost:3000/bookmarks',
-			data: {
-				"bookmark": {
-					"manga": id
-				}
+		// const res = axios({
+		// 	method: 'post',
+		// 	url: 'http://localhost:3000/bookmarks',
+
+		// });
+		console.log(id);
+		var data = {
+			"bookmark": {
+				"manga": id
 			}
-		});
+		}
+		var token = localStorage.getItem("token");
+        let axiosConfig = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        };
+		axios.post("http://localhost:3000/bookmarks", data, axiosConfig)
+		.then(
+			(result) => {
+				console.log(result);
+			},
+			// error handler
+			(error) => {
+				console.log(error);
+			}
+		)
 	}
 
 	handleCommentChange = (e) => {
@@ -222,7 +239,7 @@ class Post extends React.Component<{}, AbcState> {
 								</img>
 								<div className="w-full pt-2">
 									<button className="bg-gray-300 pl-28 hover:bg-gray-400 text-gray-800 font-semibold py-2 w-full border-2 border-gray-400 rounded shadow inline-flex items-center"
-										onClick={(e) => this.handleBookmarkClick(posts.id)}>
+										onClick={() => this.handleBookmarkClick(posts.id)}>
 										<span className="px-2">Follow</span>
 										<BsBookmarks className="fa-flag" size="20px"></BsBookmarks>
 									</button>
