@@ -1473,12 +1473,11 @@ export const mangaController = {
 
 			listMangaNeed = Array.from(new Set(listMangaNeed));
 
-			// console.log(listMangaNeed);
+			console.log(listMangaNeed);
 
 			let mangaDtos: BriefMangaDto[] = [];
 
-			let i = 0;
-
+			console.log("tempMangaDtos")
 			for (let each of listMangaNeed) {
 				let aggregationStatements: any[] = [
 					{
@@ -1488,7 +1487,7 @@ export const mangaController = {
 					},
 					{
 						$match: {
-							id: `${each}`,
+							id: each.toString(),
 						},
 					},
 					{
@@ -1503,6 +1502,11 @@ export const mangaController = {
 				let tempMangaDto: BriefMangaDto[] = await mangaModel
 					.aggregate(aggregationStatements)
 					.exec();
+
+				if (!tempMangaDto)
+					continue;
+
+				console.log(tempMangaDto)
 				mangaDtos = tempMangaDto.concat(mangaDtos);
 			}
 
@@ -1700,16 +1704,16 @@ export const mangaController = {
 
 			// console.log(sort);
 
-			mangaDtos.forEach((element) => {
-				if (sort === "view") console.log(element.views);
-				if (sort === "date") console.log(element.updatedAt?.getTime());
-				if (sort === "follow") console.log(element.bookmarks);
-				if (sort === "rate") console.log(element.averageRate);
-				console.log("-------------");
-			});
+			// mangaDtos.forEach((element) => {
+			// 	if (sort === "view") console.log(element.views);
+			// 	if (sort === "date") console.log(element.updatedAt?.getTime());
+			// 	if (sort === "follow") console.log(element.bookmarks);
+			// 	if (sort === "rate") console.log(element.averageRate);
+			// 	console.log("-------------");
+			// });
 
 			console.log(mangaDtos.length);
-			console.log(period);
+			// console.log(period);
 
 			if (period === "all" || sort != "date") return mangaDtos;
 
