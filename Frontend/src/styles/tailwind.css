@@ -202,7 +202,6 @@ body {
 	@apply absolute;
 	line-height: 30px;
 	margin-left: 275px;
-	@apply cursor-pointer;
 }
 
 
@@ -297,14 +296,23 @@ body {
 	.selection {
 		width: 127px;
 	}
+
+	.search-icon {
+		margin-left: 260px;
+	}
 }
 
 @media (max-width: 960px) {
-	.search-icon {
-		margin-left: 250px;
-	}
 	.search-field {
-		padding-right: 15px !important;
+		padding-right: 5px !important;
+	}
+
+	.search-icon {
+		margin-left: 235px;
+	}
+
+	.selection {
+		width: 122px;
 	}
 }
 
